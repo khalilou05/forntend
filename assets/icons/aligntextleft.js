@@ -1,0 +1,15 @@
+import * as React from "react";
+const SvgComponent = ({ size }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    height={size}
+    width={size}
+  >
+    <path d="M3.75 4a.75.75 0 0 0 0 1.5h12.5a.75.75 0 0 0 0-1.5h-12.5Z" />
+    <path d="M4 7.5a.75.75 0 0 0 0 1.5h8a.75.75 0 0 0 0-1.5h-8Z" />
+    <path d="M3 11.75a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5h-12.5a.75.75 0 0 1-.75-.75Z" />
+    <path d="M4 14.5a.75.75 0 0 0 0 1.5h8a.75.75 0 0 0 0-1.5h-8Z" />
+  </svg>
+);
+export default SvgComponent;
