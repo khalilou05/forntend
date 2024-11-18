@@ -17,14 +17,10 @@ import Button from "@/components/Button";
 
 export default function AddArticle() {
   const [imageFileList, setimagefileList] = useState<Images[]>([]);
-  const [isDirty, setIsDirty] = useState({
-    dirtyProduct: false,
-    dirtyProductOption: false,
-    dirtyImages: false,
-  });
-  const data = new FormData();
-  const [productOption, setProductOption] = useState<ProductOption[]>([]);
-  const [canSubmit, setCanSubmit] = useState(false);
+
+  const formData = new FormData();
+
+  const [canSubmit, setCanSubmit] = useState(true);
   const [product, setProduct] = useState<Product>({
     title: "",
     price: 0,
@@ -37,6 +33,7 @@ export default function AddArticle() {
     free_shipping: false,
     active: true,
     has_option: false,
+    option: [],
   });
   const router = useRouter();
   const prevProduct = useRef<Product>({
@@ -51,6 +48,7 @@ export default function AddArticle() {
     free_shipping: false,
     active: true,
     has_option: false,
+    option: [],
   });
 
   const handleProductUpdate = (
@@ -61,56 +59,40 @@ export default function AddArticle() {
   };
 
   const uploadProduct = async () => {
-    data.append("product", JSON.stringify(product));
-    data.append("product_option", JSON.stringify(productOption));
+    if (Object.values(formData).length > 0) return;
+    formData.append("product", JSON.stringify(product));
     for (const image of imageFileList) {
-      data.append("images", image.image);
+      formData.append("images", image.image);
     }
     const response = await fetchApi("/product", {
       method: "POST",
-      body: data,
+      body: formData,
     });
     if (response?.status === 201) router.back();
   };
 
-  const checkProduct = () => {
-    const dirtyArray = [];
-    for (const key in product) {
-      if (product[key] !== prevProduct.current[key]) dirtyArray.push(true);
-      else dirtyArray.push(false);
-    }
-    if (dirtyArray.includes(true))
-      setIsDirty({ ...isDirty, dirtyProduct: true });
-    else setIsDirty({ ...isDirty, dirtyProduct: false });
-  };
-  const checkImage = () => {
-    if (imageFileList.length > 0) setIsDirty({ ...isDirty, dirtyImages: true });
-    else setIsDirty({ ...isDirty, dirtyImages: false });
-  };
-  const checkProductOption = () => {
-    if (productOption.length === 0) return;
-    const dirtyArray: boolean[] = [];
-    productOption.forEach((option) => {
-      if (option.name === "") dirtyArray.push(true);
-      else dirtyArray.push(false);
-      option.items.forEach((item) => {
-        if (item.item_name === "" || item.price === 0 || item.stock === 0)
-          dirtyArray.push(true);
-        else dirtyArray.push(false);
-      });
-    });
-    if (dirtyArray.includes(true))
-      setIsDirty({ ...isDirty, dirtyProductOption: true });
-    else setIsDirty({ ...isDirty, dirtyProductOption: false });
-  };
+  // const checkProduct = () => {
+  //   const dirtyArray = [];
+  //   for (const key in product) {
+  //     if (product[key] !== prevProduct.current[key]) dirtyArray.push(true);
+  //     else dirtyArray.push(false);
+  //   }
+  //   if (dirtyArray.includes(true))
+  //     setIsDirty({ ...isDirty, dirtyProduct: true });
+  //   else setIsDirty({ ...isDirty, dirtyProduct: false });
+  // };
+  // const checkImage = () => {
+  //   if (imageFileList.length > 0) setIsDirty({ ...isDirty, dirtyImages: true });
+  //   else setIsDirty({ ...isDirty, dirtyImages: false });
+  // };
 
-  useEffect(() => {
-    checkProduct();
-  }, [JSON.stringify(product)]);
+  // useEffect(() => {
+  //   checkProduct();
+  // }, [JSON.stringify(product)]);
 
-  useEffect(() => {
-    checkImage();
-  }, [imageFileList.length]);
+  // useEffect(() => {
+  //   checkImage();
+  // }, [imageFileList.length]);
 
   // useEffect(() => {
   //   window.history.pushState(null, document.title, window.location.href);
@@ -198,8 +180,8 @@ export default function AddArticle() {
             handleChange={handleProductUpdate}
           />
           <OptionCard
-            options={productOption}
-            setOption={setProductOption}
+            options={product.option}
+            setProduct={setProduct}
             handleProductUpdate={handleProductUpdate}
           />
 

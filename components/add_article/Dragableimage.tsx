@@ -104,11 +104,11 @@ export default function Dragableimage({
       ]);
     };
     updateImagePostion();
-    window.addEventListener("scroll", updateImagePostion);
+    window.addEventListener("scrollend", updateImagePostion);
     window.addEventListener("resize", updateImagePostion);
 
     return () => {
-      window.removeEventListener("scroll", updateImagePostion);
+      window.removeEventListener("scrollend", updateImagePostion);
       window.removeEventListener("resize", updateImagePostion);
     };
   }, [fileListLength]);

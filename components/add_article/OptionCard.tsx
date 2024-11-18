@@ -8,26 +8,28 @@ import Button from "../Button";
 
 export default function OptionCard({
   options,
-  setOption,
+  setProduct,
   handleProductUpdate,
 }: {
   options: ProductOption[];
-  setOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
+  setProduct: React.Dispatch<React.SetStateAction<Product>>;
   handleProductUpdate: (
     prop: keyof Product,
     value: string | number | boolean
   ) => void;
 }) {
   const addProductOption = () => {
-    setOption([
-      ...options,
-
-      {
-        id: generateUUID(),
-        name: "",
-        items: [{ id: generateUUID(), item_name: "", price: 0, stock: 0 }],
-      },
-    ]);
+    setProduct((prv) => ({
+      ...prv,
+      option: [
+        ...prv.option,
+        {
+          id: generateUUID(),
+          name: "",
+          items: [{ id: generateUUID(), item_name: "", price: 0, stock: 0 }],
+        },
+      ],
+    }));
   };
 
   const updateOptionItem = (
@@ -36,8 +38,8 @@ export default function OptionCard({
     prop: keyof OptionItems,
     value: string | number
   ) => {
-    setOption((prv) => {
-      const updatedOption = prv.map((option) => {
+    setProduct((prv) => {
+      const updatedOption = options.map((option) => {
         if (option.id !== optionID) return option;
         const updatedOptionItem = option.items.map((item) =>
           item.id === itemID ? { ...item, [prop]: value } : item
@@ -54,33 +56,33 @@ export default function OptionCard({
         }
         return { ...option, items: updatedOptionItem };
       });
-      return updatedOption;
+      return { ...prv, option: updatedOption };
     });
   };
   const deleteOptionItem = (
     optionID: number | string,
     itemID: number | string
   ) => {
-    const newArray = options.map((option) =>
+    const newOption = options.map((option) =>
       option.id === optionID
         ? {
             ...option,
-            items: option.items.filter((option) => option.id !== itemID),
+            items: option.items.filter((item) => item.id !== itemID),
           }
         : option
     );
-    setOption(newArray);
+    setProduct((prv) => ({ ...prv, option: newOption }));
   };
   const deleteOption = (optionID: number | string) => {
     const newArray = options.filter((option) => option.id !== optionID);
-    setOption(newArray);
+    setProduct((prv) => ({ ...prv, option: newArray }));
   };
 
   const updateOptionName = (optionID: number | string, optionName: string) => {
     const newOptions = options.map((option) =>
       option.id === optionID ? { ...option, name: optionName } : option
     );
-    setOption(newOptions);
+    setProduct((prv) => ({ ...prv, option: newOptions }));
   };
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export default function OptionCard({
             <OptionItem
               optionName={option.name}
               optionID={option.id}
-              setOption={setOption}
+              setProduct={setProduct}
               deleteOption={deleteOption}
               deleteOptionItem={deleteOptionItem}
               updateOptionName={updateOptionName}
@@ -136,7 +138,7 @@ function OptionItem({
   optionID,
   optionName,
   items,
-  setOption,
+  setProduct,
   deleteOption,
   deleteOptionItem,
   updateOptionItem,
@@ -145,7 +147,7 @@ function OptionItem({
   items: OptionItems[];
   optionID: string | number;
   optionName: string;
-  setOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
+  setProduct: React.Dispatch<React.SetStateAction<Product>>;
   deleteOption: (index: number | string) => void;
   deleteOptionItem: (
     optionID: number | string,
@@ -214,8 +216,8 @@ function OptionItem({
       return;
     }
     if (expand) {
-      setOption((prv) => {
-        const newOption = prv.map((option) => {
+      setProduct((prv) => {
+        const newOption = prv.option.map((option) => {
           if (option.id === optionID) {
             return {
               ...option,
@@ -227,11 +229,11 @@ function OptionItem({
           }
           return option;
         });
-        return newOption;
+        return { ...prv, option: newOption };
       });
     } else {
-      setOption((prv) => {
-        const updatedOption = prv.map((option) => {
+      setProduct((prv) => {
+        const updatedOption = prv.option.map((option) => {
           if (option.id === optionID) {
             return {
               ...option,
@@ -240,7 +242,7 @@ function OptionItem({
           }
           return option;
         });
-        return updatedOption;
+        return { ...prv, option: updatedOption };
       });
     }
 

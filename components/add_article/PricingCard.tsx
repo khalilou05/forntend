@@ -1,6 +1,6 @@
 import style from "@/css/route/addArticle.module.css";
 import type { Product } from "@/types/types";
-
+import ToolTip from "../ToolTip";
 type Prop = {
   handleChange: (prop: keyof Product, value: string | number | boolean) => void;
   product: Product;
@@ -42,12 +42,18 @@ export default function PricingCard({ handleChange, product }: Prop) {
         <div className={style.row_item}>
           <label>سعر الشراء</label>
           <div>
-            <input
-              onChange={(e) =>
-                handleChange("buying_price", Number(e.target.value))
-              }
-              type="text"
-            />
+            <ToolTip
+              tooltipPosition="left"
+              width="100px"
+              value="سعر الشراء لن يظهر للزبون"
+            >
+              <input
+                onChange={(e) =>
+                  handleChange("buying_price", Number(e.target.value))
+                }
+                type="text"
+              />
+            </ToolTip>
             <span>دج</span>
           </div>
         </div>

@@ -32,7 +32,8 @@ export type OrderFilterInput = {
 };
 
 export type Product = {
-  [index: string]: string | number | boolean;
+  [index: string]: string | number | boolean | undefined | ProductOption[];
+  id?: number;
   title: string;
   price: number;
   prev_price: number;
@@ -44,6 +45,7 @@ export type Product = {
   active: boolean;
   out_stock_sell: boolean;
   has_option: boolean;
+  option: ProductOption[];
 };
 
 export type OptionItems = {

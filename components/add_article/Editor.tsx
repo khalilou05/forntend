@@ -9,6 +9,7 @@ import Image from "@/assets/icons/image";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Product } from "@/types/types";
+import ToolTip from "../ToolTip";
 const Editor = ({
   handleProductUpdate,
 }: {
@@ -66,6 +67,7 @@ const Editor = ({
             حجم النص
             <DownCaretIcon size={20} />
           </button>
+
           {expandElemnt === "size" &&
             createPortal(
               <div
@@ -81,26 +83,39 @@ const Editor = ({
               </div>,
               document.body
             )}
-          <button onClick={() => setexpandElemnt("")}>
-            <BoldTextIcon size={20} />
-          </button>
-          <button>
-            <ItalicTextIcon size={20} />
-          </button>
-          <button>
-            <UnderLineTextIcon size={20} />
-          </button>
-          <button>
-            <TextColorIcon size={20} />
-            <DownCaretIcon size={20} />
-          </button>
-          <button>
-            <AlignTextRightIcon size={20} />
-            <DownCaretIcon size={20} />
-          </button>
-          <button>
-            <Image size={20} />
-          </button>
+          <ToolTip value="خط غليض">
+            <button onClick={() => setexpandElemnt("")}>
+              <BoldTextIcon size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="خط مائل">
+            <button>
+              <ItalicTextIcon size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="خط مسطر">
+            <button>
+              <UnderLineTextIcon size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="الألوان">
+            <button>
+              <TextColorIcon size={20} />
+              <DownCaretIcon size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="إتجاه النص">
+            <button>
+              <AlignTextRightIcon size={20} />
+              <DownCaretIcon size={20} />
+            </button>
+          </ToolTip>
+
+          <ToolTip value="إضافة صور">
+            <button>
+              <Image size={20} />
+            </button>
+          </ToolTip>
         </div>
         <div
           onInput={(e) =>

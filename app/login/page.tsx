@@ -19,6 +19,7 @@ function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [errorMsg, seterrorMsg] = useState("");
 
   const firstInpt = useRef<HTMLInputElement | null>(null);
   const passInpt = useRef<HTMLInputElement | null>(null);
@@ -41,13 +42,12 @@ function AdminLogin() {
     }
     try {
       setBtnLoading(true);
-      const response = await fetchApi("/login", {
+      const response = await fetchApi<string>("/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData.current),
-        credentials: "include",
       });
 
       if (response?.status == 200) {
