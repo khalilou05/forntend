@@ -1,90 +1,110 @@
 "use client";
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Loding from "@/components/Loding";
 import style from "@/css/route/shipping.module.css";
 import Toast from "@/components/toast";
 import { fetchApi } from "@/api/fetchApi";
-import type { ToastMsg, WilayaData } from "@/types/types";
+import type { ToastMsg, Wilaya } from "@/types/types";
+import Button from "@/components/Button";
 
 function ShippingPage() {
-  const [wilaya, setwilaya] = useState<WilayaData[]>([]);
+  const [wilaya, setwilaya] = useState<Wilaya[]>([]);
+
   const [toastData, setToastData] = useState<ToastMsg[]>([]);
-  const prevWilaya = useRef<WilayaData[] | null>(null);
-  const [btnLoading, setBtnLoading] = useState(false);
+  const prevWilaya = useRef<Wilaya[] | null>(null);
+  const [btdDisabled, setBtdDisabled] = useState(true);
+  const [btnStyle, setBtnStyle] = useState<"primary" | "disabled">("primary");
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const cache = useRef<Wilaya[]>([]);
+
+  const getModified = () => {
+    const modified = [];
+    for (let i = 0; i < wilaya.length; i++) {
+      const secendList = cache.current[i];
+      for (const prop in wilaya[i]) {
+        if (secendList[prop] !== wilaya[i][prop]) {
+          modified.push(wilaya[i]);
+          continue;
+        }
+      }
+    }
+    return modified;
+  };
 
   async function updateShippingCost() {
-    setBtnLoading(true);
+    if (btdDisabled) return;
+    setLoading(true);
     try {
-      const response = await fetchApi("/wilaya/update", {
+      const response = await fetchApi("/wilaya", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(wilaya),
+        body: JSON.stringify(getModified()),
       });
       if (response?.status == 200) {
-        showNotification("ok", "done");
         prevWilaya.current = wilaya;
-        return;
-      }
-      throw new Error("failed to update");
+        cache.current = wilaya;
+        setBtdDisabled(true);
+        setTimeout(() => {
+          setBtnStyle("disabled");
+        }, 500);
+      } else throw new Error("failed to update");
     } catch (err) {
-      setwilaya(prevWilaya.current || wilaya);
-      showNotification("non", "error");
+      setwilaya(cache.current);
     } finally {
       setTimeout(() => {
-        setBtnLoading(false);
+        setLoading(false);
       }, 500);
     }
   }
-  const showNotification = (msg: string, type: "done" | "error") => {
-    setToastData([...toastData, { msg: msg, type: type }]);
-    setShowModal(true);
-    setTimeout(() => {
-      setShowModal(false);
-    }, 3000);
-  };
 
   const handleOnChange = (
-    wilayaIndex: number,
-    field: keyof WilayaData,
-    value: string | number | boolean
+    wilayaID: number,
+    prop: keyof Wilaya,
+    value: string | number | boolean,
   ) => {
-    const newArray = wilaya?.map((item, index) =>
-      index === wilayaIndex ? { ...item, [field]: value } : item
+    setwilaya((prv) =>
+      prv.map((item) =>
+        item.id === wilayaID ? { ...item, [prop]: value } : item,
+      ),
     );
-    setwilaya(newArray);
   };
   useEffect(() => {
+    document.title = "إدارة التوصيل";
     const abortcntl = new AbortController();
     (async () => {
       try {
-        const resp = await fetchApi<WilayaData[]>("/wilaya", {
+        const resp = await fetchApi<Wilaya[]>("/wilaya", {
           signal: abortcntl.signal,
         });
         if (resp?.status == 200 && resp.data) {
           setwilaya(resp.data);
-          if (!prevWilaya.current) {
-            prevWilaya.current = resp.data;
-          }
-          return;
-        }
-        throw new Error("error from the server");
+          cache.current = resp.data;
+        } else throw new Error("error from the server");
       } catch (error) {
         console.error(error);
       }
     })();
+
     return () => abortcntl.abort();
   }, []);
+
+  useEffect(() => {
+    const modified = getModified();
+    if (modified.length) {
+      setBtdDisabled(false);
+      setBtnStyle("primary");
+    } else {
+      setBtdDisabled(true);
+      setBtnStyle("disabled");
+    }
+  }, [JSON.stringify(wilaya)]);
+
   return (
     <>
-      {showModal && (
-        <Toast
-          data={toastData}
-          setToastData={setToastData}
-        />
-      )}
+      {showModal && <Toast data={toastData} setToastData={setToastData} />}
 
       <section className={style.card}>
         <div className={style.fixed_row}>
@@ -95,17 +115,16 @@ function ShippingPage() {
           <div className={style.row_item}>تفعيل</div>
         </div>
         <div className={style.item_box}>
-          {wilaya?.map((item, index) => (
-            <div
-              key={item.id}
-              className={style.wilaya_row}
-            >
+          {wilaya?.map((item) => (
+            <div key={item.id} className={style.wilaya_row}>
               <div>{item.wilaya_code}</div>
               <div>{item.name}</div>
               <div>
                 <input
+                  className={item.active ? style.input : style.input_disabled}
+                  disabled={!item.active}
                   onChange={(e) => {
-                    handleOnChange(index, "desk_price", e.target.value);
+                    handleOnChange(item.id, "desk_price", e.target.value);
                   }}
                   type="text"
                   value={item.desk_price}
@@ -113,8 +132,10 @@ function ShippingPage() {
               </div>
               <div>
                 <input
+                  className={item.active ? style.input : style.input_disabled}
+                  disabled={!item.active}
                   onChange={(e) => {
-                    handleOnChange(index, "home_price", e.target.value);
+                    handleOnChange(item.id, "home_price", e.target.value);
                   }}
                   type="text"
                   value={item.home_price}
@@ -123,7 +144,7 @@ function ShippingPage() {
               <div>
                 <input
                   onChange={(e) => {
-                    handleOnChange(index, "active", e.target.checked);
+                    handleOnChange(item.id, "active", e.target.checked);
                   }}
                   type="checkbox"
                   checked={item.active}
@@ -133,22 +154,13 @@ function ShippingPage() {
           ))}
         </div>
       </section>
-
-      <button
-        onClick={() => {
-          updateShippingCost();
-        }}
-        className={style.submit_btn}
+      <Button
+        disabled={btdDisabled}
+        onClick={updateShippingCost}
+        type={btnStyle}
       >
-        {btnLoading ? (
-          <Loding
-            borderTopColor="whitesmoke"
-            size="20px"
-          />
-        ) : (
-          "حفض"
-        )}
-      </button>
+        {loading ? <Loding borderTopColor="whitesmoke" size="20px" /> : "حفض"}
+      </Button>
     </>
   );
 }

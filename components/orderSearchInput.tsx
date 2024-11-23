@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import SearchIcon from "@/assets/icons/search";
 
 import { fetchApi } from "@/api/fetchApi";
-import { Order, OrderFilterInput } from "@/types/types";
+import { OrderIn, OrderFilterInput } from "@/types/types";
 
 function OrderSerchInput({
   setOrders,
@@ -18,7 +18,7 @@ function OrderSerchInput({
     if (query == "") {
       (async () => {
         try {
-          const response = await fetchApi<Order[]>(
+          const response = await fetchApi<OrderIn[]>(
             `/order?status=${orderStatus}`
           );
           if (response?.status == 200 && response.data)
@@ -32,7 +32,7 @@ function OrderSerchInput({
     }
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetchApi<Order[]>(`/order/search?q=${query}`);
+        const response = await fetchApi<OrderIn[]>(`/order/search?q=${query}`);
         if (response?.status == 200 && response.data) setOrders(response.data);
         else setOrders([]);
       } catch (error) {

@@ -2,9 +2,17 @@ import style from "@/css/component/customer_info.module.css";
 import SelectInput from "../SelectInput";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { fetchApi } from "@/api/fetchApi";
-import type { WilayaData, Baladiya } from "@/types/types";
+import type { WilayaData, Baladiya, OrderOut } from "@/types/types";
 import Card from "@/components/Card";
-export default function CustomerInfo() {
+
+type Prop = {
+  handleOrderData: (
+    prop: keyof OrderOut,
+    value: string | number | boolean
+  ) => void;
+};
+
+export default function CustomerInfo({ handleOrderData }: Prop) {
   const [wilaya, setwilaya] = useState<WilayaData[]>([]);
   const [baladiya, setbaladiya] = useState<Baladiya[]>([]);
   const [selectedWilaya, setselectedWilaya] = useState<number>(0);
@@ -14,6 +22,7 @@ export default function CustomerInfo() {
       setbaladiya([]);
     }
     setselectedWilaya(Number(e.target.value));
+    handleOrderData("wilaya_id", Number(e.target.value));
   };
 
   useEffect(() => {
@@ -50,11 +59,17 @@ export default function CustomerInfo() {
       <div className={style.card_body}>
         <div className={style.input_sec}>
           <label>الإسم الكامل</label>
-          <input type="text" />
+          <input
+            onChange={(e) => handleOrderData("full_name", e.target.value)}
+            type="text"
+          />
         </div>
         <div className={style.input_sec}>
           <label>رقم الهاتف</label>
-          <input type="text" />
+          <input
+            onChange={(e) => handleOrderData("phone_number", e.target.value)}
+            type="text"
+          />
         </div>
         <div className={style.input_sec}>
           <label>الولاية</label>
@@ -75,18 +90,31 @@ export default function CustomerInfo() {
         <div className={style.input_sec}>
           <label>البلدية</label>
 
-          <SelectInput onChange={() => {}}>
+          <SelectInput
+            onChange={(e) => {
+              handleOrderData("baladiya_id", Number(e.target.value));
+            }}
+          >
             <option value={0}>-- إختر بلدية --</option>
             {baladiya.map((item) => (
-              <option key={item.id}>{item.name}</option>
+              <option
+                value={item.id}
+                key={item.id}
+              >
+                {item.name}
+              </option>
             ))}
           </SelectInput>
         </div>
         <div className={style.input_sec}>
           <label>التوصيل</label>
-          <SelectInput onChange={() => {}}>
-            <option>للمكتب</option>
-            <option>للمنزل</option>
+          <SelectInput
+            onChange={(e) => {
+              handleOrderData("home_dilvery", !!e.target.value);
+            }}
+          >
+            <option value={0}>للمكتب</option>
+            <option value={1}>للمنزل</option>
           </SelectInput>
         </div>
       </div>

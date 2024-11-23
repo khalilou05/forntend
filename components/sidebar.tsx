@@ -61,12 +61,7 @@ function Sidebar() {
             }
           >
             {item.icon}
-            <Link
-              href={item.href}
-              scroll={false}
-            >
-              {item.name}
-            </Link>
+            <Link href={item.href}>{item.name}</Link>
           </div>
         ))}
       </div>
@@ -79,24 +74,11 @@ function Sidebar() {
           }
         >
           <SettingIcon size="25px" />
-          <Link
-            href={"/admin/setting"}
-            scroll={false}
-          >
-            إعـــــدادات
-          </Link>
+          <Link href={"/admin/setting"}>إعـــــدادات</Link>
         </div>
-        <div
-          onClick={handleLogout}
-          className={style.link_box}
-        >
+        <div onClick={handleLogout} className={style.link_box}>
           <LogoutIcon size="25px" />
-          <Link
-            href={"#"}
-            scroll={false}
-          >
-            الــخـــروج
-          </Link>
+          <Link href="">الــخـــروج</Link>
         </div>
       </div>
     </nav>

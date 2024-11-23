@@ -6,15 +6,23 @@ import CustomerInfo from "@/components/add_order/CustomerInfo";
 import OrderSummary from "@/components/add_order/OrderSummary";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { type OrderOut } from "@/types/types";
 
 export default function AddOrderPage() {
-  const [order, setorder] = useState({
-    fullName: "",
-    phoneNumber: 0,
-    wilaya: 0,
-    baladiya: 0,
-    homeDelivery: false,
+  const [order, setOrder] = useState<OrderOut>({
+    full_name: "",
+    phone_number: "",
+    wilaya_id: 0,
+    baladiya_id: 0,
+    home_dilvery: false,
   });
+
+  const handleOrderData = (
+    prop: keyof OrderOut,
+    value: string | number | boolean
+  ) => {
+    setOrder({ ...order, [prop]: value });
+  };
 
   useEffect(() => {
     document.title = "إضافة طلبية";
@@ -35,7 +43,7 @@ export default function AddOrderPage() {
           <OrderSummary />
         </div>
         <div className={style.left_section}>
-          <CustomerInfo />
+          <CustomerInfo handleOrderData={handleOrderData} />
         </div>
       </div>
     </div>

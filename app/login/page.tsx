@@ -26,7 +26,7 @@ function AdminLogin() {
   const route = useRouter();
 
   async function login(
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ): Promise<any> {
     event.preventDefault();
 
@@ -71,59 +71,60 @@ function AdminLogin() {
 
   return (
     <section className={style.wraper}>
-      <form dir="rtl">
+      <form>
         <div className={style.top}>
           <h1>لوحة التحكم</h1>
           <LockIcon size={"30px"} />
         </div>
 
         <div className={style.main}>
-          <label htmlFor="username">إسم المستخدم</label>
-          <input
-            id="username"
-            ref={firstInpt}
-            tabIndex={1}
-            type="text"
-            className={style.inp_usr}
-            autoComplete="off"
-            required
-            onChange={(e) => {
-              loginData.current.username = e.target.value;
-            }}
-          />
+          <div className={style.input}>
+            <label htmlFor="username">إسم المستخدم</label>
+            <input
+              id="username"
+              ref={firstInpt}
+              tabIndex={1}
+              type="text"
+              autoComplete="off"
+              required
+              onChange={(e) => {
+                loginData.current.username = e.target.value;
+              }}
+            />
+          </div>
 
-          <span
-            className={style.eye_cross}
-            style={{
-              visibility: passEmpty ? "hidden" : "visible",
-            }}
-            onClick={() => setShowPassword((prv) => !prv)}
-          >
-            {showPassword ? (
-              <EyeCrossedIcon size={"15px"} />
-            ) : (
-              <EyeOpned size={"15px"} />
-            )}
-          </span>
-          <label htmlFor="password">كلمة السر</label>
-
-          <input
-            tabIndex={2}
-            id="password"
-            className={style.inp_pass}
-            autoComplete="off"
-            type={showPassword ? "text" : "password"}
-            ref={passInpt}
-            required
-            onChange={(e) => {
-              loginData.current.password = e.target.value;
-              if (loginData.current.password == "") {
-                setPassEmpty(true);
-                return;
-              }
-              setPassEmpty(false);
-            }}
-          />
+          <div className={style.input}>
+            <label htmlFor="password">كلمة السر</label>
+            <input
+              tabIndex={2}
+              id="password"
+              autoComplete="off"
+              type={showPassword ? "text" : "password"}
+              ref={passInpt}
+              required
+              onChange={(e) => {
+                loginData.current.password = e.target.value;
+                if (loginData.current.password == "") {
+                  setPassEmpty(true);
+                  return;
+                }
+                setPassEmpty(false);
+              }}
+            />
+            <span
+              className={style.eyeIcon}
+              style={{
+                visibility: passEmpty ? "hidden" : "visible",
+              }}
+              onClick={() => setShowPassword((prv) => !prv)}
+            >
+              {showPassword ? (
+                <EyeCrossedIcon size={"15px"} />
+              ) : (
+                <EyeOpned size={"15px"} />
+              )}
+            </span>
+          </div>
 
           <button
             disabled={btnLoading}
@@ -132,10 +133,7 @@ function AdminLogin() {
             onClick={login}
           >
             {btnLoading ? (
-              <Loding
-                borderTopColor="white"
-                size="25px"
-              />
+              <Loding borderTopColor="white" size="25px" />
             ) : (
               "دخول"
             )}

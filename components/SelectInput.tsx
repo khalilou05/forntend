@@ -3,7 +3,7 @@ import ArrowIcon from "@/assets/icons/selectArrow";
 import style from "@/css/component/selectInput.module.css";
 type Prop = {
   children?: ReactNode;
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
 };
 
 export default function SelectInput({ children, onChange }: Prop) {

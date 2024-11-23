@@ -3,7 +3,7 @@
 import style from "@/css/route/addArticle.module.css";
 import { useEffect, useRef, useState } from "react";
 import SelectInput from "@/components/SelectInput";
-import type { Product, ProductOption, Images } from "@/types/types";
+import type { Product, Images } from "@/types/types";
 import ImageManager from "@/components/add_article/ImageManager";
 import { fetchApi } from "@/api/fetchApi";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,7 @@ export default function AddArticle() {
 
   const handleProductUpdate = (
     prop: keyof Product,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setProduct({ ...product, [prop]: value });
   };
@@ -136,6 +136,10 @@ export default function AddArticle() {
   //   };
   // }, [isDirty]);
 
+  useEffect(() => {
+    document.title = "إضافة منتج";
+  }, []);
+
   return (
     <main className={style.body}>
       <div className={style.navBar}>
@@ -150,10 +154,7 @@ export default function AddArticle() {
         <div className={style.right_column}>
           <div className={style.article_info_card}>
             <div className={style.title_sec}>
-              <label
-                className={style.inpt_label}
-                htmlFor="title"
-              >
+              <label className={style.inpt_label} htmlFor="title">
                 العنوان
               </label>
               <input
@@ -175,10 +176,7 @@ export default function AddArticle() {
             </div>
           </div>
 
-          <PricingCard
-            product={product}
-            handleChange={handleProductUpdate}
-          />
+          <PricingCard product={product} handleChange={handleProductUpdate} />
           <OptionCard
             options={product.option}
             setProduct={setProduct}
@@ -188,7 +186,7 @@ export default function AddArticle() {
           <Button
             className={style.submit_btn}
             type={canSubmit ? "primary" : "disabled"}
-            disabled={canSubmit ? false : true}
+            disabled={canSubmit}
             onClick={uploadProduct}
           >
             إضافة
@@ -240,13 +238,9 @@ export default function AddArticle() {
             <div className={style.title}>الفئة</div>
             <CategoryInput handleChange={handleProductUpdate} />
           </div>
-          {/* <button onClick={() => console.log(prevProduct)}>
-            log prev product
-          </button>
-          <button onClick={() => console.log(product)}>
-            log product product
-          </button>
-          <button onClick={() => console.log(isDirty)}>is dirty </button> */}
+          <div>
+            <div className="khalil"></div>
+          </div>
         </div>
       </div>
     </main>

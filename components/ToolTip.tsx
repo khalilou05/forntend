@@ -5,8 +5,9 @@ import { createPortal } from "react-dom";
 type Prop = {
   children: React.ReactNode;
   value: string;
-  tooltipPosition?: "center" | "left" | "right";
   width?: string;
+  padding?: string;
+  tooltipPosition?: "center" | "left" | "right";
   textPosition?: "start" | "end" | "center";
 };
 export default function ToolTip({
@@ -14,10 +15,12 @@ export default function ToolTip({
   value,
   tooltipPosition = "center",
   width = "auto",
+  padding = "7px",
   textPosition = "start",
 }: Prop) {
   const [postiotion, setpostiotion] = useState({ top: 0, x: 0 });
   const [visiblity, setVisiblity] = useState<"visible" | "hidden">("hidden");
+  const [showDown, setshowDown] = useState(false);
   const [cancreatePrtal, setcancreatePrtal] = useState(false);
   const toolTipRef = useRef<HTMLDivElement | null>(null);
   const warperRef = useRef<HTMLDivElement | null>(null);
@@ -28,22 +31,35 @@ export default function ToolTip({
       const { top, left, width, right } =
         warperRef.current.children[0].getBoundingClientRect();
       const toltipRect = toolTipRef.current.getBoundingClientRect();
+      const isBelow20 = top <= 41;
+
+      if (isBelow20) setshowDown(true);
+      else setshowDown(false);
       if (tooltipPosition === "left") {
         setpostiotion({
-          top: top - toltipRect.height - 3 + window.scrollY,
+          top:
+            (isBelow20
+              ? top + toltipRect.height + 6
+              : top - toltipRect.height - 6) + window.scrollY,
           x: left,
         });
         return;
       }
       if (tooltipPosition === "right") {
         setpostiotion({
-          top: top - toltipRect.height - 3 + window.scrollY,
+          top:
+            (isBelow20
+              ? top + toltipRect.height + 6
+              : top - toltipRect.height - 6) + window.scrollY,
           x: right - toltipRect.width,
         });
         return;
       }
       setpostiotion({
-        top: top - toltipRect.height - 3 + window.scrollY,
+        top:
+          (isBelow20
+            ? top + toltipRect.height + 6
+            : top - toltipRect.height - 6) + window.scrollY,
         x: left - toltipRect.width / 2 + width / 2,
       });
     }
@@ -56,20 +72,24 @@ export default function ToolTip({
     setcancreatePrtal(true);
   }, []);
   return (
-    <div
-      ref={warperRef}
-      style={{ display: "contents", width: "fit-content" }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {children}
+    <>
+      <div
+        ref={warperRef}
+        style={{ display: "contents" }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {children}
+      </div>
+
       {cancreatePrtal &&
         createPortal(
           <div
             ref={toolTipRef}
-            className={style.tooltip}
+            className={showDown ? style.tooltipDown : style.tooltip}
             style={{
               width: width,
+              padding: padding,
               visibility: visiblity,
               position: "absolute",
               top: postiotion.top,
@@ -78,8 +98,8 @@ export default function ToolTip({
           >
             {value}
           </div>,
-          document.body
+          document.body,
         )}
-    </div>
+    </>
   );
 }

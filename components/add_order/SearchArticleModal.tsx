@@ -57,16 +57,10 @@ export default function SearchArticleModal({
   return (
     <>
       {isOpen && (
-        <dialog
-          className={style.dialog}
-          ref={modalRef}
-        >
+        <dialog className={style.dialog} ref={modalRef}>
           <div className={style.header}>
             إختيار المنتجات
-            <button
-              className={style.close_btn}
-              onClick={closeModal}
-            >
+            <button className={style.close_btn} onClick={closeModal}>
               <Xicon size={20} />
             </button>
           </div>
@@ -87,11 +81,7 @@ export default function SearchArticleModal({
             ))}
           </main>
           <div className={style.footer}>
-            <Button
-              className={style.btn}
-              type="secandary"
-              onClick={closeModal}
-            >
+            <Button className={style.btn} type="secandary" onClick={closeModal}>
               إلغاء
             </Button>
 
@@ -105,10 +95,7 @@ export default function SearchArticleModal({
           </div>
         </dialog>
       )}
-      <Button
-        type="secandary"
-        onClick={openModal}
-      >
+      <Button type="secandary" onClick={openModal}>
         عرض
       </Button>
     </>

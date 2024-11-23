@@ -5,10 +5,13 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-
+/vscode
+/idea
+/scss
+.idea
 # testing
 /coverage
-
+/test
 # next.js
 /.next/
 /out/
@@ -35,3 +38,8 @@ scss
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#prettier
+.prettierrc
+
+

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import style from "@/css/component/orderTable.module.css";
-import { OrderStatus, type Order, type OrderTableProps } from "@/types/types";
+import { OrderStatus, type OrderIn, type OrderTableProps } from "@/types/types";
 import { inSelectedOrder, orderStatusFormat } from "@/lib/ordertableFunc";
 import { phoneFormat } from "@/lib/phoneNformat";
 import { useRouter } from "next/navigation";
@@ -10,20 +10,21 @@ import SearchInput from "@/components/orderSearchInput";
 
 import { fetchApi } from "@/api/fetchApi";
 import Link from "next/link";
+import Card from "./Card";
 
 function OrderTable({ data, ordersCount }: OrderTableProps) {
-  const [selectedOrders, setselectedOrders] = useState<Order[]>([]);
-  const [orders, setOrders] = useState<Order[]>(data || []);
+  const [selectedOrders, setselectedOrders] = useState<OrderIn[]>([]);
+  const [orders, setOrders] = useState<OrderIn[]>(data || []);
   const [orderToViewId, setorderToViewId] = useState(0);
   const [orderStatus, setOrderStatus] = useState<OrderStatus>("all");
 
   const selectAllInput = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const handleSelectOrder = (order: Order) => {
+  const handleSelectOrder = (order: OrderIn) => {
     const selectedOrdersId = selectedOrders.map((order) => order.id);
     if (selectedOrdersId.includes(order.id)) {
       const removedOrderList = selectedOrders.filter(
-        (sorder) => sorder.id != order.id
+        (sorder) => sorder.id != order.id,
       );
       setselectedOrders(removedOrderList);
     } else {
@@ -52,8 +53,8 @@ function OrderTable({ data, ordersCount }: OrderTableProps) {
   useEffect(() => {
     const getOrders = async () => {
       try {
-        const response = await fetchApi<Order[]>(
-          `/order?status=${orderStatus}`
+        const response = await fetchApi<OrderIn[]>(
+          `/order?status=${orderStatus}`,
         );
         if (response?.status == 200 && response.data) setOrders(response.data);
         else setOrders([]);
@@ -89,7 +90,7 @@ function OrderTable({ data, ordersCount }: OrderTableProps) {
             <span>إضافة طلبية</span>
           </Link>
         </div>
-        <section className={style.card}>
+        <Card className={style.card}>
           <div className={style.status_bar}>
             {btnStatusBadge.map((item, index) => (
               <button
@@ -134,10 +135,7 @@ function OrderTable({ data, ordersCount }: OrderTableProps) {
               <div className={style.no_orders}>لا توجد طلبيات</div>
             ) : (
               orders?.map((order, index) => (
-                <div
-                  key={order.id}
-                  className={style.order_row}
-                >
+                <div key={order.id} className={style.order_row}>
                   <div>
                     <input
                       checked={inSelectedOrder(order.id, selectedOrders)}
@@ -172,7 +170,7 @@ function OrderTable({ data, ordersCount }: OrderTableProps) {
               ))
             )}
           </div>
-        </section>
+        </Card>
       </section>
     </>
   );

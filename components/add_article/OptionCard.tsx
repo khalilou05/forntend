@@ -15,7 +15,7 @@ export default function OptionCard({
   setProduct: React.Dispatch<React.SetStateAction<Product>>;
   handleProductUpdate: (
     prop: keyof Product,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => void;
 }) {
   const addProductOption = () => {
@@ -36,13 +36,13 @@ export default function OptionCard({
     optionID: number | string,
     itemID: number | string,
     prop: keyof OptionItems,
-    value: string | number
+    value: string | number,
   ) => {
     setProduct((prv) => {
       const updatedOption = options.map((option) => {
         if (option.id !== optionID) return option;
         const updatedOptionItem = option.items.map((item) =>
-          item.id === itemID ? { ...item, [prop]: value } : item
+          item.id === itemID ? { ...item, [prop]: value } : item,
         );
         const lastItem = updatedOptionItem[updatedOptionItem.length - 1];
         const shouldAddNewItem = lastItem && lastItem.item_name !== "";
@@ -61,7 +61,7 @@ export default function OptionCard({
   };
   const deleteOptionItem = (
     optionID: number | string,
-    itemID: number | string
+    itemID: number | string,
   ) => {
     const newOption = options.map((option) =>
       option.id === optionID
@@ -69,7 +69,7 @@ export default function OptionCard({
             ...option,
             items: option.items.filter((item) => item.id !== itemID),
           }
-        : option
+        : option,
     );
     setProduct((prv) => ({ ...prv, option: newOption }));
   };
@@ -80,7 +80,7 @@ export default function OptionCard({
 
   const updateOptionName = (optionID: number | string, optionName: string) => {
     const newOptions = options.map((option) =>
-      option.id === optionID ? { ...option, name: optionName } : option
+      option.id === optionID ? { ...option, name: optionName } : option,
     );
     setProduct((prv) => ({ ...prv, option: newOptions }));
   };
@@ -111,10 +111,7 @@ export default function OptionCard({
             />
           ))}
 
-          <button
-            onClick={addProductOption}
-            className={style.add_otherOpt_btn}
-          >
+          <button onClick={addProductOption} className={style.add_otherOpt_btn}>
             <PlusIcon size={20} />
             إضافة خيار آخر
           </button>
@@ -122,10 +119,7 @@ export default function OptionCard({
       )}
 
       {options.length === 0 && (
-        <button
-          onClick={addProductOption}
-          className={style.add_opt_btn}
-        >
+        <button onClick={addProductOption} className={style.add_opt_btn}>
           <PlusIcon size={20} />
           إضافة خيارات مثل الحجم أو الألوان
         </button>
@@ -151,14 +145,14 @@ function OptionItem({
   deleteOption: (index: number | string) => void;
   deleteOptionItem: (
     optionID: number | string,
-    itemID: number | string
+    itemID: number | string,
   ) => void;
   updateOptionName: (index: number | string, optionName: string) => void;
   updateOptionItem: (
     optionID: number | string,
     itemID: number | string,
     prop: keyof OptionItems,
-    value: string | number
+    value: string | number,
   ) => void;
 }) {
   const [expand, setExpand] = useState(false);
@@ -185,7 +179,7 @@ function OptionItem({
     e: React.KeyboardEvent<HTMLInputElement>,
     inputIndex: number,
     optionID: string | number,
-    itemID: string | number
+    itemID: string | number,
   ) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -203,12 +197,12 @@ function OptionItem({
   };
   const handleChangeItem = (
     e: React.ChangeEvent<HTMLInputElement>,
-    itemID: string | number
+    itemID: string | number,
   ) => {
     updateOptionItem(optionID, itemID, "item_name", e.target.value);
   };
   const handleCollapse = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement, MouseEvent>,
   ) => {
     e.preventDefault();
     if (optionName === "") {
@@ -257,17 +251,11 @@ function OptionItem({
 
   if (expand) {
     return (
-      <div
-        className={style.option_view}
-        onClick={handleCollapse}
-      >
+      <div className={style.option_view} onClick={handleCollapse}>
         <label>{optionName}</label>
         <div className={style.item_warper}>
           {items.map((item) => (
-            <span
-              className={style.item_badge}
-              key={item.id}
-            >
+            <span className={style.item_badge} key={item.id}>
               {item.item_name}
             </span>
           ))}
@@ -290,10 +278,7 @@ function OptionItem({
       <div className={style.input_warper}>
         {items.map((item, i) => {
           return (
-            <div
-              className={style.item_input}
-              key={item.id}
-            >
+            <div className={style.item_input} key={item.id}>
               <input
                 onKeyDown={(e) => handleKeyDonw(e, i, optionID, item.id)}
                 ref={(node) => handleRefInit(node, i)}
@@ -318,10 +303,7 @@ function OptionItem({
         })}
       </div>
       <div className={style.btn_bar}>
-        <Button
-          onClick={(e) => handleCollapse(e)}
-          type="primary"
-        >
+        <Button onClick={(e) => handleCollapse(e)} type="primary">
           حفض
         </Button>
         <Button

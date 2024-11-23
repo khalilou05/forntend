@@ -1,7 +1,7 @@
-import type { Order } from "@/types/types";
+import type { OrderIn } from "@/types/types";
 import { MutableRefObject } from "react";
 
-export function inSelectedOrder(orderId: number, selectedOrders: Order[]) {
+export function inSelectedOrder(orderId: number, selectedOrders: OrderIn[]) {
   for (let i of selectedOrders) {
     if (orderId == i.id) {
       return true;

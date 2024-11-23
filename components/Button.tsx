@@ -11,7 +11,7 @@ type Prop = {
 };
 export default function Button({
   children,
-  className,
+  className = "",
   type,
   onClick,
   padding = "5px",

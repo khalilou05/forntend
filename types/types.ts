@@ -1,4 +1,4 @@
-export type Order = {
+export type OrderIn = {
   id: number;
   full_name: string;
   wilaya: string;
@@ -9,9 +9,18 @@ export type Order = {
   home_dilvery: boolean;
   status: string;
 };
+export type OrderOut = {
+  full_name: string;
+  wilaya_id: number;
+  phone_number: string;
+  baladiya_id: number;
+  home_dilvery: boolean;
+};
+
+export type Customer = {};
 
 export type OrderTableProps = {
-  data: Order[];
+  data: OrderIn[];
   ordersCount: number;
 };
 
@@ -26,7 +35,7 @@ export type OrderStatus =
   | "notresponding";
 
 export type OrderFilterInput = {
-  setOrders: (orders: Order[]) => void;
+  setOrders: (orders: OrderIn[]) => void;
   orderStatus: string;
   orderLength: number;
 };
@@ -66,7 +75,8 @@ export type Category = {
   name: string;
 };
 
-export type WilayaData = {
+export type Wilaya = {
+  [index: string]: string | number | boolean | undefined;
   id: number;
   name: string;
   wilaya_code: string;

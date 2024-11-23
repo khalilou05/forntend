@@ -1,7 +1,8 @@
 import { fetchApi } from "@/api/fetchApi";
 import OrderTable from "@/components/ordertable";
-import { Order } from "@/types/types";
+import { OrderIn } from "@/types/types";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "الطلبيات",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 async function OrdersPage() {
   const ordersCount = await fetchApi<number>(`/order`);
-  const orders = await fetchApi<Order[]>(`/order?status=all`);
+  const orders = await fetchApi<OrderIn[]>(`/order?status=all`);
 
   return (
     <OrderTable

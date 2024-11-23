@@ -6,7 +6,11 @@ import { useEffect, useState } from "react";
 import { fetchApi } from "@/api/fetchApi";
 import Link from "next/link";
 
-function ArticleManager() {
+export default function ArticleManager() {
+  useEffect(() => {
+    document.title = "إدارة المنتجات";
+  }, []);
+
   const [article, setArticle] = useState<null>(null);
   const [status, setStatus] = useState("loading");
   // useEffect(() => {
@@ -34,5 +38,3 @@ function ArticleManager() {
     </section>
   );
 }
-
-export default ArticleManager;
