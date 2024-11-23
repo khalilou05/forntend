@@ -7,12 +7,14 @@ type Prop = {
   value: string;
   width?: string;
   padding?: string;
+  show?: boolean;
   tooltipPosition?: "center" | "left" | "right";
   textPosition?: "start" | "end" | "center";
 };
 export default function ToolTip({
   children,
   value,
+  show = true,
   tooltipPosition = "center",
   width = "auto",
   padding = "7px",
@@ -83,6 +85,7 @@ export default function ToolTip({
       </div>
 
       {cancreatePrtal &&
+        show &&
         createPortal(
           <div
             ref={toolTipRef}

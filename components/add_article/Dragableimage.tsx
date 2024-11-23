@@ -121,8 +121,8 @@ export default function Dragableimage({
           isDraging
             ? style.img_ghost
             : dragMode
-            ? style.other_is_draging
-            : style.img_normal
+              ? style.other_is_draging
+              : style.img_normal
         }
         onMouseDown={handleMouseDown}
       >
@@ -134,11 +134,7 @@ export default function Dragableimage({
           type="checkbox"
         />
 
-        <Image
-          src={imgUrl}
-          fill
-          alt="img"
-        />
+        <Image src={imgUrl} fill alt="img" />
       </div>
 
       {isDraging &&
@@ -168,7 +164,7 @@ export default function Dragableimage({
               alt="img"
             />
           </div>,
-          document.body
+          document.body,
         )}
     </>
   );

@@ -20,10 +20,9 @@ export default function AdminImageSlider({
   const [imagePosition, setimagePosition] = useState<ImagesPosition[]>([]);
   const [dragMode, setdragMode] = useState(false);
   const [expand, setexpand] = useState(false);
-  let imageList2 = [];
-
   const InputRef = useRef<HTMLInputElement | null>(null);
   const slectAllRef = useRef<HTMLInputElement | null>(null);
+  let imageList2 = [];
   const imageUrlList = useMemo(
     () =>
       imageFileList?.map((item) => {
@@ -32,7 +31,7 @@ export default function AdminImageSlider({
           image: URL.createObjectURL(item.image),
         };
       }),
-    [imageFileList.length]
+    [imageFileList.length],
   );
 
   const handleSelectAllImage = () => {
@@ -72,7 +71,7 @@ export default function AdminImageSlider({
   };
   const deleteSelectedImage = () => {
     const newImages = imageFileList.filter(
-      (item) => !selectedImage.includes(item.id)
+      (item) => !selectedImage.includes(item.id),
     );
     setimageFileList(newImages);
     setselectedImage([]);
@@ -91,7 +90,7 @@ export default function AdminImageSlider({
         imageID={imageUrlList[i].id}
         key={imageUrlList[i].id}
         imgUrl={imageUrlList[i].image}
-      />
+      />,
     );
 
     if (i == 6 && !expand && imageUrlList.length > 8) {
@@ -102,7 +101,7 @@ export default function AdminImageSlider({
           onClick={() => setexpand(true)}
         >
           {imageUrlList.length - 7}+
-        </div>
+        </div>,
       );
 
       break;

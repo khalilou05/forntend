@@ -95,7 +95,7 @@ export default function Editor({
       <label className={style.label}>الوصف</label>
       <div className={style.warper}>
         <div className={style.tool_bar}>
-          <ToolTip padding="7px 10px" tooltipPosition="right" value="حجم النص">
+          <ToolTip padding="7px 10px" value="حجم النص">
             <button className={style.txtSize}>
               عادي
               <DownCaretIcon size={20} />
@@ -117,7 +117,7 @@ export default function Editor({
               <UnderLineTextIcon size={20} />
             </button>
           </ToolTip>
-          <BtnDropDown dropcomponent={<ColorDropDown />} toolTipValue="الألوان">
+          <BtnDropDown toolTipValue="الألوان">
             <TextColorIcon size={20} />
             <DownCaretIcon size={20} />
           </BtnDropDown>
@@ -192,12 +192,27 @@ function BtnDropDown({
       )
         togleExpand();
     };
-    if (expand) window.addEventListener("mousedown", handleMouseDown);
-    return () => window.removeEventListener("mousedown", handleMouseDown);
+    const handleClose = () => {
+      if (!dropRef.current) return;
+      const { top } = dropRef.current?.getBoundingClientRect();
+      if (window.scrollY > top + window.scrollY) setExpand(false);
+    };
+    if (expand) {
+      window.addEventListener("mousedown", handleMouseDown);
+      window.addEventListener("scrollend", handleClose);
+    }
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("scrollend", handleClose);
+    };
   }, [expand]);
   return (
     <>
-      <ToolTip tooltipPosition={tooltipPosition} value={toolTipValue}>
+      <ToolTip
+        show={!expand}
+        tooltipPosition={tooltipPosition}
+        value={toolTipValue}
+      >
         <button data-expand={expand} ref={btnRef} onClick={handleClick}>
           {children}
         </button>
@@ -224,36 +239,21 @@ function BtnDropDown({
 function TextPosDropDown() {
   return (
     <div className={style.textPosDrop}>
-      <button>
-        <ToolTip value="اليمين">
+      <ToolTip value="اليمين">
+        <button>
           <AlignTextRightIcon size={20} />
-        </ToolTip>
-      </button>
-      <button>
-        <ToolTip value="الوسط">
+        </button>
+      </ToolTip>
+      <ToolTip value="الوسط">
+        <button>
           <AlignTextCenterIcon size={20} />
-        </ToolTip>
-      </button>
-      <button>
-        <ToolTip value="اليسار">
+        </button>
+      </ToolTip>
+      <ToolTip value="اليسار">
+        <button>
           <AlignTextLeftIcon size={20} />
-        </ToolTip>
-      </button>
-    </div>
-  );
-}
-
-function ColorDropDown() {
-  return (
-    <div>
-      <div>
-        لون النص
-        <input type="color" />
-      </div>
-      <div>
-        لون خلفية النص
-        <input type="color" />
-      </div>
+        </button>
+      </ToolTip>
     </div>
   );
 }
