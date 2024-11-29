@@ -40,10 +40,7 @@ export default function Dragableimage({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    if (fileListLength === 1) return;
-    if (selectedImageLength > 0) return;
-    console.log(selectedImageLength);
-
+    if (fileListLength === 1 || selectedImageLength) return;
     setisDraging(true);
     setdragMode(true);
     setclickOffset({

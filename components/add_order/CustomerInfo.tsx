@@ -2,18 +2,18 @@ import style from "@/css/component/customer_info.module.css";
 import SelectInput from "../SelectInput";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { fetchApi } from "@/api/fetchApi";
-import type { WilayaData, Baladiya, OrderOut } from "@/types/types";
+import type { Wilaya, Baladiya, OrderOut } from "@/types/types";
 import Card from "@/components/Card";
 
 type Prop = {
   handleOrderData: (
     prop: keyof OrderOut,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => void;
 };
 
 export default function CustomerInfo({ handleOrderData }: Prop) {
-  const [wilaya, setwilaya] = useState<WilayaData[]>([]);
+  const [wilaya, setwilaya] = useState<Wilaya[]>([]);
   const [baladiya, setbaladiya] = useState<Baladiya[]>([]);
   const [selectedWilaya, setselectedWilaya] = useState<number>(0);
 
@@ -33,7 +33,7 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
         signal: controller.signal,
         cache: "force-cache",
       });
-      if (resp?.status == 200) setbaladiya(resp.data);
+      if (resp?.status == 200 && resp.data) setbaladiya(resp.data);
     })();
     return () => controller.abort();
   }, [selectedWilaya]);
@@ -41,20 +41,16 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
-      const resp = await fetchApi<WilayaData[]>("/wilaya?active=true", {
+      const resp = await fetchApi<Wilaya[]>("/wilaya?active=true", {
         signal: controller.signal,
         cache: "force-cache",
       });
-      if (resp?.status == 200) setwilaya(resp.data);
+      if (resp?.status == 200 && resp.data) setwilaya(resp.data);
     })();
     return () => controller.abort();
   }, []);
   return (
-    <Card
-      flexDirection="column"
-      display="flex"
-      gap="10px"
-    >
+    <Card flexDirection="column" display="flex" gap="10px">
       <div className={style.title}>معلومات الزبون</div>
       <div className={style.card_body}>
         <div className={style.input_sec}>
@@ -78,10 +74,7 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
             <option value={0}>-- إختر ولاية --</option>
             {!!wilaya.length &&
               wilaya.map((wilaya) => (
-                <option
-                  value={wilaya.id}
-                  key={wilaya.id}
-                >
+                <option value={wilaya.id} key={wilaya.id}>
                   {wilaya.wilaya_code}-{wilaya.name}
                 </option>
               ))}
@@ -97,10 +90,7 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
           >
             <option value={0}>-- إختر بلدية --</option>
             {baladiya.map((item) => (
-              <option
-                value={item.id}
-                key={item.id}
-              >
+              <option value={item.id} key={item.id}>
                 {item.name}
               </option>
             ))}

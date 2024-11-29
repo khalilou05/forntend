@@ -1,78 +1,51 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import style from "@/css/component/tooltip.module.css";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 type Prop = {
   children: React.ReactNode;
   value: string;
-  width?: string;
   padding?: string;
   show?: boolean;
-  tooltipPosition?: "center" | "left" | "right";
-  textPosition?: "start" | "end" | "center";
+  tooltipPosition?: "center" | "left";
 };
-export default function ToolTip({
+function Tool({
   children,
   value,
   show = true,
   tooltipPosition = "center",
-  width = "auto",
   padding = "7px",
-  textPosition = "start",
 }: Prop) {
-  const [postiotion, setpostiotion] = useState({ top: 0, x: 0 });
-  const [visiblity, setVisiblity] = useState<"visible" | "hidden">("hidden");
-  const [showDown, setshowDown] = useState(false);
-  const [cancreatePrtal, setcancreatePrtal] = useState(false);
-  const toolTipRef = useRef<HTMLDivElement | null>(null);
+  const [tooltipState, setTooltipState] = useState({
+    top: 0,
+    left: 0,
+    showDown: false,
+    visible: false,
+  });
+
   const warperRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseEnter = () => {
-    setVisiblity("visible");
-    if (warperRef.current && toolTipRef.current) {
-      const { top, left, width, right } =
+  const handleMouseEnter = useCallback(() => {
+    if (warperRef.current) {
+      const { top, left, width, height } =
         warperRef.current.children[0].getBoundingClientRect();
-      const toltipRect = toolTipRef.current.getBoundingClientRect();
-      const isBelow20 = top <= 41;
 
-      if (isBelow20) setshowDown(true);
-      else setshowDown(false);
-      if (tooltipPosition === "left") {
-        setpostiotion({
-          top:
-            (isBelow20
-              ? top + toltipRect.height + 6
-              : top - toltipRect.height - 6) + window.scrollY,
-          x: left,
-        });
-        return;
-      }
-      if (tooltipPosition === "right") {
-        setpostiotion({
-          top:
-            (isBelow20
-              ? top + toltipRect.height + 6
-              : top - toltipRect.height - 6) + window.scrollY,
-          x: right - toltipRect.width,
-        });
-        return;
-      }
-      setpostiotion({
+      setTooltipState({
         top:
-          (isBelow20
-            ? top + toltipRect.height + 6
-            : top - toltipRect.height - 6) + window.scrollY,
-        x: left - toltipRect.width / 2 + width / 2,
+          top <= 41
+            ? top + height + 9 + window.scrollY
+            : top - height - 9 + window.scrollY,
+        left: tooltipPosition === "center" ? left + width / 2 : left,
+        showDown: top <= 41 ? true : false,
+        visible: true,
       });
     }
-  };
-  const handleMouseLeave = () => {
-    setVisiblity("hidden");
-  };
-
-  useEffect(() => {
-    setcancreatePrtal(true);
   }, []);
+  const handleMouseLeave = useCallback(() => {
+    setTooltipState((prv) => ({ ...prv, visible: false }));
+  }, []);
+
   return (
     <>
       <div
@@ -84,25 +57,28 @@ export default function ToolTip({
         {children}
       </div>
 
-      {cancreatePrtal &&
-        show &&
-        createPortal(
-          <div
-            ref={toolTipRef}
-            className={showDown ? style.tooltipDown : style.tooltip}
-            style={{
-              width: width,
-              padding: padding,
-              visibility: visiblity,
-              position: "absolute",
-              top: postiotion.top,
-              left: postiotion.x,
-            }}
-          >
-            {value}
-          </div>,
-          document.body,
-        )}
+      {createPortal(
+        <div
+          className={tooltipState.showDown ? style.tooltipDown : style.tooltip}
+          style={{
+            width: "auto",
+            padding: padding,
+            visibility: tooltipState.visible && show ? "visible" : "hidden",
+            position: "absolute",
+            top: tooltipState.top,
+            left: tooltipState.left,
+            transform: tooltipPosition === "center" ? "translateX(-50%)" : "",
+            zIndex: 1000,
+          }}
+        >
+          {value}
+        </div>,
+        document.body,
+      )}
     </>
   );
 }
+
+const ToolTip = dynamic(() => Promise.resolve(Tool), { ssr: false });
+
+export default ToolTip;

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Loding from "@/components/Loding";
+import Loding from "@/components/Loading";
 import style from "@/css/route/shipping.module.css";
 import Toast from "@/components/toast";
 import { fetchApi } from "@/api/fetchApi";

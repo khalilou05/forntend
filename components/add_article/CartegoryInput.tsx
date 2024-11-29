@@ -3,7 +3,7 @@ import ArrowIcon from "@/assets/icons/selectArrow";
 import style from "@/css/component/categoryInput.module.css";
 import type { Product, Category } from "@/types/types";
 import React, { useEffect, useRef, useState } from "react";
-import Loading from "@/components/Loding";
+import Loading from "@/components/Loading";
 import { createPortal } from "react-dom";
 export default function CartegoryInput({
   handleChange,
@@ -99,7 +99,7 @@ export default function CartegoryInput({
               ))
             )}
           </div>,
-          document.body
+          document.body,
         )}
     </>
   );

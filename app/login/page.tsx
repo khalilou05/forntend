@@ -6,7 +6,7 @@ import style from "@/css/route/login.module.css";
 import LockIcon from "@/assets/icons/lock.js";
 import EyeCrossedIcon from "@/assets/icons/eyecrossed.js";
 import EyeOpned from "@/assets/icons/eyeOpen.js";
-import Loding from "@/components/Loding";
+import Loding from "@/components/Loading";
 
 import { fetchApi } from "@/api/fetchApi";
 
@@ -42,15 +42,16 @@ function AdminLogin() {
     }
     try {
       setBtnLoading(true);
-      const response = await fetchApi<string>("/login", {
+      const response = await fetchApi("/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData.current),
       });
 
-      if (response?.status == 200) {
+      if (response?.status === 200) {
         route.push("/admin/orders");
       } else {
         throw new Error("failed");

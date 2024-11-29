@@ -17,7 +17,7 @@ function Sidebar() {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    const response = await fetchApi("/logout", {
+    await fetchApi("/logout", {
       method: "POST",
       credentials: "include",
     });

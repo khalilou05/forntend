@@ -1,17 +1,19 @@
-import ToolTip from "@/components/ToolTip";
+"use client";
+
+import Modal from "@/components/Modal";
 export default function page() {
   return (
-    <>
-      <br />
-      <br />
-      <br />
-      <br />
-      <ToolTip
-        tooltipPosition="center"
-        value="khaliqsdqsdqsdl"
+    <div>
+      <Modal
+        submitValue="qsqsd"
+        cancelValue="qsdqd"
+        modalTitle="khalil"
+        height={200}
+        width={200}
+        render={(handleClick) => <button onClick={handleClick}>btn</button>}
       >
-        <span>khalsdqsdqsdqsdqsdqsdil</span>
-      </ToolTip>
-    </>
+        <div>khalil</div>
+      </Modal>
+    </div>
   );
 }

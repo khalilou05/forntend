@@ -5,7 +5,7 @@ type loadingProp = {
   borderTopColor?: string;
   borderColor?: string;
 };
-export default function Loding({ size, borderTopColor }: loadingProp) {
+export default function Loading({ size, borderTopColor }: loadingProp) {
   const border = (Number(size.replace("px", "")) * 10) / 100;
 
   return (

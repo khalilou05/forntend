@@ -9,7 +9,7 @@
 /.idea
 /.yarn
 /scss
-
+.env
 # testing
 /coverage
 /test

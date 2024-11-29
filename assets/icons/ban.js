@@ -1,10 +1,14 @@
-import * as React from "react";
 const SvgComponent = ({ size }) => (
   <svg
+    height={size}
+    width={size}
     xmlns="http://www.w3.org/2000/svg"
-    style={{ height: size, width: size }}
-    viewBox="0 0 24 24">
-    <path d="M12 0a12 12 0 1 0 12 12A12.013 12.013 0 0 0 12 0Zm0 2a9.949 9.949 0 0 1 6.324 2.262L4.262 18.324A9.992 9.992 0 0 1 12 2Zm0 20a9.949 9.949 0 0 1-6.324-2.262L19.738 5.676A9.992 9.992 0 0 1 12 22Z" />
+    viewBox="0 0 20 20"
+  >
+    <path
+      fillRule="evenodd"
+      d="M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Zm-3.677 4.383a5.5 5.5 0 0 1-7.706-7.706l7.706 7.706Zm1.06-1.06-7.706-7.706a5.5 5.5 0 0 1 7.706 7.706Z"
+    />
   </svg>
 );
 export default SvgComponent;

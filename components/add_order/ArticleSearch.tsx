@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "@/css/route/add_order.module.css";
-import ArticleSearchModal from "@/components/add_order/SearchArticleModal";
+
 import SearchInput from "../SearchInput";
 import Card from "../Card";
 function ArticleSearchInput() {
@@ -22,11 +22,7 @@ function ArticleSearchInput() {
   };
 
   return (
-    <Card
-      flexDirection="column"
-      display="flex"
-      gap="10px"
-    >
+    <Card flexDirection="column" display="flex" gap="10px">
       <div className={style.title}>المنتجات</div>
       <div className={style.search_bar}>
         <div className={style.input_search}>
@@ -36,12 +32,6 @@ function ArticleSearchInput() {
             placeholder="إبحث عن منتجات"
           />
         </div>
-        <ArticleSearchModal
-          isOpen={isOpen}
-          value={value}
-          openModal={openModal}
-          closeModal={closeModal}
-        />
       </div>
     </Card>
   );

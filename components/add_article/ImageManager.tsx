@@ -5,7 +5,7 @@ import AddImageIcon from "@/assets/icons/addImage";
 import PlusIcon from "@/assets/icons/plus";
 import DragableImage from "./Dragableimage";
 import { ImagesPosition, Images } from "@/types/types";
-
+import Image from "next/image";
 type Prop = {
   imageFileList: Images[];
   setimageFileList: React.Dispatch<React.SetStateAction<Images[]>>;
@@ -100,7 +100,8 @@ export default function AdminImageSlider({
           className={style.expand_btn}
           onClick={() => setexpand(true)}
         >
-          {imageUrlList.length - 7}+
+          <Image src={imageUrlList[7].image} alt="" fill />
+          <span>{imageUrlList.length - 7}+</span>
         </div>,
       );
 

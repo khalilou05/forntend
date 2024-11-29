@@ -7,12 +7,18 @@ import TextColorIcon from "@/assets/icons/textcolor";
 import AlignTextRightIcon from "@/assets/icons/aligntextright";
 import AlignTextLeftIcon from "@/assets/icons/aligntextleft";
 import AlignTextCenterIcon from "@/assets/icons/aligntextcenter";
+import LinkIcon from "@/assets/icons/link";
+import BanIcon from "@/assets/icons/ban";
+import VideoIcon from "@/assets/icons/video";
+import ListIcon from "@/assets/icons/list";
+import ListNumIcon from "@/assets/icons/listNumber";
 
 import Image from "@/assets/icons/image";
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { Product } from "@/types/types";
 import ToolTip from "../ToolTip";
+import Modal from "../Modal";
 export default function Editor({
   handleProductUpdate,
 }: {
@@ -21,6 +27,9 @@ export default function Editor({
     value: string | number | boolean,
   ) => void;
 }) {
+  const [bold, setBold] = useState(false);
+  const [italic, setItalic] = useState(false);
+  const [underline, setUnderline] = useState(false);
   const editor = useRef<HTMLDivElement | null>(null);
 
   const makeBold = () => {
@@ -95,46 +104,82 @@ export default function Editor({
       <label className={style.label}>الوصف</label>
       <div className={style.warper}>
         <div className={style.tool_bar}>
-          <ToolTip padding="7px 10px" value="حجم النص">
-            <button className={style.txtSize}>
-              عادي
-              <DownCaretIcon size={20} />
-            </button>
-          </ToolTip>
+          <TextSizeBtn />
           <div className={style.dividor}></div>
           <ToolTip value="خط غليض">
-            <button onClick={makeBold}>
+            <button
+              className={style.btn}
+              data-active={bold}
+              onClick={() => setBold(!bold)}
+            >
               <BoldTextIcon size={20} />
             </button>
           </ToolTip>
           <ToolTip value="خط مائل">
-            <button>
+            <button
+              className={style.btn}
+              onClick={() => setItalic(!italic)}
+              data-active={italic}
+            >
               <ItalicTextIcon size={20} />
             </button>
           </ToolTip>
           <ToolTip value="خط مسطر">
-            <button>
+            <button
+              className={style.btn}
+              data-active={underline}
+              onClick={() => setUnderline(!underline)}
+            >
               <UnderLineTextIcon size={20} />
             </button>
           </ToolTip>
-          <BtnDropDown toolTipValue="الألوان">
-            <TextColorIcon size={20} />
-            <DownCaretIcon size={20} />
-          </BtnDropDown>
-          <div className={style.dividor}></div>
-          <BtnDropDown
-            dropcomponent={<TextPosDropDown />}
-            toolTipValue="إتجاه النص"
-          >
-            <AlignTextRightIcon size={20} />
-            <DownCaretIcon size={20} />
-          </BtnDropDown>
 
           <div className={style.dividor}></div>
+          <ColorBtn />
+          <div className={style.dividor}></div>
+          <TextPosBtn />
+          <div className={style.dividor}></div>
+          <Modal
+            cancelValue="إلغاء"
+            modalTitle="إضافة رابط"
+            submitValue="إضافة"
+            height={100}
+            render={(handleClick) => (
+              <ToolTip value="إضافة رابط">
+                <button className={style.btn} onClick={handleClick}>
+                  <LinkIcon size={20} />
+                </button>
+              </ToolTip>
+            )}
+          >
+            <p>khalil</p>
+          </Modal>
 
           <ToolTip value="إضافة صور">
-            <button>
+            <button className={style.btn}>
               <Image size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="إضافة فيديو">
+            <button className={style.btn}>
+              <VideoIcon size={20} />
+            </button>
+          </ToolTip>
+          <div className={style.dividor}></div>
+          <ToolTip value="قائمة نقاط">
+            <button className={style.btn}>
+              <ListIcon size={20} />
+            </button>
+          </ToolTip>
+          <ToolTip value="قائمة أرقام">
+            <button className={style.btn}>
+              <ListNumIcon size={20} />
+            </button>
+          </ToolTip>
+
+          <ToolTip value="إزالة التنسيق">
+            <button className={style.btn}>
+              <BanIcon size={20} />
             </button>
           </ToolTip>
         </div>
@@ -155,23 +200,26 @@ export default function Editor({
 }
 
 function BtnDropDown({
+  isOpen,
+  setIsOpen,
   children,
   toolTipValue,
   tooltipPosition = "center",
-  dropcomponent,
+  icons,
 }: {
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
   children: ReactNode;
   toolTipValue: string;
-  tooltipPosition?: "center" | "left" | "right";
-  dropcomponent?: ReactNode;
+  tooltipPosition?: "center" | "left";
+  icons: ReactNode[];
 }) {
-  const [expand, setExpand] = useState(false);
   const [dropDownPosition, setDropDownPosition] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
 
   const togleExpand = () => {
-    setExpand(!expand);
+    setIsOpen(!isOpen);
   };
 
   const handleClick = () => {
@@ -195,9 +243,9 @@ function BtnDropDown({
     const handleClose = () => {
       if (!dropRef.current) return;
       const { top } = dropRef.current?.getBoundingClientRect();
-      if (window.scrollY > top + window.scrollY) setExpand(false);
+      if (window.scrollY > top + window.scrollY) setIsOpen(false);
     };
-    if (expand) {
+    if (isOpen) {
       window.addEventListener("mousedown", handleMouseDown);
       window.addEventListener("scrollend", handleClose);
     }
@@ -205,19 +253,26 @@ function BtnDropDown({
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("scrollend", handleClose);
     };
-  }, [expand]);
+  }, [isOpen]);
   return (
     <>
       <ToolTip
-        show={!expand}
+        show={!isOpen}
         tooltipPosition={tooltipPosition}
         value={toolTipValue}
       >
-        <button data-expand={expand} ref={btnRef} onClick={handleClick}>
-          {children}
+        <button
+          className={style.btn}
+          data-active={isOpen}
+          ref={btnRef}
+          onClick={handleClick}
+        >
+          {icons.map((icon, i) => (
+            <span key={i}>{icon}</span>
+          ))}
         </button>
       </ToolTip>
-      {expand &&
+      {isOpen &&
         createPortal(
           <div
             ref={dropRef}
@@ -228,7 +283,7 @@ function BtnDropDown({
               left: dropDownPosition.left,
             }}
           >
-            {dropcomponent}
+            {children}
           </div>,
           document.body,
         )}
@@ -236,24 +291,63 @@ function BtnDropDown({
   );
 }
 
-function TextPosDropDown() {
+function TextPosBtn() {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className={style.textPosDrop}>
-      <ToolTip value="اليمين">
-        <button>
-          <AlignTextRightIcon size={20} />
-        </button>
-      </ToolTip>
-      <ToolTip value="الوسط">
-        <button>
-          <AlignTextCenterIcon size={20} />
-        </button>
-      </ToolTip>
-      <ToolTip value="اليسار">
-        <button>
-          <AlignTextLeftIcon size={20} />
-        </button>
-      </ToolTip>
-    </div>
+    <BtnDropDown
+      toolTipValue="إتجاه النص"
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      icons={[<AlignTextRightIcon size={20} />, <DownCaretIcon size={20} />]}
+    >
+      <div className={style.textPosDrop}>
+        <ToolTip value="اليمين">
+          <button>
+            <AlignTextRightIcon size={20} />
+          </button>
+        </ToolTip>
+        <ToolTip value="الوسط">
+          <button>
+            <AlignTextCenterIcon size={20} />
+          </button>
+        </ToolTip>
+        <ToolTip value="اليسار">
+          <button>
+            <AlignTextLeftIcon size={20} />
+          </button>
+        </ToolTip>
+      </div>
+    </BtnDropDown>
+  );
+}
+
+function ColorBtn() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <BtnDropDown
+      toolTipValue="لون النص"
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      icons={[<TextColorIcon size={20} />, <DownCaretIcon size={20} />]}
+    >
+      <div>khalil</div>
+    </BtnDropDown>
+  );
+}
+function TextSizeBtn() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("عادي");
+
+  const textSizeList = [];
+  return (
+    <BtnDropDown
+      toolTipValue="حجم النص"
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      icons={[selectedSize, <DownCaretIcon size={20} />]}
+    >
+      <div>khalil</div>
+    </BtnDropDown>
   );
 }
