@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { isAuth } from "./lib/auth";
 
-const baseUrl = "http://localhost:3000";
 const protectedRoute = ["/admin"];
 
 export default async function middmeware(request: NextRequest) {

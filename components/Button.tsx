@@ -7,7 +7,7 @@ type Prop = {
   padding?: string;
   borderRadius?: string;
   disabled?: boolean;
-  onClick?: (...args: any) => void;
+  onClick?: (...arg: any) => void;
 };
 export default function Button({
   children,

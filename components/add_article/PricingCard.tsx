@@ -42,11 +42,7 @@ export default function PricingCard({ handleChange, product }: Prop) {
         <div className={style.row_item}>
           <label>سعر الشراء</label>
           <div>
-            <ToolTip
-              tooltipPosition="left"
-              width="100px"
-              value="سعر الشراء لن يظهر للزبون"
-            >
+            <ToolTip tooltipPosition="left" value="سعر الشراء لن يظهر للزبون">
               <input
                 onChange={(e) =>
                   handleChange("buying_price", Number(e.target.value))

@@ -9,6 +9,7 @@ export type OrderIn = {
   home_dilvery: boolean;
   status: string;
 };
+
 export type OrderOut = {
   full_name: string;
   wilaya_id: number;
@@ -20,7 +21,7 @@ export type OrderOut = {
 export type Customer = {};
 
 export type OrderTableProps = {
-  data: OrderIn[];
+  ordersList: OrderIn[];
   ordersCount: number;
 };
 

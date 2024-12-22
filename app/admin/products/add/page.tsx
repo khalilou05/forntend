@@ -7,7 +7,7 @@ import type { Product, Images } from "@/types/types";
 import ImageManager from "@/components/add_article/ImageManager";
 import { fetchApi } from "@/api/fetchApi";
 import { useRouter } from "next/navigation";
-import Editor from "@/components/add_article/Editor";
+import Editor from "@/components/editor/Editor";
 import CategoryInput from "@/components/add_article/CartegoryInput";
 import PricingCard from "@/components/add_article/PricingCard";
 import OptionCard from "@/components/add_article/OptionCard";

@@ -1,6 +1,5 @@
 "use client";
 
-import AddIcon from "@/assets/aside_icons/add.js";
 import ManageIcon from "@/assets/aside_icons/articleManage.js";
 import TruckIcon from "@/assets/aside_icons/truck.js";
 import OrdersIcon from "@/assets/icons/orders.js";
@@ -11,6 +10,7 @@ import style from "@/css/component/sidebar.module.css";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/api/fetchApi";
+
 
 function Sidebar() {
   const router = useRouter();

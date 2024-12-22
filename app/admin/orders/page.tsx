@@ -10,15 +10,10 @@ export const metadata: Metadata = {
 };
 
 async function OrdersPage() {
-  const ordersCount = await fetchApi<number>(`/order`);
-  const orders = await fetchApi<OrderIn[]>(`/order?status=all`);
+  const { data: orderCount } = await fetchApi<number>(`/order`);
+  const { data: orders } = await fetchApi<OrderIn[]>(`/order?status=all`);
 
-  return (
-    <OrderTable
-      ordersCount={ordersCount?.data || 0}
-      data={orders?.data || []}
-    />
-  );
+  return <OrderTable ordersCount={orderCount || 0} ordersList={orders || []} />;
 }
 
 export default OrdersPage;

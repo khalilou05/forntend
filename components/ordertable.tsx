@@ -12,9 +12,9 @@ import { fetchApi } from "@/api/fetchApi";
 import Link from "next/link";
 import Card from "./Card";
 
-function OrderTable({ data, ordersCount }: OrderTableProps) {
+function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
   const [selectedOrders, setselectedOrders] = useState<OrderIn[]>([]);
-  const [orders, setOrders] = useState<OrderIn[]>(data || []);
+  const [orders, setOrders] = useState<OrderIn[]>(ordersList);
   const [orderToViewId, setorderToViewId] = useState(0);
   const [orderStatus, setOrderStatus] = useState<OrderStatus>("all");
 

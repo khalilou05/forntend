@@ -13,7 +13,6 @@ function ShippingPage() {
   const [toastData, setToastData] = useState<ToastMsg[]>([]);
   const prevWilaya = useRef<Wilaya[] | null>(null);
   const [btdDisabled, setBtdDisabled] = useState(true);
-  const [btnStyle, setBtnStyle] = useState<"primary" | "disabled">("primary");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const cache = useRef<Wilaya[]>([]);
@@ -36,20 +35,17 @@ function ShippingPage() {
     if (btdDisabled) return;
     setLoading(true);
     try {
-      const response = await fetchApi("/wilaya", {
+      const { status } = await fetchApi("/wilaya", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(getModified()),
       });
-      if (response?.status == 200) {
+      if (status == 200) {
         prevWilaya.current = wilaya;
         cache.current = wilaya;
         setBtdDisabled(true);
-        setTimeout(() => {
-          setBtnStyle("disabled");
-        }, 500);
       } else throw new Error("failed to update");
     } catch (err) {
       setwilaya(cache.current);
@@ -76,12 +72,12 @@ function ShippingPage() {
     const abortcntl = new AbortController();
     (async () => {
       try {
-        const resp = await fetchApi<Wilaya[]>("/wilaya", {
+        const { data, status } = await fetchApi<Wilaya[]>("/wilaya", {
           signal: abortcntl.signal,
         });
-        if (resp?.status == 200 && resp.data) {
-          setwilaya(resp.data);
-          cache.current = resp.data;
+        if (status == 200 && data) {
+          setwilaya(data);
+          cache.current = data;
         } else throw new Error("error from the server");
       } catch (error) {
         console.error(error);
@@ -95,10 +91,8 @@ function ShippingPage() {
     const modified = getModified();
     if (modified.length) {
       setBtdDisabled(false);
-      setBtnStyle("primary");
     } else {
       setBtdDisabled(true);
-      setBtnStyle("disabled");
     }
   }, [JSON.stringify(wilaya)]);
 
@@ -157,9 +151,9 @@ function ShippingPage() {
       <Button
         disabled={btdDisabled}
         onClick={updateShippingCost}
-        type={btnStyle}
+        type={btdDisabled ? "disabled" : "primary"}
       >
-        {loading ? <Loding borderTopColor="whitesmoke" size="20px" /> : "حفض"}
+        {loading ? <Loding size="20px" /> : "حفض"}
       </Button>
     </>
   );

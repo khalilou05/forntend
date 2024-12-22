@@ -1,8 +1,9 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import style from "@/css/component/tooltip.module.css";
-import { createPortal } from "react-dom";
-import dynamic from "next/dynamic";
+
+import Protal from "./Portal";
+
 type Prop = {
   children: React.ReactNode;
   value: string;
@@ -10,7 +11,7 @@ type Prop = {
   show?: boolean;
   tooltipPosition?: "center" | "left";
 };
-function Tool({
+export default function ToolTip({
   children,
   value,
   show = true,
@@ -26,7 +27,7 @@ function Tool({
 
   const warperRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseEnter = () => {
     if (warperRef.current) {
       const { top, left, width, height } =
         warperRef.current.children[0].getBoundingClientRect();
@@ -41,7 +42,7 @@ function Tool({
         visible: true,
       });
     }
-  }, []);
+  };
   const handleMouseLeave = useCallback(() => {
     setTooltipState((prv) => ({ ...prv, visible: false }));
   }, []);
@@ -57,7 +58,7 @@ function Tool({
         {children}
       </div>
 
-      {createPortal(
+      <Protal>
         <div
           className={tooltipState.showDown ? style.tooltipDown : style.tooltip}
           style={{
@@ -72,13 +73,8 @@ function Tool({
           }}
         >
           {value}
-        </div>,
-        document.body,
-      )}
+        </div>
+      </Protal>
     </>
   );
 }
-
-const ToolTip = dynamic(() => Promise.resolve(Tool), { ssr: false });
-
-export default ToolTip;

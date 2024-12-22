@@ -1,19 +1,22 @@
 "use client";
 
-import Modal from "@/components/Modal";
-export default function page() {
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
+
+export default function Page() {
+  useEffect(() => {
+    const hey = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      console.log(e);
+    };
+    window.addEventListener("beforeunload", hey);
+
+    return () => window.removeEventListener("beforeunload", hey);
+  }, []);
+
   return (
     <div>
-      <Modal
-        submitValue="qsqsd"
-        cancelValue="qsdqd"
-        modalTitle="khalil"
-        height={200}
-        width={200}
-        render={(handleClick) => <button onClick={handleClick}>btn</button>}
-      >
-        <div>khalil</div>
-      </Modal>
+      <Link href={"/admin/orders"}>qsdqsd</Link>
     </div>
   );
 }
