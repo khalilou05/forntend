@@ -1,10 +1,14 @@
 import * as React from "react";
-const SvgComponent = ({ size }) => (
+type Prop = {
+  size?: number;
+} & React.SVGProps<SVGSVGElement>;
+const SvgComponent = ({ size, ...rest }: Prop) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
-    width={size}
     height={size}
+    width={size}
+    {...rest}
   >
     <path d="M10.75 13.05a1.5 1.5 0 1 0-1.5 0v.45a.75.75 0 0 0 1.5 0v-.45Z" />
     <path

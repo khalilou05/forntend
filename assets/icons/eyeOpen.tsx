@@ -1,14 +1,15 @@
-import * as React from "react";
-const SvgComponent = ({ size }) => (
+import type React from "react";
+type Prop = {
+  size: number;
+} & React.SVGProps<SVGSVGElement>;
+const SvgComponent = ({ size, ...rest }: Prop) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
-    width={size}
-    height={size}
-    style={{
-      enableBackground: "new 0 0 512.19 512.19",
-    }}
     viewBox="0 0 512.19 512.19"
+    height={size}
+    width={size}
+    {...rest}
   >
     <circle
       cx={256.095}

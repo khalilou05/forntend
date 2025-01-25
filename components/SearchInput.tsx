@@ -1,24 +1,14 @@
 import style from "@/css/component/searchInput.module.css";
 import SearchIcon from "@/assets/icons/search";
-import { useEffect, useRef } from "react";
-
-type Prop = {
-  value?: string;
-  placeholder: string;
-  onChange?: (...args: any) => void;
-  autoFocus?: boolean;
-};
+import React, { useEffect, useRef } from "react";
+import Input from "./Input";
 
 export default function SearchInput({
-  placeholder,
-
-  value,
-  autoFocus = false,
-  onChange,
-}: Prop) {
+  ...rest
+}: React.InputHTMLAttributes<HTMLInputElement>) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
-    if (autoFocus) {
+    if (rest.autoFocus) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
@@ -27,14 +17,12 @@ export default function SearchInput({
   return (
     <div className={style.input_search}>
       <SearchIcon size={20} />
-      <input
+
+      <Input
         ref={inputRef}
-        value={value}
-        placeholder={placeholder}
-        type="text"
-        onChange={onChange}
+        style={{ paddingRight: "25px" }}
+        {...rest}
       />
-      
     </div>
   );
 }

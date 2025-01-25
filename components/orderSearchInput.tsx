@@ -1,14 +1,16 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import SearchIcon from "@/assets/icons/search";
 
 import { fetchApi } from "@/api/fetchApi";
-import { OrderIn, OrderFilterInput } from "@/types/types";
+import { OrderIn } from "@/types/types";
 
-function OrderSerchInput({
-  setOrders,
-  orderStatus,
-  orderLength,
-}: OrderFilterInput) {
+import SearchInput from "./SearchInput";
+
+type OrderFilterInput = {
+  setOrders: (orders: OrderIn[]) => void;
+  orderStatus: string;
+};
+
+function OrderSerchInput({ setOrders, orderStatus }: OrderFilterInput) {
   const [query, setquery] = useState("");
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,16 +46,10 @@ function OrderSerchInput({
   }, [query]);
 
   return (
-    <>
-      <SearchIcon size={20} />
-
-      <input
-        disabled={orderLength === 0 ? true : false}
-        onChange={handleSearch}
-        placeholder="بحث عن رقم هاتف أو الإسم"
-        type="text"
-      />
-    </>
+    <SearchInput
+      placeholder="إبحث برقم الهاتف أو الإسم"
+      onChange={handleSearch}
+    />
   );
 }
 

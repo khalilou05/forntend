@@ -1,22 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
+import DatePicker from "@/components/DatePicker";
+import Card from "@/components/Card";
+import ProductOptionSearch from "@/components/ProductOptionSearch";
+import InputNumber from "@/components/InputNumber";
+import Switch from "@/components/Switch";
+import LoadingSpiner from "@/components/LoadingSpiner";
+import ColorPicker from "@/components/editor/ColorPicker";
+
 export default function Page() {
-  useEffect(() => {
-    const hey = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      console.log(e);
-    };
-    window.addEventListener("beforeunload", hey);
-
-    return () => window.removeEventListener("beforeunload", hey);
-  }, []);
-
   return (
-    <div>
-      <Link href={"/admin/orders"}>qsdqsd</Link>
-    </div>
+    <>
+      <br />
+      <ColorPicker />
+    </>
   );
 }

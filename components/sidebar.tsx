@@ -11,7 +11,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/api/fetchApi";
 
-
 function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -36,7 +35,7 @@ function Sidebar() {
       icon: <TruckIcon size="25px" />,
     },
     {
-      name: "الـــطــــــلــــــبـــــــــيــــــــات",
+      name: "الطلبيات",
       href: "/admin/orders",
       icon: <OrdersIcon size="25px" />,
     },
@@ -76,7 +75,10 @@ function Sidebar() {
           <SettingIcon size="25px" />
           <Link href={"/admin/setting"}>إعـــــدادات</Link>
         </div>
-        <div onClick={handleLogout} className={style.link_box}>
+        <div
+          onClick={handleLogout}
+          className={style.link_box}
+        >
           <LogoutIcon size="25px" />
           <Link href="">الــخـــروج</Link>
         </div>

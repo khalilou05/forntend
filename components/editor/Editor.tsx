@@ -21,11 +21,11 @@ export default function Editor({
 }: {
   handleProductUpdate: (
     prop: keyof Product,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => void;
 }) {
-  const [bold, setBold] = useState(false);
   const [hasSelected, setHasSelected] = useState(false);
+  const [savedSelection, setSavedSelection] = useState<Range | null>(null);
 
   const editor = useRef<HTMLDivElement | null>(null);
 
@@ -38,18 +38,8 @@ export default function Editor({
     }
   };
 
-  const handleInput = () => {
-    const first = editor.current?.firstChild;
-    if (!first) {
-      const p = document.createElement("p");
-      p.innerHTML = "<br/>";
-      editor.current?.appendChild(p);
-      window.getSelection()?.setPosition(p);
-    }
-  };
-
   const addVideo = (value: string) => {
-    editor.current?.insertAdjacentHTML("beforeend", value);
+    console.log(window.getSelection()?.getRangeAt(0));
   };
 
   const hasSelectedText = () => {
@@ -92,10 +82,12 @@ export default function Editor({
     }
   };
 
-  const findParentElement = (element: HTMLElement) => {
-    let current;
-    while (element.parentNode?.nodeName !== "STRONG") {
-      current = element.parentNode;
+  const handleInput = () => {
+    if (!editor.current?.firstChild) {
+      const elemnt = document.createElement("p");
+      elemnt.innerHTML = "<br />";
+      editor.current?.appendChild(elemnt);
+      document.getSelection()?.setPosition(elemnt);
     }
   };
 
@@ -110,7 +102,6 @@ export default function Editor({
           <ToolTip value="خط غليض">
             <button
               className={style.btn}
-              data-active={bold}
               onClick={() => {
                 test();
               }}

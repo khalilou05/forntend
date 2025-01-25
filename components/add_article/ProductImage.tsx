@@ -11,7 +11,7 @@ type Prop = {
   setimageFileList: React.Dispatch<React.SetStateAction<Images[]>>;
 };
 
-export default function AdminImageSlider({
+export default function ProductImage({
   imageFileList,
   setimageFileList,
 }: Prop) {
@@ -31,7 +31,7 @@ export default function AdminImageSlider({
           image: URL.createObjectURL(item.image),
         };
       }),
-    [imageFileList.length],
+    [imageFileList.length]
   );
 
   const handleSelectAllImage = () => {
@@ -49,7 +49,7 @@ export default function AdminImageSlider({
     const images = Array.from(e.target.files);
     const data = images.map((item) => {
       return {
-        id: self.crypto.randomUUID(),
+        id: crypto.randomUUID(),
         image: item,
       };
     });
@@ -71,7 +71,7 @@ export default function AdminImageSlider({
   };
   const deleteSelectedImage = () => {
     const newImages = imageFileList.filter(
-      (item) => !selectedImage.includes(item.id),
+      (item) => !selectedImage.includes(item.id)
     );
     setimageFileList(newImages);
     setselectedImage([]);
@@ -90,7 +90,7 @@ export default function AdminImageSlider({
         imageID={imageUrlList[i].id}
         key={imageUrlList[i].id}
         imgUrl={imageUrlList[i].image}
-      />,
+      />
     );
 
     if (i == 6 && !expand && imageUrlList.length > 8) {
@@ -100,9 +100,13 @@ export default function AdminImageSlider({
           className={style.expand_btn}
           onClick={() => setexpand(true)}
         >
-          <Image src={imageUrlList[7].image} alt="" fill />
+          <Image
+            src={imageUrlList[7].image}
+            alt=""
+            fill
+          />
           <span>{imageUrlList.length - 7}+</span>
-        </div>,
+        </div>
       );
 
       break;

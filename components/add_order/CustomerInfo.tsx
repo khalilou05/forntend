@@ -4,11 +4,12 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { fetchApi } from "@/api/fetchApi";
 import type { Wilaya, Baladiya, OrderOut } from "@/types/types";
 import Card from "@/components/Card";
+import Input from "../Input";
 
 type Prop = {
   handleOrderData: (
     prop: keyof OrderOut,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => void;
 };
 
@@ -50,21 +51,19 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
     return () => controller.abort();
   }, []);
   return (
-    <Card flexDirection="column" display="flex" gap="10px">
+    <Card>
       <div className={style.title}>معلومات الزبون</div>
       <div className={style.card_body}>
         <div className={style.input_sec}>
           <label>الإسم الكامل</label>
-          <input
+          <Input
             onChange={(e) => handleOrderData("full_name", e.target.value)}
-            type="text"
           />
         </div>
         <div className={style.input_sec}>
           <label>رقم الهاتف</label>
-          <input
+          <Input
             onChange={(e) => handleOrderData("phone_number", e.target.value)}
-            type="text"
           />
         </div>
         <div className={style.input_sec}>
@@ -74,7 +73,10 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
             <option value={0}>-- إختر ولاية --</option>
             {!!wilaya.length &&
               wilaya.map((wilaya) => (
-                <option value={wilaya.id} key={wilaya.id}>
+                <option
+                  value={wilaya.id}
+                  key={wilaya.id}
+                >
                   {wilaya.wilaya_code}-{wilaya.name}
                 </option>
               ))}
@@ -90,7 +92,10 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
           >
             <option value={0}>-- إختر بلدية --</option>
             {baladiya.map((item) => (
-              <option value={item.id} key={item.id}>
+              <option
+                value={item.id}
+                key={item.id}
+              >
                 {item.name}
               </option>
             ))}

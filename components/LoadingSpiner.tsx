@@ -1,21 +1,24 @@
 import style from "@/css/component/loiding.module.css";
 type loadingProp = {
-  size: string;
+  size: number;
   borderWidth?: string;
   borderTopColor?: string;
   borderColor?: string;
 };
-export default function Loading({ size, borderTopColor }: loadingProp) {
-  const border = (Number(size.replace("px", "")) * 10) / 100;
+export default function LoadingSpiner({
+  size,
+  borderTopColor = "black",
+}: loadingProp) {
+  const border = (size * 10) / 100;
 
   return (
     <div
       style={{
-        width: size,
+        width: `${size}px`,
         borderRadius: "50%",
         aspectRatio: 1 / 1,
         border: `${border}px solid gray`,
-        borderTopColor: borderTopColor ?? "black",
+        borderTopColor: borderTopColor,
       }}
       className={style.loading}
     ></div>

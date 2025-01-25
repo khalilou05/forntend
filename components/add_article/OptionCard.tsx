@@ -1,159 +1,71 @@
 import style from "@/css/component/articleOptionCard.module.css";
-import type { OptionItems, Product, ProductOption } from "@/types/types";
+import type { OptionItem, ProductOption } from "@/types/types";
 import PlusIcon from "@/assets/icons/plusCircle";
 import TrashIcon from "@/assets/icons/trash";
 import React, { useEffect, useRef, useState } from "react";
-import { generateUUID } from "@/lib/genUUID";
+
 import Button from "../Button";
+import Card from "../Card";
+import Input from "../Input";
 
-export default function OptionCard({
-  options,
-  setProduct,
-  handleProductUpdate,
-}: {
+import OptionListDropDown from "./OptionListDropDown";
+
+type Prop = {
   options: ProductOption[];
-  setProduct: React.Dispatch<React.SetStateAction<Product>>;
-  handleProductUpdate: (
-    prop: keyof Product,
-    value: string | number | boolean,
-  ) => void;
-}) {
-  const addProductOption = () => {
-    setProduct((prv) => ({
+  setProductOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
+};
+
+export default function OptionCard({ options, setProductOption }: Prop) {
+  const addCustomProductOption = () => {
+    setProductOption((prv) => [
       ...prv,
-      option: [
-        ...prv.option,
-        {
-          id: generateUUID(),
-          name: "",
-          items: [{ id: generateUUID(), item_name: "", price: 0, stock: 0 }],
-        },
-      ],
-    }));
+      {
+        id: crypto.randomUUID(),
+        is_custom: true,
+        name: "",
+        items: [{ id: crypto.randomUUID(), key: "", value: "" }],
+      },
+    ]);
   };
 
-  const updateOptionItem = (
-    optionID: number | string,
-    itemID: number | string,
-    prop: keyof OptionItems,
-    value: string | number,
-  ) => {
-    setProduct((prv) => {
-      const updatedOption = options.map((option) => {
-        if (option.id !== optionID) return option;
-        const updatedOptionItem = option.items.map((item) =>
-          item.id === itemID ? { ...item, [prop]: value } : item,
-        );
-        const lastItem = updatedOptionItem[updatedOptionItem.length - 1];
-        const shouldAddNewItem = lastItem && lastItem.item_name !== "";
-        if (shouldAddNewItem) {
-          updatedOptionItem.push({
-            id: generateUUID(),
-            item_name: "",
-            price: 0,
-            stock: 0,
-          });
-        }
-        return { ...option, items: updatedOptionItem };
-      });
-      return { ...prv, option: updatedOption };
-    });
-  };
-  const deleteOptionItem = (
-    optionID: number | string,
-    itemID: number | string,
-  ) => {
-    const newOption = options.map((option) =>
-      option.id === optionID
-        ? {
-            ...option,
-            items: option.items.filter((item) => item.id !== itemID),
-          }
-        : option,
-    );
-    setProduct((prv) => ({ ...prv, option: newOption }));
-  };
-  const deleteOption = (optionID: number | string) => {
-    const newArray = options.filter((option) => option.id !== optionID);
-    setProduct((prv) => ({ ...prv, option: newArray }));
-  };
-
-  const updateOptionName = (optionID: number | string, optionName: string) => {
-    const newOptions = options.map((option) =>
-      option.id === optionID ? { ...option, name: optionName } : option,
-    );
-    setProduct((prv) => ({ ...prv, option: newOptions }));
-  };
-
-  useEffect(() => {
-    if (options.length === 0) {
-      handleProductUpdate("has_option", false);
-    } else {
-      handleProductUpdate("has_option", true);
-    }
-  }, [options.length]);
   return (
-    <div className={style.option_card}>
-      <div className={style.title}>خيارات المنتج</div>
+    <Card
+      style={{ gap: 10 }}
+      title="خيارات المنتج"
+    >
       {!!options?.length && (
         <div className={style.option_warper}>
           {options.map((option) => (
-            <OptionItem
-              optionName={option.name}
-              optionID={option.id}
-              setProduct={setProduct}
-              deleteOption={deleteOption}
-              deleteOptionItem={deleteOptionItem}
-              updateOptionName={updateOptionName}
-              updateOptionItem={updateOptionItem}
+            <CustomOption
               key={option.id}
-              items={option.items}
+              option={option}
+              setProductOption={setProductOption}
             />
           ))}
 
-          <button onClick={addProductOption} className={style.add_otherOpt_btn}>
+          <button className={style.add_otherOpt_btn}>
             <PlusIcon size={20} />
             إضافة خيار آخر
           </button>
         </div>
       )}
 
-      {options.length === 0 && (
-        <button onClick={addProductOption} className={style.add_opt_btn}>
+      {!options.length && (
+        <button className={style.add_opt_btn}>
           <PlusIcon size={20} />
           إضافة خيارات مثل الحجم أو الألوان
         </button>
       )}
-    </div>
+    </Card>
   );
 }
 
-function OptionItem({
-  optionID,
-  optionName,
-  items,
-  setProduct,
-  deleteOption,
-  deleteOptionItem,
-  updateOptionItem,
-  updateOptionName,
+function CustomOption({
+  option,
+  setProductOption,
 }: {
-  items: OptionItems[];
-  optionID: string | number;
-  optionName: string;
-  setProduct: React.Dispatch<React.SetStateAction<Product>>;
-  deleteOption: (index: number | string) => void;
-  deleteOptionItem: (
-    optionID: number | string,
-    itemID: number | string,
-  ) => void;
-  updateOptionName: (index: number | string, optionName: string) => void;
-  updateOptionItem: (
-    optionID: number | string,
-    itemID: number | string,
-    prop: keyof OptionItems,
-    value: string | number,
-  ) => void;
+  option: ProductOption;
+  setProductOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
 }) {
   const [expand, setExpand] = useState(false);
   const optionNameInput = useRef<HTMLInputElement | null>(null);
@@ -179,7 +91,7 @@ function OptionItem({
     e: React.KeyboardEvent<HTMLInputElement>,
     inputIndex: number,
     optionID: string | number,
-    itemID: string | number,
+    itemID: string | number
   ) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -188,59 +100,153 @@ function OptionItem({
     if (
       e.key === "Backspace" &&
       e.currentTarget.value === "" &&
-      inputIndex > 0
+      inputIndex === option.items.length - 1
+    ) {
+      e.preventDefault();
+      itemInputList.current?.get(`item${inputIndex - 1}`)?.focus();
+    }
+    if (
+      e.key === "Backspace" &&
+      e.currentTarget.value === "" &&
+      inputIndex > 0 &&
+      inputIndex !== option.items.length - 1
     ) {
       e.preventDefault();
       deleteOptionItem(optionID, itemID);
       itemInputList.current?.get(`item${inputIndex - 1}`)?.focus();
     }
   };
-  const handleChangeItem = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    itemID: string | number,
-  ) => {
-    updateOptionItem(optionID, itemID, "item_name", e.target.value);
+
+  const handleKeyDonwFirstInp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const map = getMap();
+      map.get("item0")?.focus();
+    }
   };
+
   const handleCollapse = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement, MouseEvent>,
+    e: React.MouseEvent<HTMLButtonElement | HTMLDivElement, MouseEvent>
   ) => {
     e.preventDefault();
-    if (optionName === "") {
+    if (option.name === "") {
       optionNameInput.current?.focus();
       return;
     }
     if (expand) {
-      setProduct((prv) => {
-        const newOption = prv.option.map((option) => {
-          if (option.id === optionID) {
+      setProductOption((prv) => {
+        const newOption = prv.map((prvItem) => {
+          if (option.id === prvItem.id) {
             return {
-              ...option,
+              ...prvItem,
               items: [
-                ...option.items,
-                { id: generateUUID(), price: 0, item_name: "", stock: 0 },
+                ...prvItem.items,
+                { id: crypto.randomUUID(), key: "", value: "" },
               ],
             };
           }
-          return option;
+          return prvItem;
         });
-        return { ...prv, option: newOption };
+        return newOption;
       });
     } else {
-      setProduct((prv) => {
-        const updatedOption = prv.option.map((option) => {
-          if (option.id === optionID) {
+      setProductOption((prv) => {
+        const updatedOption = prv.map((prvOption) => {
+          if (option.id === prvOption.id) {
             return {
               ...option,
-              items: option.items.filter((item) => item.item_name !== ""),
+              items: option.items.filter((item) => item.key !== ""),
             };
           }
-          return option;
+          return prvOption;
         });
-        return { ...prv, option: updatedOption };
+        return updatedOption;
       });
     }
 
     setExpand(!expand);
+  };
+  // const checkDoubleItem = () => {
+  //   if (option.items.length === 1) return;
+
+  //   for (let i = 0; i < option.items.length; i++) {
+  //     if (i + 1 >= option.items.length) return;
+  //     if (option.items[i].item_name === option.items[i + 1].item_name) {
+  //       setProductOption((prv) => {
+  //         const newItem = prv.map((opt) => {
+  //           return {
+  //             ...opt,
+  //             items: opt.items.map((itm) =>
+  //               itm.id === option.items[i + 1].id
+  //                 ? { ...itm, invalid: true }
+  //                 : itm
+  //             ),
+  //           };
+  //         });
+
+  //         return newItem;
+  //       });
+  //     } else {
+  //       setProductOption((prv) => {
+  //         const newItem = prv.map((opt) => {
+  //           return {
+  //             ...opt,
+  //             items: opt.items.map((itm) => ({ ...itm, invalid: false })),
+  //           };
+  //         });
+
+  //         return newItem;
+  //       });
+  //     }
+  //   }
+  // };
+  const updateOptionItem = (
+    optionID: number | string,
+    itemID: number | string,
+    prop: keyof OptionItem,
+    value: string
+  ) => {
+    setProductOption((prv) => {
+      const updatedOption = prv.map((option) => {
+        if (option.id !== optionID) return option;
+        const updatedOptionItem = option.items.map((item) =>
+          item.id === itemID ? { ...item, [prop]: value } : item
+        );
+        const lastItem = updatedOptionItem[updatedOptionItem.length - 1];
+        const shouldAddNewItem = lastItem && lastItem.key.trim() !== "";
+        if (shouldAddNewItem) {
+          updatedOptionItem.push({
+            id: crypto.randomUUID(),
+            key: "",
+            value: "",
+          });
+        }
+        return { ...option, items: updatedOptionItem };
+      });
+      return updatedOption;
+    });
+  };
+  const deleteOptionItem = (
+    optionID: number | string,
+    itemID: number | string
+  ) => {
+    setProductOption((prv) =>
+      prv.map((opt) => ({
+        ...opt,
+        items: opt.items.filter((itm) => itm.id !== itemID),
+      }))
+    );
+  };
+  const deleteOption = (optionID: number | string) => {
+    setProductOption((prv) => prv.filter((opt) => opt.id !== optionID));
+  };
+
+  const updateOptionName = (optionID: number | string, optionName: string) => {
+    setProductOption((prv) =>
+      prv.map((opt) =>
+        opt.id === optionID ? { ...opt, name: optionName } : opt
+      )
+    );
   };
 
   useEffect(() => {
@@ -251,12 +257,18 @@ function OptionItem({
 
   if (expand) {
     return (
-      <div className={style.option_view} onClick={handleCollapse}>
-        <label>{optionName}</label>
+      <div
+        className={style.option_view}
+        onClick={handleCollapse}
+      >
+        <label>{option.name}</label>
         <div className={style.item_warper}>
-          {items.map((item) => (
-            <span className={style.item_badge} key={item.id}>
-              {item.item_name}
+          {option.items.map((item) => (
+            <span
+              className={style.item_badge}
+              key={item.id}
+            >
+              {item.key}
             </span>
           ))}
         </div>
@@ -267,52 +279,92 @@ function OptionItem({
   return (
     <form className={style.option}>
       <label>إسم الخيار</label>
-      <input
-        required
+      <Input
         ref={optionNameInput}
-        value={optionName}
-        type="text"
-        onChange={(e) => updateOptionName(optionID, e.target.value)}
+        value={option.name}
+        onChange={(e) => updateOptionName(option.id, e.target.value)}
+        onKeyDown={handleKeyDonwFirstInp}
       />
       <label>الخيارات</label>
       <div className={style.input_warper}>
-        {items.map((item, i) => {
+        {option.items.map((item, i) => {
           return (
-            <div className={style.item_input} key={item.id}>
-              <input
-                onKeyDown={(e) => handleKeyDonw(e, i, optionID, item.id)}
+            <div
+              className={style.item_input}
+              key={item.id}
+            >
+              <Input
+                onKeyDown={(e) => handleKeyDonw(e, i, option.id, item.id)}
                 ref={(node) => handleRefInit(node, i)}
-                required
                 tabIndex={0}
-                value={item.item_name}
-                type="text"
-                onChange={(e) => handleChangeItem(e, item.id)}
               />
-              {items.length > 2 && item.item_name !== "" && (
-                <button
+
+              {option.items.length > 2 && item.value.trim() !== "" && (
+                <TrashIcon
                   tabIndex={-1}
                   onClick={() => {
-                    deleteOptionItem(optionID, item.id);
+                    deleteOptionItem(option.id, item.id);
                   }}
-                >
-                  <TrashIcon size={15} />
-                </button>
+                  size={15}
+                />
               )}
             </div>
           );
         })}
       </div>
       <div className={style.btn_bar}>
-        <Button onClick={(e) => handleCollapse(e)} type="primary">
+        <Button
+          onClick={(e) => handleCollapse(e)}
+          buttonType="primary"
+        >
           حفض
         </Button>
         <Button
+          style={{ color: "#8e0b21" }}
           onClick={(e) => {
             e.preventDefault();
-            deleteOption(optionID);
+            deleteOption(option.id);
           }}
-          type="secandary"
-          className={style.btn_remove}
+          buttonType="secandary"
+        >
+          حذف
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function Option({ option }: { option: ProductOption }) {
+  const [dropDownVisible, setDropDownVisible] = useState(false);
+
+  const showDropdown = () => {
+    setDropDownVisible(true);
+  };
+  const hideDropDown = () => {
+    setDropDownVisible(false);
+  };
+  return (
+    <form className={style.option}>
+      <label>إسم الخيار</label>
+      <Input
+        value={option.name}
+        readOnly
+      />
+      <label>الخيارات</label>
+      <div className={style.input_warper}>
+        <div className="{style.label}"></div>
+        <Input
+          onFocus={showDropdown}
+          onBlur={hideDropDown}
+        />
+      </div>
+      {dropDownVisible && <OptionListDropDown optionID={option.id} />}
+      <div className={style.btn_bar}>
+        <Button buttonType="primary">حفض</Button>
+        <Button
+          style={{ color: "#8e0b21" }}
+          onClick={(e) => {}}
+          buttonType="secandary"
         >
           حذف
         </Button>

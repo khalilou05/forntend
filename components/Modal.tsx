@@ -7,6 +7,7 @@ type Prop = {
   children: ReactNode;
   modalTitle: string;
   width?: number;
+
   setOutClose?: () => void;
   footerRender?: (handleClose: () => void) => ReactNode;
 
@@ -71,7 +72,10 @@ export default function Modal({
         >
           <div className={style.header}>
             {modalTitle}
-            <button className={style.close_btn} onClick={closeModal}>
+            <button
+              className={style.close_btn}
+              onClick={closeModal}
+            >
               <Xicon size={20} />
             </button>
           </div>

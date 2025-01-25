@@ -1,5 +1,5 @@
 import React from "react";
-import LoadingIco from "@/components/Loading";
+import LoadingIco from "@/components/LoadingSpiner";
 function Loading() {
   return (
     <div

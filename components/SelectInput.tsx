@@ -1,15 +1,14 @@
-import { ReactNode, type ChangeEvent } from "react";
+import React, { ReactNode } from "react";
 import ArrowIcon from "@/assets/icons/selectArrow";
 import style from "@/css/component/selectInput.module.css";
 type Prop = {
   children?: ReactNode;
-  onChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
-};
+} & React.SelectHTMLAttributes<HTMLSelectElement>;
 
-export default function SelectInput({ children, onChange }: Prop) {
+export default function SelectInput({ children, ...rest }: Prop) {
   return (
     <div className={style.select_warper}>
-      <select onChange={onChange}>{children}</select>
+      <select {...rest}>{children}</select>
       <ArrowIcon size={"20px"} />
     </div>
   );

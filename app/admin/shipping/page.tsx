@@ -1,11 +1,14 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Loding from "@/components/Loading";
 import style from "@/css/route/shipping.module.css";
 import Toast from "@/components/toast";
 import { fetchApi } from "@/api/fetchApi";
 import type { ToastMsg, Wilaya } from "@/types/types";
 import Button from "@/components/Button";
+import Card from "@/components/Card";
+import Input from "@/components/Input";
+import Switch from "@/components/Switch";
+import LoadingSpiner from "@/components/LoadingSpiner";
 
 function ShippingPage() {
   const [wilaya, setwilaya] = useState<Wilaya[]>([]);
@@ -59,12 +62,12 @@ function ShippingPage() {
   const handleOnChange = (
     wilayaID: number,
     prop: keyof Wilaya,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
     setwilaya((prv) =>
       prv.map((item) =>
-        item.id === wilayaID ? { ...item, [prop]: value } : item,
-      ),
+        item.id === wilayaID ? { ...item, [prop]: value } : item
+      )
     );
   };
   useEffect(() => {
@@ -80,7 +83,7 @@ function ShippingPage() {
           cache.current = data;
         } else throw new Error("error from the server");
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     })();
 
@@ -98,9 +101,14 @@ function ShippingPage() {
 
   return (
     <>
-      {showModal && <Toast data={toastData} setToastData={setToastData} />}
+      {showModal && (
+        <Toast
+          data={toastData}
+          setToastData={setToastData}
+        />
+      )}
 
-      <section className={style.card}>
+      <Card style={{ padding: 0, width: "fit-content" }}>
         <div className={style.fixed_row}>
           <div className={style.row_item}>#</div>
           <div className={style.row_item}>الولاية</div>
@@ -108,52 +116,50 @@ function ShippingPage() {
           <div className={style.row_item}>توصيل للمنزل</div>
           <div className={style.row_item}>تفعيل</div>
         </div>
-        <div className={style.item_box}>
+        <div className={style.main}>
           {wilaya?.map((item) => (
-            <div key={item.id} className={style.wilaya_row}>
+            <div
+              key={item.id}
+              className={style.wilaya_row}
+            >
               <div>{item.wilaya_code}</div>
               <div>{item.name}</div>
               <div>
-                <input
-                  className={item.active ? style.input : style.input_disabled}
+                <Input
                   disabled={!item.active}
                   onChange={(e) => {
                     handleOnChange(item.id, "desk_price", e.target.value);
                   }}
-                  type="text"
                   value={item.desk_price}
                 />
               </div>
               <div>
-                <input
-                  className={item.active ? style.input : style.input_disabled}
+                <Input
                   disabled={!item.active}
                   onChange={(e) => {
                     handleOnChange(item.id, "home_price", e.target.value);
                   }}
-                  type="text"
                   value={item.home_price}
                 />
               </div>
               <div>
-                <input
+                <Switch
                   onChange={(e) => {
                     handleOnChange(item.id, "active", e.target.checked);
                   }}
-                  type="checkbox"
                   checked={item.active}
                 />
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </Card>
       <Button
         disabled={btdDisabled}
         onClick={updateShippingCost}
-        type={btdDisabled ? "disabled" : "primary"}
+        buttonType={btdDisabled ? "disabled" : "primary"}
       >
-        {loading ? <Loding size="20px" /> : "حفض"}
+        {loading ? <LoadingSpiner size={20} /> : "حفض"}
       </Button>
     </>
   );

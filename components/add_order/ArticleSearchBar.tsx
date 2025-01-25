@@ -21,7 +21,7 @@ function ArticleSearchInput() {
   };
 
   return (
-    <Card flexDirection="column" display="flex" gap="10px">
+    <Card>
       <div className={style.title}>المنتجات</div>
       <div className={style.search_bar}>
         <div className={style.input_search}>
@@ -36,13 +36,16 @@ function ArticleSearchInput() {
           setOutClose={closeModal}
           modalTitle="بحث عن منتج"
           render={(handleOpen) => (
-            <Button onClick={handleOpen} type="secandary">
+            <Button
+              onClick={handleOpen}
+              buttonType="secandary"
+            >
               عرض
             </Button>
           )}
         >
           <SearchInput
-            autoFocus={true}
+            autoFocus
             onChange={handleChange}
             placeholder="إبحث عن منتجات"
             value={value}

@@ -18,11 +18,13 @@ export default function AddVideoBtn({ addVideo }: Prop) {
 
   return (
     <Modal
-      height={200}
       modalTitle="إضافة فيديو"
       render={(handleOpen) => (
         <ToolTip value="إضافة فيديو">
-          <button onClick={handleOpen} className={style.btn}>
+          <button
+            onClick={handleOpen}
+            className={style.btn}
+          >
             <VideoIcon size={20} />
           </button>
         </ToolTip>
@@ -34,7 +36,7 @@ export default function AddVideoBtn({ addVideo }: Prop) {
               handleClose();
               setValue("");
             }}
-            type="secandary"
+            buttonType="secandary"
           >
             إلغاء
           </Button>
@@ -45,7 +47,7 @@ export default function AddVideoBtn({ addVideo }: Prop) {
               setValue("");
             }}
             disabled={value.length ? false : true}
-            type={value.length ? "primary" : "disabled"}
+            buttonType={value.length ? "primary" : "disabled"}
           >
             إضافة
           </Button>

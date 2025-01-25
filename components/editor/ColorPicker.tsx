@@ -1,7 +1,6 @@
-"use client";
-import style from "@/css/component/colorPalette.module.css";
+import style from "@/css/component/colorpicker.module.css";
 import { useRef, useState } from "react";
-export default function ColorPalette() {
+export default function ColorPicker() {
   const [hsl, setHsl] = useState({
     hue: 0,
     saturation: 0,
@@ -29,8 +28,8 @@ export default function ColorPalette() {
         e.clientY - y >= height
           ? height
           : e.clientY - y <= 0
-            ? 0
-            : e.clientY - y;
+          ? 0
+          : e.clientY - y;
 
       setPaletteDrager({ x: pX, y: pY });
     }
@@ -44,8 +43,8 @@ export default function ColorPalette() {
         e.clientY - y <= 10
           ? 10
           : e.clientY - y >= height - 10
-            ? height - 10
-            : e.clientY - y,
+          ? height - 10
+          : e.clientY - y,
     });
     setgrabing(true);
   };
@@ -56,8 +55,8 @@ export default function ColorPalette() {
         e.clientY - y <= 10
           ? 10
           : e.clientY - y >= height - 10
-            ? height - 10
-            : e.clientY - y;
+          ? height - 10
+          : e.clientY - y;
       setSliderDrager({ ...sliderDrager, y: pos });
     }
   };
@@ -82,7 +81,7 @@ export default function ColorPalette() {
   ];
 
   return (
-    <div className={style.warper}>
+    <>
       <div className={style.section}>
         <button>النص</button>
         <button>الخلفية</button>
@@ -99,7 +98,9 @@ export default function ColorPalette() {
             style={{
               top: 0,
               left: 0,
-              transform: `translate3d(${sliderDrager.x - 5}px, ${sliderDrager.y - 5}px,0)`,
+              transform: `translate3d(${sliderDrager.x - 5}px, ${
+                sliderDrager.y - 5
+              }px,0)`,
             }}
             className={style.sliderPointer}
           ></div>
@@ -115,7 +116,9 @@ export default function ColorPalette() {
             style={{
               top: 0,
               left: 0,
-              transform: `translate3d(${paletteDrager.x - 5}px, ${paletteDrager.y - 5}px,0)`,
+              transform: `translate3d(${paletteDrager.x - 5}px, ${
+                paletteDrager.y - 5
+              }px,0)`,
             }}
             className={style.pointer}
           ></div>
@@ -138,6 +141,6 @@ export default function ColorPalette() {
           ></div>
         ))}
       </div>
-    </div>
+    </>
   );
 }

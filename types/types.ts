@@ -7,7 +7,7 @@ export type OrderIn = {
   time: string;
   date: string;
   home_dilvery: boolean;
-  status: string;
+  status: Exclude<OrderStatus, "all">;
 };
 
 export type OrderOut = {
@@ -17,8 +17,6 @@ export type OrderOut = {
   baladiya_id: number;
   home_dilvery: boolean;
 };
-
-export type Customer = {};
 
 export type OrderTableProps = {
   ordersList: OrderIn[];
@@ -35,15 +33,7 @@ export type OrderStatus =
   | "returned"
   | "notresponding";
 
-export type OrderFilterInput = {
-  setOrders: (orders: OrderIn[]) => void;
-  orderStatus: string;
-  orderLength: number;
-};
-
 export type Product = {
-  [index: string]: string | number | boolean | undefined | ProductOption[];
-  id?: number;
   title: string;
   price: number;
   prev_price: number;
@@ -55,20 +45,19 @@ export type Product = {
   active: boolean;
   out_stock_sell: boolean;
   has_option: boolean;
-  option: ProductOption[];
 };
 
-export type OptionItems = {
-  id: string | number;
-  item_name: string;
-  price: number;
-  stock: number;
+export type OptionItem = {
+  id: string;
+  key: string;
+  value: string;
 };
 
 export type ProductOption = {
-  id: string | number;
-  name: string;
-  items: OptionItems[];
+  id: string;
+  name?: string;
+  is_custom: boolean;
+  items: OptionItem[];
 };
 
 export type Category = {

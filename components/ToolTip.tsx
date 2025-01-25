@@ -7,7 +7,7 @@ import Protal from "./Portal";
 type Prop = {
   children: React.ReactNode;
   value: string;
-  padding?: string;
+
   show?: boolean;
   tooltipPosition?: "center" | "left";
 };
@@ -16,7 +16,6 @@ export default function ToolTip({
   value,
   show = true,
   tooltipPosition = "center",
-  padding = "7px",
 }: Prop) {
   const [tooltipState, setTooltipState] = useState({
     top: 0,
@@ -36,7 +35,7 @@ export default function ToolTip({
         top:
           top <= 41
             ? top + height + 9 + window.scrollY
-            : top - height - 9 + window.scrollY,
+            : top - height - 11 + window.scrollY,
         left: tooltipPosition === "center" ? left + width / 2 : left,
         showDown: top <= 41 ? true : false,
         visible: true,
@@ -62,8 +61,6 @@ export default function ToolTip({
         <div
           className={tooltipState.showDown ? style.tooltipDown : style.tooltip}
           style={{
-            width: "auto",
-            padding: padding,
             visibility: tooltipState.visible && show ? "visible" : "hidden",
             position: "absolute",
             top: tooltipState.top,

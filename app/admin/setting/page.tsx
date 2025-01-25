@@ -6,6 +6,8 @@ import ReseTIcon from "@/assets/icons/resetPass";
 import EyeOpen from "@/assets/icons/eyeOpen";
 import EyeClose from "@/assets/icons/eyecrossed";
 import { fetchApi } from "@/api/fetchApi";
+import Card from "@/components/Card";
+import Button from "@/components/Button";
 
 type Setting = {
   [key: string]: string;
@@ -40,7 +42,7 @@ function SettingPage() {
   }
 
   return (
-    <section className={style.card}>
+    <Card>
       <div className={style.title}>
         <h1>تغير اسم المستخدم و كلمة السر</h1>
         <ReseTIcon
@@ -87,9 +89,14 @@ function SettingPage() {
           onChange={(e) => handleCHange("confirmePassword", e.target.value)}
           type={show ? "text" : "password"}
         />
-        <button onClick={handleAdminInfoChange}>حفظ</button>
+        <Button
+          buttonType="primary"
+          onClick={handleAdminInfoChange}
+        >
+          حفظ
+        </Button>
       </section>
-    </section>
+    </Card>
   );
 }
 

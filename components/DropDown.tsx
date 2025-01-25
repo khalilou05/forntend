@@ -1,95 +1,122 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import style from "@/css/component/dropdown.module.css";
-import { createPortal } from "react-dom";
-import { ThreeDot } from "@/assets/icons/threeDot";
-import EyeOpenIco from "@/assets/icons/eyeOpen";
-import BanIco from "@/assets/icons/ban";
-import TrashIco from "@/assets/icons/trash";
-import { useRouter } from "next/navigation";
+import React, { useState, type ReactNode, useRef, useEffect } from "react";
+import Portal from "./Portal";
+import Card from "./Card";
 
-type Props = {
-  orderID: number;
+type Prop = {
+  component: (
+    isOpen: boolean,
+    ref: React.Ref<any>,
+    openDropDown: () => void,
+    togleDropDown: () => void
+  ) => ReactNode;
+  renderChildren: (closeDropDown: () => void) => ReactNode;
+  align?: "right" | "center";
+  padding?: string;
+  sameWidth?: boolean;
+  customWidth?: number | string;
+  customHeith?: number | string;
+  marginTop?: number;
+  flexDirection?: "row" | "column";
 };
 
-function DropDown({ orderID }: Props) {
-  const btnRef = useRef<HTMLButtonElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const [elmStyle, setElemStyle] = useState({});
-  const [isOpen, setOpen] = useState(false);
-  const [shouldSlideUp, setShouldSlideUp] = useState(false);
-  const router = useRouter();
+export default function DropDown({
+  component,
+  renderChildren,
+  padding,
+  customWidth = "fit-content",
+  customHeith = "fit-content",
+  marginTop = 0,
+  sameWidth = false,
+  flexDirection = "column",
+  align,
+}: Prop) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<Record<string, string | number>>({
+    top: 0,
+    left: 0,
+    right: 0,
+    width: 0,
+  });
+  const componentRef = useRef<HTMLElement | null>(null);
+  const dropRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleClose = (e: MouseEvent) => {
-      if (
-        btnRef.current &&
-        e.target instanceof Node &&
-        !btnRef.current.contains(e.target) &&
-        !contentRef.current?.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    if (isOpen) document.addEventListener("mousedown", handleClose);
-    else {
-      document.removeEventListener("mousedown", handleClose);
+  const togleDropDown = () => {
+    setIsOpen(!isOpen);
+  };
+  const openDropDown = () => {
+    setIsOpen(true);
+  };
+  const closeDropDown = () => {
+    setIsOpen(false);
+  };
+
+  const handleMouseDown = (e: MouseEvent) => {
+    if (
+      componentRef.current &&
+      e.target instanceof Node &&
+      !componentRef.current.contains(e.target) &&
+      !dropRef.current?.contains(e.target)
+    ) {
+      togleDropDown();
     }
-    return () => document.removeEventListener("mousedown", handleClose);
+  };
+  const adjustPosition = () => {
+    if (!componentRef.current) return;
+    const { top, left, right, height, width } =
+      componentRef.current?.getBoundingClientRect();
+    setPosition({
+      top: top + height + window.scrollY,
+      left: align === "center" ? left + width / 2 : left,
+      width: sameWidth ? width : customWidth,
+      right: align === "right" ? window.innerWidth - right : "",
+    });
+  };
+  const handleScroll = () => {
+    if (!componentRef.current) return;
+    const { top, height } = componentRef.current?.getBoundingClientRect();
+    if (window.scrollY > top + height + window.scrollY) setIsOpen(false);
+  };
+  useEffect(() => {
+    adjustPosition();
+    window.addEventListener("resize", adjustPosition);
+    window.addEventListener("scrollend", handleScroll);
+
+    return () => {
+      window.removeEventListener("resize", adjustPosition);
+      window.removeEventListener("scrollend", handleScroll);
+    };
+  }, []);
+  useEffect(() => {
+    if (isOpen) document.addEventListener("mousedown", handleMouseDown);
+    else {
+      document.removeEventListener("mousedown", handleMouseDown);
+    }
+    return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [isOpen]);
   return (
     <>
-      <button
-        data-open={isOpen}
-        ref={btnRef}
-        onClick={() => {
-          setOpen(!isOpen);
-          const btn = btnRef.current!.getBoundingClientRect();
-          if (window.innerHeight - btn.bottom <= 120) {
-            setShouldSlideUp(true);
-            setElemStyle({
-              left: btn.left,
-              bottom: window.innerHeight - btn.top,
-            });
-          } else {
-            setElemStyle({
-              top: btn.bottom,
-              left: btn.left,
-            });
-          }
-        }}
-        className={style.btn}
-      >
-        <ThreeDot size={"15px"} />
-      </button>
-      {isOpen &&
-        createPortal(
-          <div
-            style={elmStyle}
-            className={shouldSlideUp ? style.contentUp : style.content}
-            ref={contentRef}
-            onClick={() => setOpen(false)}
+      {component(isOpen, componentRef, openDropDown, togleDropDown)}
+      {isOpen && (
+        <Portal>
+          <Card
+            ref={dropRef}
+            type="floating"
+            style={{
+              padding: padding,
+              width: position.width,
+              height: customHeith,
+              flexDirection: flexDirection,
+              transform: align === "center" ? "translateX(-50%)" : "",
+              marginTop: marginTop,
+              top: position.top,
+              left: position.left,
+              right: position.right,
+            }}
           >
-            <div
-              onClick={() => {
-                router.push(`/admin/orders/${orderID}`);
-              }}
-            >
-              معاينة
-              <EyeOpenIco size={"12px"} />
-            </div>
-            <div>
-              حـظــر
-              <BanIco size={"12px"} />
-            </div>
-            <div>
-              حـــذف
-              <TrashIco size={"12px"} />
-            </div>
-          </div>,
-          document.body
-        )}
+            {renderChildren(closeDropDown)}
+          </Card>
+        </Portal>
+      )}
     </>
   );
 }
-
-export default DropDown;

@@ -1,20 +1,34 @@
 import { useState } from "react";
-import DropDownWarper from "@/components/editor/DropDownWarper";
 import DownCaretIcon from "@/assets/icons/downcaret";
+import DropDown from "../DropDown";
+import ToolTip from "../ToolTip";
+import style from "@/css/component/editor.module.css";
 
 export default function TextSizeBtn() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("عادي");
 
-  const textSizeList = [];
   return (
-    <DropDownWarper
-      toolTipValue="حجم النص"
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      icons={[selectedSize, <DownCaretIcon size={20} />]}
-    >
-      <div>khalil</div>
-    </DropDownWarper>
+    <DropDown
+      align="center"
+      customWidth={100}
+      component={(isOpen, ref, _, togleDropDown) => (
+        <ToolTip
+          show={!isOpen}
+          value="حجم النص"
+        >
+          <button
+            className={style.btn}
+            data-open={isOpen}
+            ref={ref}
+            onClick={togleDropDown}
+          >
+            {selectedSize}
+            <DownCaretIcon size={20} />
+          </button>
+        </ToolTip>
+      )}
+      renderChildren={() => <p>khalil</p>}
+    />
   );
 }

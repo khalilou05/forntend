@@ -3,12 +3,15 @@
 import { useRouter } from "next/navigation";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import style from "@/css/route/login.module.css";
-import LockIcon from "@/assets/icons/lock.js";
-import EyeCrossedIcon from "@/assets/icons/eyecrossed.js";
-import EyeOpned from "@/assets/icons/eyeOpen.js";
-import Loding from "@/components/Loading";
+import LockIcon from "@/assets/icons/lock";
+import EyeCrossedIcon from "@/assets/icons/eyecrossed";
+import EyeOpned from "@/assets/icons/eyeOpen";
+import Loding from "@/components/LoadingSpiner";
 
 import { fetchApi } from "@/api/fetchApi";
+import Card from "@/components/Card";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
 
 function AdminLogin() {
   const loginData = useRef({
@@ -26,7 +29,7 @@ function AdminLogin() {
   const route = useRouter();
 
   async function login(
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ): Promise<any> {
     event.preventDefault();
 
@@ -71,74 +74,82 @@ function AdminLogin() {
   }, []);
 
   return (
-    <section className={style.wraper}>
+    <Card
+      style={{
+        height: 400,
+        width: 350,
+        position: "absolute",
+        inset: 0,
+        margin: "auto",
+        padding: "0px 20px",
+      }}
+    >
       <form>
         <div className={style.top}>
           <h1>لوحة التحكم</h1>
-          <LockIcon size={"30px"} />
+          <LockIcon size={60} />
         </div>
 
         <div className={style.main}>
-          <div className={style.input}>
-            <label htmlFor="username">إسم المستخدم</label>
-            <input
-              id="username"
+          <div className={style.section}>
+            <label>إسم المستخدم</label>
+            <Input
+              style={{ height: "40px" }}
               ref={firstInpt}
-              tabIndex={1}
-              type="text"
-              autoComplete="off"
-              required
               onChange={(e) => {
                 loginData.current.username = e.target.value;
               }}
             />
           </div>
 
-          <div className={style.input}>
+          <div className={style.section}>
             <label htmlFor="password">كلمة السر</label>
-            <input
-              tabIndex={2}
-              id="password"
-              autoComplete="off"
-              type={showPassword ? "text" : "password"}
-              ref={passInpt}
-              required
-              onChange={(e) => {
-                loginData.current.password = e.target.value;
-                if (loginData.current.password == "") {
-                  setPassEmpty(true);
-                  return;
-                }
-                setPassEmpty(false);
-              }}
-            />
-            <span
-              className={style.eyeIcon}
-              style={{
-                visibility: passEmpty ? "hidden" : "visible",
-              }}
-              onClick={() => setShowPassword((prv) => !prv)}
-            >
+            <div className={style.passwordInput}>
+              <Input
+                type={showPassword ? "text" : "password"}
+                style={{ height: "40px" }}
+                onChange={(e) => {
+                  loginData.current.password = e.target.value;
+                  if (loginData.current.password == "") {
+                    setPassEmpty(true);
+                    return;
+                  }
+                  setPassEmpty(false);
+                }}
+              />
+
               {showPassword ? (
-                <EyeCrossedIcon size={"15px"} />
+                <EyeCrossedIcon
+                  onClick={() => setShowPassword((prv) => !prv)}
+                  size={15}
+                />
               ) : (
-                <EyeOpned size={"15px"} />
+                <EyeOpned
+                  onClick={() => setShowPassword((prv) => !prv)}
+                  size={15}
+                  style={{
+                    visibility: passEmpty ? "hidden" : "visible",
+                  }}
+                />
               )}
-            </span>
+            </div>
           </div>
 
-          <button
+          <Button
+            style={{ width: "auto", height: "40px" }}
+            buttonType="primary"
             disabled={btnLoading}
-            tabIndex={3}
-            type="submit"
             onClick={login}
           >
             {btnLoading ? (
-              <Loding borderTopColor="white" size="25px" />
+              <Loding
+                borderTopColor="white"
+                size="25px"
+              />
             ) : (
               "دخول"
             )}
-          </button>
+          </Button>
           {loginError && (
             <span className={style.error_msg}>
               إسم المستخدم أو كلمة السر خاطئة
@@ -146,7 +157,7 @@ function AdminLogin() {
           )}
         </div>
       </form>
-    </section>
+    </Card>
   );
 }
 

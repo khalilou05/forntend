@@ -1,9 +1,13 @@
 import * as React from "react";
-const SvgComponent = ({ size }) => (
+type Prop = {
+  size: number;
+} & React.SVGProps<SVGSVGElement>;
+const SvgComponent = ({ size, ...rest }: Prop) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={size}
     height={size}
+    width={size}
+    {...rest}
     data-name="Layer 1"
     viewBox="0 0 24 24"
   >

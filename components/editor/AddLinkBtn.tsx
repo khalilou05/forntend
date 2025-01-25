@@ -6,6 +6,7 @@ import LinkIcon from "@/assets/icons/link";
 import SelectInput from "../SelectInput";
 import Button from "../Button";
 import React, { useState } from "react";
+import Input from "../Input";
 export default function AddLinkBtn({ hasSelected }: { hasSelected: boolean }) {
   const [link, setLink] = useState("");
 
@@ -28,12 +29,15 @@ export default function AddLinkBtn({ hasSelected }: { hasSelected: boolean }) {
       )}
       footerRender={(handleClose) => (
         <>
-          <Button onClick={handleClose} type="secandary">
+          <Button
+            onClick={handleClose}
+            buttonType="secandary"
+          >
             إلغاء
           </Button>
           <Button
             disabled={!!link.length}
-            type={!!link.length ? "primary" : "disabled"}
+            buttonType={!!link.length ? "primary" : "disabled"}
           >
             إضافة
           </Button>
@@ -43,11 +47,10 @@ export default function AddLinkBtn({ hasSelected }: { hasSelected: boolean }) {
       <div className={style.addLink_modal}>
         <div className={style.column}>
           <label>رابط الي</label>
-          <input
+          <Input
             dir="ltr"
             placeholder="https://"
             onChange={handleChange}
-            type="text"
           />
         </div>
         <div className={style.column}>

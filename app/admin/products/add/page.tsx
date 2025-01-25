@@ -3,8 +3,8 @@
 import style from "@/css/route/addArticle.module.css";
 import { useEffect, useRef, useState } from "react";
 import SelectInput from "@/components/SelectInput";
-import type { Product, Images } from "@/types/types";
-import ImageManager from "@/components/add_article/ImageManager";
+import type { Product, Images, ProductOption } from "@/types/types";
+import ProductImage from "@/components/add_article/ProductImage";
 import { fetchApi } from "@/api/fetchApi";
 import { useRouter } from "next/navigation";
 import Editor from "@/components/editor/Editor";
@@ -12,15 +12,23 @@ import CategoryInput from "@/components/add_article/CartegoryInput";
 import PricingCard from "@/components/add_article/PricingCard";
 import OptionCard from "@/components/add_article/OptionCard";
 import Link from "next/link";
-import RightArrowIcon from "@/assets/icons/rightArrow";
+
 import Button from "@/components/Button";
+import InputNumberArrow from "@/components/InputNumberArrow";
+import HeaderNav from "@/components/HeaderNav";
+import Card from "@/components/Card";
+import Input from "@/components/Input";
+import useFetch from "@/hooks/useFetch";
 
 export default function AddArticle() {
   const [imageFileList, setimagefileList] = useState<Images[]>([]);
 
   const formData = new FormData();
+  const router = useRouter();
 
-  const [canSubmit, setCanSubmit] = useState(true);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [productOption, setProductOption] = useState<ProductOption[]>([]);
+
   const [product, setProduct] = useState<Product>({
     title: "",
     price: 0,
@@ -33,9 +41,7 @@ export default function AddArticle() {
     free_shipping: false,
     active: true,
     has_option: false,
-    option: [],
   });
-  const router = useRouter();
   const prevProduct = useRef<Product>({
     title: "",
     price: 0,
@@ -48,27 +54,30 @@ export default function AddArticle() {
     free_shipping: false,
     active: true,
     has_option: false,
-    option: [],
   });
 
   const handleProductUpdate = (
     prop: keyof Product,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
     setProduct({ ...product, [prop]: value });
   };
 
   const uploadProduct = async () => {
     if (Object.values(formData).length > 0) return;
-    formData.append("product", JSON.stringify(product));
+    const data = {
+      product: product,
+      product_option: productOption,
+    };
+    formData.append("data", JSON.stringify(data));
     for (const image of imageFileList) {
       formData.append("images", image.image);
     }
-    const response = await fetchApi("/product", {
+    const { response } = useFetch("/product", {
       method: "POST",
-      body: formData,
+      body: JSON.stringify(data),
     });
-    if (response?.status === 201) router.back();
+    if (response.statusNumber === 201) router.back();
   };
 
   // const checkProduct = () => {
@@ -139,62 +148,71 @@ export default function AddArticle() {
   useEffect(() => {
     document.title = "إضافة منتج";
   }, []);
+  useEffect(() => {
+    if (productOption.length) {
+      setProduct((prv) => ({ ...prv, has_option: true }));
+    } else {
+      setProduct((prv) => ({ ...prv, has_option: false }));
+    }
+  }, [productOption.length]);
 
   return (
     <main className={style.body}>
-      <div className={style.navBar}>
-        <Link href={"/admin/products"}>
-          <span>
-            <RightArrowIcon size={20} />
-          </span>
-        </Link>
-        إضافة منتج
-      </div>
+      <HeaderNav title="إضافة منتج" />
       <div className={style.column_container}>
         <div className={style.right_column}>
-          <div className={style.article_info_card}>
-            <div className={style.title_sec}>
-              <label className={style.inpt_label} htmlFor="title">
+          <Card
+            className={style.product_info}
+            style={{ gap: 10 }}
+          >
+            <div className={style.section}>
+              <label
+                className={style.inpt_label}
+                htmlFor="title"
+              >
                 العنوان
               </label>
-              <input
+              <Input
+                placeholder="أكتب عنوان مناسب للمنتج"
                 onChange={(e) => {
                   handleProductUpdate("title", e.target.value);
                 }}
-                name="title"
-                type="text"
               />
             </div>
-            <div className={style.editor_sec}>
+            <div className={style.section}>
               <Editor handleProductUpdate={handleProductUpdate} />
             </div>
-            <div className={style.image_sec}>
-              <ImageManager
+            <div className={style.section}>
+              <ProductImage
                 imageFileList={imageFileList}
                 setimageFileList={setimagefileList}
               />
             </div>
-          </div>
+          </Card>
 
-          <PricingCard product={product} handleChange={handleProductUpdate} />
-          <OptionCard
-            options={product.option}
+          <PricingCard
+            product={product}
             setProduct={setProduct}
-            handleProductUpdate={handleProductUpdate}
+          />
+          <OptionCard
+            options={productOption}
+            setProductOption={setProductOption}
           />
 
           <Button
-            className={style.submit_btn}
-            type={canSubmit ? "primary" : "disabled"}
+            buttonType={canSubmit ? "primary" : "disabled"}
             disabled={canSubmit}
             onClick={uploadProduct}
           >
             إضافة
           </Button>
         </div>
+
         <div className={style.left_column}>
-          <div className={style.status_card}>
-            <div className={style.title}>حالة المنتج</div>
+          <Card
+            title="حالة المنتج"
+            style={{ gap: 10 }}
+          >
             <SelectInput
               onChange={(e) =>
                 handleProductUpdate("active", !!Number(e.target.value))
@@ -203,9 +221,11 @@ export default function AddArticle() {
               <option value={1}>مفعل</option>
               <option value={0}>غير مفعل</option>
             </SelectInput>
-          </div>
-          <div className={style.shipping_card}>
-            <div className={style.title}>التوصيل</div>
+          </Card>
+          <Card
+            title="التوصيل"
+            style={{ gap: 10 }}
+          >
             <SelectInput
               onChange={(e) =>
                 handleProductUpdate("free_shipping", !!Number(e.target.value))
@@ -214,16 +234,12 @@ export default function AddArticle() {
               <option value={0}>غير مجاني</option>
               <option value={1}>مجاني</option>
             </SelectInput>
-          </div>
+          </Card>
 
-          <div className={style.stock_card}>
+          <Card style={{ gap: 10 }}>
             <div className={style.title}>المخزون</div>
-            <input
-              onChange={(e) =>
-                handleProductUpdate("global_stock", Number(e.target.value))
-              }
-              type="text"
-            />
+
+            <InputNumberArrow onChange={() => handleProductUpdate} />
             <div>
               <input
                 onChange={(e) =>
@@ -233,14 +249,13 @@ export default function AddArticle() {
               />
               <span>إستقبال الطلبيات بعد نفاذ المخزون</span>
             </div>
-          </div>
-          <div className={style.category_card}>
-            <div className={style.title}>الفئة</div>
-            <CategoryInput handleChange={handleProductUpdate} />
-          </div>
-          <div>
-            <div className="khalil"></div>
-          </div>
+          </Card>
+          <Card
+            title="الفئة"
+            style={{ gap: 10 }}
+          >
+            <CategoryInput setProdct={setProduct} />
+          </Card>
         </div>
       </div>
     </main>
