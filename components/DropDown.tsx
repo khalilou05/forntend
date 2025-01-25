@@ -64,6 +64,7 @@ export default function DropDown({
     if (!componentRef.current) return;
     const { top, left, right, height, width } =
       componentRef.current?.getBoundingClientRect();
+
     setPosition({
       top: top + height + window.scrollY,
       left: align === "center" ? left + width / 2 : left,
@@ -72,26 +73,29 @@ export default function DropDown({
     });
   };
   const handleScroll = () => {
-    if (!componentRef.current) return;
-    const { top, height } = componentRef.current?.getBoundingClientRect();
-    if (window.scrollY > top + height + window.scrollY) setIsOpen(false);
+    if (dropRef.current && componentRef.current) {
+      const { top } = dropRef.current?.getBoundingClientRect();
+      if (window.scrollY > top + window.scrollY) setIsOpen(false);
+    }
   };
+
   useEffect(() => {
     adjustPosition();
     window.addEventListener("resize", adjustPosition);
-    window.addEventListener("scrollend", handleScroll);
-
-    return () => {
-      window.removeEventListener("resize", adjustPosition);
-      window.removeEventListener("scrollend", handleScroll);
-    };
+    return () => window.removeEventListener("resize", adjustPosition);
   }, []);
   useEffect(() => {
-    if (isOpen) document.addEventListener("mousedown", handleMouseDown);
-    else {
-      document.removeEventListener("mousedown", handleMouseDown);
+    if (isOpen) {
+      window.addEventListener("mousedown", handleMouseDown);
+      window.addEventListener("scroll", handleScroll);
+    } else {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("scroll", handleScroll);
     }
-    return () => document.removeEventListener("mousedown", handleMouseDown);
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [isOpen]);
   return (
     <>
