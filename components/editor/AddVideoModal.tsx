@@ -9,16 +9,27 @@ type Prop = {
   addVideo: (value: string) => void;
 };
 
-export default function AddVideoBtn({ addVideo }: Prop) {
+export default function AddVideoModal({ addVideo }: Prop) {
   const [value, setValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
   };
 
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
   return (
     <Modal
-      modalTitle="إضافة فيديو"
+      isOpen={isOpen}
+      closeModal={closeModal}
+      openModal={openModal}
+      title="إضافة فيديو"
       render={(handleOpen) => (
         <ToolTip value="إضافة فيديو">
           <button

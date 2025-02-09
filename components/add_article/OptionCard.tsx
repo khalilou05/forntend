@@ -9,6 +9,7 @@ import Card from "../Card";
 import Input from "../Input";
 
 import OptionListDropDown from "./OptionListDropDown";
+import DropDown from "../DropDown";
 
 type Prop = {
   options: ProductOption[];
@@ -51,10 +52,22 @@ export default function OptionCard({ options, setProductOption }: Prop) {
       )}
 
       {!options.length && (
-        <button className={style.add_opt_btn}>
-          <PlusIcon size={20} />
-          إضافة خيارات مثل الحجم أو الألوان
-        </button>
+        <DropDown
+          customWidth={200}
+          customHeith={100}
+          align="right"
+          component={(__, ref, _, togleDropDown) => (
+            <button
+              ref={ref}
+              onClick={togleDropDown}
+              className={style.add_opt_btn}
+            >
+              <PlusIcon size={20} />
+              إضافة خيارات مثل الحجم أو الألوان
+            </button>
+          )}
+          renderChildren={() => <p onClick={addCustomProductOption}>khalil</p>}
+        />
       )}
     </Card>
   );
@@ -295,6 +308,9 @@ function CustomOption({
             >
               <Input
                 onKeyDown={(e) => handleKeyDonw(e, i, option.id, item.id)}
+                onChange={(e) =>
+                  updateOptionItem(option.id, item.id, "key", e.target.value)
+                }
                 ref={(node) => handleRefInit(node, i)}
                 tabIndex={0}
               />

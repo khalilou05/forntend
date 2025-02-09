@@ -7,7 +7,7 @@ import { phoneFormat } from "@/lib/phoneNformat";
 import { useRouter } from "next/navigation";
 import DropDown from "./DropDown";
 
-import { fetchApi } from "@/api/fetchApi";
+import fetchApi from "@/lib/fetch";
 import Card from "./Card";
 import Button from "./Button";
 import Badge from "./Badge";

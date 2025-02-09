@@ -3,15 +3,13 @@
 import style from "@/css/route/addArticle.module.css";
 import { useEffect, useRef, useState } from "react";
 import SelectInput from "@/components/SelectInput";
-import type { Product, Images, ProductOption } from "@/types/types";
+import type { Product, ProductOption, ImagesIn } from "@/types/types";
 import ProductImage from "@/components/add_article/ProductImage";
-import { fetchApi } from "@/api/fetchApi";
 import { useRouter } from "next/navigation";
 import Editor from "@/components/editor/Editor";
 import CategoryInput from "@/components/add_article/CartegoryInput";
 import PricingCard from "@/components/add_article/PricingCard";
 import OptionCard from "@/components/add_article/OptionCard";
-import Link from "next/link";
 
 import Button from "@/components/Button";
 import InputNumberArrow from "@/components/InputNumberArrow";
@@ -19,16 +17,22 @@ import HeaderNav from "@/components/HeaderNav";
 import Card from "@/components/Card";
 import Input from "@/components/Input";
 import useFetch from "@/hooks/useFetch";
+import ImageModal from "@/components/ImageModal";
+
+type ImageModalProp = {
+  isOpen: boolean;
+  openFor: ImagesIn[] | null;
+  singleSelectionMode: boolean;
+};
 
 export default function AddArticle() {
-  const [imageFileList, setimagefileList] = useState<Images[]>([]);
-
+  const [mediaList, setMediaList] = useState<ImagesIn[]>([]);
   const formData = new FormData();
   const router = useRouter();
-
+  const editorRef = useRef<HTMLDivElement | null>(null);
   const [canSubmit, setCanSubmit] = useState(false);
   const [productOption, setProductOption] = useState<ProductOption[]>([]);
-
+  const imageModalAction = useRef<((images: ImagesIn[]) => void) | null>(null);
   const [product, setProduct] = useState<Product>({
     title: "",
     price: 0,
@@ -55,6 +59,11 @@ export default function AddArticle() {
     active: true,
     has_option: false,
   });
+  const [imgModalState, setImgModalState] = useState<ImageModalProp>({
+    isOpen: false,
+    openFor: [],
+    singleSelectionMode: false,
+  });
 
   const handleProductUpdate = (
     prop: keyof Product,
@@ -70,14 +79,55 @@ export default function AddArticle() {
       product_option: productOption,
     };
     formData.append("data", JSON.stringify(data));
-    for (const image of imageFileList) {
-      formData.append("images", image.image);
-    }
-    const { response } = useFetch("/product", {
+    // todo check here
+    // for (const image of imageFileList) {
+    //   formData.append("images", image.image);
+    // }
+    const { data: resp } = useFetch("/product", {
       method: "POST",
       body: JSON.stringify(data),
     });
-    if (response.statusNumber === 201) router.back();
+    if (resp) router.back();
+  };
+
+  const closeImgModal = () => {
+    setImgModalState((prv) => ({ ...prv, isOpen: false }));
+    imageModalAction.current = null;
+  };
+
+  const openForProductImg = () => {
+    setImgModalState((prv) => ({
+      ...prv,
+      openFor: mediaList,
+      isOpen: true,
+    }));
+    imageModalAction.current = (images) => {
+      setMediaList(images);
+    };
+  };
+  const appendImgToEditor = (images: ImagesIn[]) => {
+    for (const img of images) {
+      const node = document.createElement("img");
+      node.src = img.url;
+
+      editorRef.current?.appendChild(node);
+    }
+  };
+  const openForDescImg = () => {
+    setImgModalState((prv) => ({
+      ...prv,
+      openFor: null,
+      isOpen: true,
+    }));
+    imageModalAction.current = (images) => appendImgToEditor(images);
+  };
+  const openVariantImg = () => {
+    setImgModalState((prv) => ({
+      ...prv,
+      isOpen: true,
+      openFor: mediaList,
+      singleSelectionMode: true,
+    }));
   };
 
   // const checkProduct = () => {
@@ -159,6 +209,11 @@ export default function AddArticle() {
   return (
     <main className={style.body}>
       <HeaderNav title="إضافة منتج" />
+      <ImageModal
+        {...imgModalState}
+        closeModal={closeImgModal}
+        action={imageModalAction.current}
+      />
       <div className={style.column_container}>
         <div className={style.right_column}>
           <Card
@@ -180,12 +235,16 @@ export default function AddArticle() {
               />
             </div>
             <div className={style.section}>
-              <Editor handleProductUpdate={handleProductUpdate} />
+              <Editor
+                ref={editorRef}
+                openImgModal={openForDescImg}
+              />
             </div>
             <div className={style.section}>
               <ProductImage
-                imageFileList={imageFileList}
-                setimageFileList={setimagefileList}
+                openForProductImg={openForProductImg}
+                setMediaList={setMediaList}
+                mediaList={mediaList}
               />
             </div>
           </Card>
@@ -218,8 +277,8 @@ export default function AddArticle() {
                 handleProductUpdate("active", !!Number(e.target.value))
               }
             >
-              <option value={1}>مفعل</option>
-              <option value={0}>غير مفعل</option>
+              <option value={1}>ظاهر في الموقع</option>
+              <option value={0}>مخفي</option>
             </SelectInput>
           </Card>
           <Card

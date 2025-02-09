@@ -1,5 +1,5 @@
-import { fetchApi } from "@/api/fetchApi";
 import OrderTable from "@/components/ordertable";
+import fetchApi from "@/lib/fetch";
 import { OrderIn } from "@/types/types";
 import { Metadata } from "next";
 import { Suspense } from "react";

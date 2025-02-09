@@ -51,6 +51,7 @@ export default function PricingCard({ setProduct, product }: Prop) {
         </div>
         <div className={style.row_item}></div>
       </div>
+
       <div className={style.down_row}>
         <div className={style.row_item}>
           <label>سعر الشراء</label>

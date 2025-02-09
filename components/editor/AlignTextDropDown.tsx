@@ -15,7 +15,7 @@ export default function AlignTextBtn() {
       component={(isOpen, ref, _, togleDropDown) => (
         <ToolTip
           show={!isOpen}
-          value="اليمين"
+          value="إتجاه النص"
         >
           <button
             className={style.btn}
@@ -39,7 +39,13 @@ export default function AlignTextBtn() {
             </button>
           </ToolTip>
           <ToolTip value="الوسط">
-            <button className={style.alignBtn}>
+            <button
+              onClick={() => {
+                document.execCommand("justifyCenter");
+                closeDropDown();
+              }}
+              className={style.alignBtn}
+            >
               <AlignTextCenterIcon size={20} />
             </button>
           </ToolTip>

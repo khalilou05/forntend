@@ -7,12 +7,14 @@ import { useState } from "react";
 export default function AddImageBtn() {
   return (
     <Modal
-      height={600}
       width={1000}
-      modalTitle="إضافة صور"
+      title="إضافة صور"
       render={(handleClick) => (
         <ToolTip value="إضافة صور">
-          <button onClick={handleClick} className={style.btn}>
+          <button
+            onClick={handleClick}
+            className={style.btn}
+          >
             <Image size={20} />
           </button>
         </ToolTip>

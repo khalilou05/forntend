@@ -9,7 +9,7 @@ import PuzzuleIcon from "@/assets/aside_icons/puzzule";
 import style from "@/css/component/sidebar.module.css";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { fetchApi } from "@/api/fetchApi";
+import fetchApi from "@/lib/fetch";
 
 function Sidebar() {
   const router = useRouter();

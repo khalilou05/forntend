@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import Image from "next/image";
+
 import style from "@/css/component/imageManager.module.css";
-import { ImagesPosition } from "@/types/types";
+
+import Portal from "../Portal";
 
 export default function Dragableimage({
   imgUrl,
@@ -11,7 +11,7 @@ export default function Dragableimage({
   imageID,
   inSelectedImage,
   selectedImageLength,
-  setimagePosition,
+
   setSelectedImage,
   setdragMode,
 }: {
@@ -23,7 +23,6 @@ export default function Dragableimage({
   dragMode: boolean;
   setdragMode: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedImage: () => void;
-  setimagePosition: React.Dispatch<React.SetStateAction<ImagesPosition[]>>;
 }) {
   const [translatePos, settranslatePos] = useState({ x: 0, y: 0 });
   const [clickOffset, setclickOffset] = useState({ x: 0, y: 0 });
@@ -95,10 +94,6 @@ export default function Dragableimage({
       const { left, top, width, height } =
         original.current?.getBoundingClientRect();
       setoffset({ left: left, top: top, width: width, height: height });
-      setimagePosition((prv) => [
-        ...prv,
-        { imageID: imageID, x: left, y: top },
-      ]);
     };
     updateImagePostion();
     window.addEventListener("scrollend", updateImagePostion);
@@ -116,10 +111,10 @@ export default function Dragableimage({
         ref={original}
         className={
           isDraging
-            ? style.img_ghost
+            ? style.img_plcace_holder
             : dragMode
-              ? style.other_is_draging
-              : style.img_normal
+            ? style.dragMode
+            : style.img
         }
         onMouseDown={handleMouseDown}
       >
@@ -131,17 +126,22 @@ export default function Dragableimage({
           type="checkbox"
         />
 
-        <Image src={imgUrl} fill alt="img" />
+        <img
+          src={imgUrl}
+          alt="img"
+          style={{ objectFit: "cover", height: "100%", width: "100%" }}
+        />
       </div>
 
-      {isDraging &&
-        createPortal(
+      {isDraging && (
+        <Portal>
           <div
             style={{
               width: offset.width,
               height: offset.height,
               left: offset.left,
               top: offset.top,
+
               transform: `translate3d(${translatePos.x}px,${translatePos.y}px,0px)`,
               boxShadow: "0px 1px 8px hsl(0,0%,50%)",
               transition: isReleasing ? "transform 300ms" : "none",
@@ -154,15 +154,19 @@ export default function Dragableimage({
               zIndex: 100,
             }}
           >
-            <Image
-              style={{ pointerEvents: "none" }}
+            <img
+              style={{
+                pointerEvents: "none",
+                objectFit: "cover",
+                height: "100%",
+                width: "100%",
+              }}
               src={imgUrl}
-              fill
               alt="img"
             />
-          </div>,
-          document.body,
-        )}
+          </div>
+        </Portal>
+      )}
     </>
   );
 }

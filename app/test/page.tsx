@@ -8,13 +8,15 @@ import ProductOptionSearch from "@/components/ProductOptionSearch";
 import InputNumber from "@/components/InputNumber";
 import Switch from "@/components/Switch";
 import LoadingSpiner from "@/components/LoadingSpiner";
-import ColorPicker from "@/components/editor/ColorPicker";
+import ColorPicker from "@/components/ColorPicker";
+import SearchInput from "@/components/SearchInput";
+import Button from "@/components/Button";
 
 export default function Page() {
   return (
     <>
       <br />
-      <ColorPicker />
+      <Button buttonType="link">khalil</Button>
     </>
   );
 }

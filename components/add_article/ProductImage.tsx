@@ -1,62 +1,39 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import style from "@/css/component/imageManager.module.css";
 
-import AddImageIcon from "@/assets/icons/addImage";
 import PlusIcon from "@/assets/icons/plus";
 import DragableImage from "./Dragableimage";
-import { ImagesPosition, Images } from "@/types/types";
+import { Images, type ImagesIn } from "@/types/types";
 import Image from "next/image";
+
+import fetchApi from "@/lib/fetch";
+import Button from "../Button";
 type Prop = {
-  imageFileList: Images[];
-  setimageFileList: React.Dispatch<React.SetStateAction<Images[]>>;
+  mediaList: ImagesIn[];
+  setMediaList: React.Dispatch<React.SetStateAction<ImagesIn[]>>;
+  openForProductImg: () => void;
 };
 
 export default function ProductImage({
-  imageFileList,
-  setimageFileList,
+  mediaList,
+  setMediaList,
+  openForProductImg,
 }: Prop) {
   const [selectedImage, setselectedImage] = useState<string[]>([]);
-  const [dragedIndex, setdragedIndex] = useState<string | null>(null);
-  const [imagePosition, setimagePosition] = useState<ImagesPosition[]>([]);
   const [dragMode, setdragMode] = useState(false);
   const [expand, setexpand] = useState(false);
   const InputRef = useRef<HTMLInputElement | null>(null);
   const slectAllRef = useRef<HTMLInputElement | null>(null);
-  let imageList2 = [];
-  const imageUrlList = useMemo(
-    () =>
-      imageFileList?.map((item) => {
-        return {
-          id: item.id,
-          image: URL.createObjectURL(item.image),
-        };
-      }),
-    [imageFileList.length]
-  );
-
+  const mediaToRender = [];
   const handleSelectAllImage = () => {
-    if (selectedImage.length === imageUrlList.length) {
+    if (selectedImage.length === mediaList.length) {
       setselectedImage([]);
     } else {
-      const imgId = imageUrlList.map((item) => item.id);
+      const imgId = mediaList.map((item) => item.id);
       setselectedImage(imgId);
     }
   };
 
-  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.length) return;
-
-    const images = Array.from(e.target.files);
-    const data = images.map((item) => {
-      return {
-        id: crypto.randomUUID(),
-        image: item,
-      };
-    });
-
-    setimageFileList((prv) => [...prv, ...data]);
-    e.target.value = "";
-  };
   const handleSelectImage = (id: string) => {
     const inSelection = selectedImage.includes(id);
     if (inSelection) {
@@ -70,42 +47,55 @@ export default function ProductImage({
     return selectedImage.includes(id);
   };
   const deleteSelectedImage = () => {
-    const newImages = imageFileList.filter(
+    const newImages = mediaList.filter(
       (item) => !selectedImage.includes(item.id)
     );
-    setimageFileList(newImages);
+    setMediaList(newImages);
     setselectedImage([]);
   };
 
-  for (let i = 0; i < imageUrlList.length; i++) {
-    imageList2.push(
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("medias", file);
+    }
+    const { data, status } = await fetchApi<ImagesIn[]>("/media", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (data) setMediaList((prv) => [...prv, ...data]);
+  };
+
+  for (let i = 0; i < mediaList.length; i++) {
+    mediaToRender.push(
       <DragableImage
         selectedImageLength={selectedImage.length}
         dragMode={dragMode}
         setdragMode={setdragMode}
-        setSelectedImage={() => handleSelectImage(imageUrlList[i].id)}
-        inSelectedImage={inSelectedImage(imageUrlList[i].id)}
-        setimagePosition={setimagePosition}
-        fileListLength={imageFileList.length}
-        imageID={imageUrlList[i].id}
-        key={imageUrlList[i].id}
-        imgUrl={imageUrlList[i].image}
+        setSelectedImage={() => handleSelectImage(mediaList[i].id)}
+        inSelectedImage={inSelectedImage(mediaList[i].id)}
+        fileListLength={mediaList.length}
+        imageID={mediaList[i].id}
+        key={mediaList[i].id}
+        imgUrl={mediaList[i].url}
       />
     );
 
-    if (i == 6 && !expand && imageUrlList.length > 8) {
-      imageList2.push(
+    if (i == 6 && !expand && mediaList.length > 8) {
+      mediaToRender.push(
         <div
           key={i}
           className={style.expand_btn}
           onClick={() => setexpand(true)}
         >
-          <Image
-            src={imageUrlList[7].image}
+          <img
+            src={mediaList[7].url}
             alt=""
-            fill
           />
-          <span>{imageUrlList.length - 7}+</span>
+          <span>{mediaList.length - 7}+</span>
         </div>
       );
 
@@ -119,7 +109,7 @@ export default function ProductImage({
       slectAllRef.current.indeterminate = true;
       slectAllRef.current.checked = false;
     }
-    if (selectedImage.length === imageFileList.length) {
+    if (selectedImage.length === mediaList.length) {
       slectAllRef.current.checked = true;
       slectAllRef.current.indeterminate = false;
     }
@@ -128,11 +118,6 @@ export default function ProductImage({
       slectAllRef.current.checked = false;
     }
   }, [selectedImage.length]);
-  useEffect(() => {
-    return () => {
-      imageUrlList.forEach((item) => URL.revokeObjectURL(item.image));
-    };
-  }, [imageFileList.length]);
 
   return (
     <>
@@ -154,39 +139,56 @@ export default function ProductImage({
       )}
       <section
         onClick={() => {
-          if (imageFileList.length) return;
+          if (mediaList.length) return;
           InputRef.current?.click();
         }}
-        className={
-          imageFileList.length ? style.warper : style.warper_no_content
-        }
+        className={mediaList.length ? style.warper : style.warper_no_content}
       >
-        {imageFileList.length ? (
+        {mediaList.length ? (
           <>
-            {imageList2}
-            <button onClick={() => InputRef.current?.click()}>
+            {mediaToRender}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                openForProductImg();
+              }}
+            >
               <PlusIcon size={"20px"} />
             </button>
             <input
+              onChange={handleUploadImage}
               accept=".jpeg,.webp,.png,.jpg,.avif"
               ref={InputRef}
               hidden
               multiple
-              onChange={handleAddImage}
               type="file"
-              id="file2"
             />
           </>
         ) : (
           <>
-            <AddImageIcon size={"20px"} />
-            <span>إضافة صور</span>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                openForProductImg();
+              }}
+              buttonType="link"
+            >
+              إختيار صور
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                InputRef.current?.click();
+              }}
+              buttonType="secandary"
+            >
+              رفع صور
+            </Button>
             <input
+              onChange={handleUploadImage}
               accept=".jpeg,.webp,.png,.jpg,.avif"
               ref={InputRef}
               hidden
-              onChange={handleAddImage}
-              id="images"
               type="file"
               multiple
             />

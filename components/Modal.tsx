@@ -1,86 +1,78 @@
-import React, { useEffect, useRef, type ReactNode, useState } from "react";
+import React, { useEffect, useRef, type ReactNode } from "react";
 import style from "@/css/component/modal.module.css";
 import Xicon from "@/assets/icons/Xicon";
 
 type Prop = {
-  outOpen?: boolean;
+  isOpen: boolean;
+  delayedClose?: boolean;
   children: ReactNode;
-  modalTitle: string;
+  title: string;
   width?: number;
-
-  setOutClose?: () => void;
+  heigth?: number;
+  openModal?: () => void;
+  closeModal: () => void;
   footerRender?: (handleClose: () => void) => ReactNode;
-
-  render?: (handleOpen: () => void) => ReactNode;
+  render?: (handleOpen?: () => void) => ReactNode;
 };
 export default function Modal({
-  outOpen = false,
+  isOpen,
+  delayedClose = true,
   children,
-  modalTitle,
-
-  width = 620,
+  title,
+  width,
+  heigth,
   footerRender,
-  setOutClose,
-
+  openModal,
+  closeModal,
   render,
 }: Prop) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
-  const [inOpen, setinOpen] = useState(false);
-
-  const openModal = () => {
-    setinOpen(true);
-    modalRef.current?.setAttribute("open", "");
-  };
-  const closeModal = () => {
-    modalRef.current?.removeAttribute("open");
-
-    setTimeout(() => {
-      setinOpen(false);
-      setOutClose && setOutClose();
-    }, 100);
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
     if (e.key === "Escape") {
-      setinOpen(false);
-      setOutClose && setOutClose();
+      closeModal();
     }
   };
 
-  useEffect(() => {
-    if ((inOpen || outOpen) && modalRef.current) {
-      modalRef.current.showModal();
+  const close = () => {
+    modalRef.current?.removeAttribute("open");
+    if (delayedClose) setTimeout(closeModal, 100);
+    else closeModal();
+  };
 
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      modalRef.current.showModal();
       document.body.setAttribute("style", "height:100vh;overflow-y:hidden;");
     } else {
       modalRef.current?.close();
-
       document.body.removeAttribute("style");
     }
-  }, [outOpen, inOpen]);
+  }, [isOpen]);
 
   return (
     <>
-      {(inOpen || outOpen) && (
+      {isOpen && (
         <dialog
           onKeyDown={handleKeyDown}
           className={style.dialog}
           style={{
-            width: `${width}px`,
+            width: width,
+            height: heigth,
           }}
           ref={modalRef}
         >
           <div className={style.header}>
-            {modalTitle}
+            {title}
             <button
               className={style.close_btn}
-              onClick={closeModal}
+              onClick={close}
             >
               <Xicon size={20} />
             </button>
           </div>
           <main>{children}</main>
-          {footerRender && <footer> {footerRender(closeModal)}</footer>}
+          {footerRender && <footer> {footerRender(close)}</footer>}
         </dialog>
       )}
       {render && render(openModal)}

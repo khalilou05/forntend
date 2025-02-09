@@ -1,4 +1,4 @@
-import { SERVER_IP } from "@/settings";
+import { DOMAIN_NAME } from "@/settings";
 import { useEffect, useState } from "react";
 
 export default function useFetch<T>(
@@ -8,10 +8,12 @@ export default function useFetch<T>(
   data: T | null;
   loading: boolean;
   error: string;
+  statusCode: number;
 } {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<T | null>(null);
+  const [statusCode, setStatusCode] = useState(0);
 
   useEffect(() => {
     const abortctrl = new AbortController();
@@ -19,13 +21,14 @@ export default function useFetch<T>(
     setError("");
     (async () => {
       try {
-        const resp = await fetch(`${SERVER_IP}${url}`, {
+        const resp = await fetch(`${DOMAIN_NAME}${url}`, {
           signal: abortctrl.signal,
           ...option,
         });
         const jsonData = await resp.json().catch(() => null);
         if (resp.ok) {
           setData(jsonData);
+          setStatusCode(resp.status);
         } else {
           throw Error(jsonData["msg"]);
         }
@@ -39,5 +42,5 @@ export default function useFetch<T>(
     return () => abortctrl.abort();
   }, [url]);
 
-  return { data: data, loading: loading, error: error };
+  return { data: data, statusCode: statusCode, loading: loading, error: error };
 }

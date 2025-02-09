@@ -1,7 +1,7 @@
 import style from "@/css/component/customer_info.module.css";
 import SelectInput from "../SelectInput";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { fetchApi } from "@/api/fetchApi";
+import fetchApi from "@/lib/fetch";
 import type { Wilaya, Baladiya, OrderOut } from "@/types/types";
 import Card from "@/components/Card";
 import Input from "../Input";

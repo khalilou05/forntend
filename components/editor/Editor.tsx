@@ -2,32 +2,28 @@ import style from "@/css/component/editor.module.css";
 import BoldTextIcon from "@/assets/icons/boldtext";
 import ItalicTextIcon from "@/assets/icons/italictext";
 import UnderLineTextIcon from "@/assets/icons/underlinetext";
-import AddLinkBtn from "./AddLinkBtn";
+import AddLinkBtn from "./AddLinkModal";
 import BanIcon from "@/assets/icons/ban";
 import ListIcon from "@/assets/icons/list";
 import ListNumIcon from "@/assets/icons/listNumber";
-import AlignTextBtn from "@/components/editor/AlignTextBtn";
-import AddImageBtn from "@/components/editor/AddImageBtn";
-import AddVideoBtn from "@/components/editor/AddVideoBtn";
-import TextSizeBtn from "@/components/editor/TextSizeBtn";
-import ColorBtn from "@/components/editor/ColorBtn";
+import AlignTextBtn from "@/components/editor/AlignTextDropDown";
+import ImageIcon from "@/assets/icons/image";
+import AddVideoBtn from "@/components/editor/AddVideoModal";
+import TextSizeBtn from "@/components/editor/SelectTextSizeDropDown";
+import ColorBtn from "@/components/editor/SelectColorDropDown";
 import React, { useEffect, useRef, useState } from "react";
 
 import type { Product } from "@/types/types";
 import ToolTip from "../ToolTip";
 
-export default function Editor({
-  handleProductUpdate,
-}: {
-  handleProductUpdate: (
-    prop: keyof Product,
-    value: string | number | boolean
-  ) => void;
-}) {
+type Prop = {
+  openImgModal: () => void;
+  ref: React.RefObject<HTMLDivElement | null>;
+};
+
+export default function Editor({ openImgModal, ref }: Prop) {
   const [hasSelected, setHasSelected] = useState(false);
   const [savedSelection, setSavedSelection] = useState<Range | null>(null);
-
-  const editor = useRef<HTMLDivElement | null>(null);
 
   const addImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -82,11 +78,12 @@ export default function Editor({
     }
   };
 
-  const handleInput = () => {
-    if (!editor.current?.firstChild) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Backspace") {
+      return;
       const elemnt = document.createElement("p");
       elemnt.innerHTML = "<br />";
-      editor.current?.appendChild(elemnt);
+      ref.current?.appendChild(elemnt);
       document.getSelection()?.setPosition(elemnt);
     }
   };
@@ -137,7 +134,14 @@ export default function Editor({
 
           <div className={style.dividor}></div>
           <AddLinkBtn hasSelected={hasSelected} />
-          <AddImageBtn />
+          <ToolTip value="إضافة صور">
+            <button
+              onClick={openImgModal}
+              className={style.btn}
+            >
+              <ImageIcon size={20} />
+            </button>
+          </ToolTip>
           <AddVideoBtn addVideo={addVideo} />
           <div className={style.dividor}></div>
           <ToolTip value="قائمة نقاط">
@@ -168,8 +172,8 @@ export default function Editor({
         </div>
         <div
           suppressContentEditableWarning
-          ref={editor}
-          onInput={handleInput}
+          ref={ref}
+          onKeyDown={handleKeyDown}
           onKeyUp={hasSelectedText}
           onMouseUp={hasSelectedText}
           className={style.editor}

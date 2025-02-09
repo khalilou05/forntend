@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "@/css/route/shipping.module.css";
 import Toast from "@/components/toast";
-import { fetchApi } from "@/api/fetchApi";
+import fetchApi from "@/lib/fetch";
 import type { ToastMsg, Wilaya } from "@/types/types";
 import Button from "@/components/Button";
 import Card from "@/components/Card";

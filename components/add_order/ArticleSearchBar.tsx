@@ -7,17 +7,17 @@ import Modal from "../Modal";
 import Button from "../Button";
 function ArticleSearchInput() {
   const [value, setValue] = useState("");
-  const [outOpen, setOutOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedProduct, setselectedProduct] = useState();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
-    setOutOpen(true);
+    setIsOpen(true);
   };
 
-  const closeModal = () => {
-    setOutOpen(false);
+  const handleClose = () => {
     setValue("");
+    setIsOpen(false);
   };
 
   return (
@@ -32,9 +32,10 @@ function ArticleSearchInput() {
           />
         </div>
         <Modal
-          outOpen={outOpen}
-          setOutClose={closeModal}
-          modalTitle="بحث عن منتج"
+          isOpen={isOpen}
+          closeModal={handleClose}
+          openModal={() => setIsOpen(true)}
+          title="بحث عن منتج"
           render={(handleOpen) => (
             <Button
               onClick={handleOpen}

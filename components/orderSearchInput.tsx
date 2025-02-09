@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 
-import { fetchApi } from "@/api/fetchApi";
 import { OrderIn } from "@/types/types";
 
 import SearchInput from "./SearchInput";
+import fetchApi from "@/lib/fetch";
 
 type OrderFilterInput = {
   setOrders: (orders: OrderIn[]) => void;
@@ -47,6 +47,7 @@ function OrderSerchInput({ setOrders, orderStatus }: OrderFilterInput) {
 
   return (
     <SearchInput
+      showXicon
       placeholder="إبحث برقم الهاتف أو الإسم"
       onChange={handleSearch}
     />

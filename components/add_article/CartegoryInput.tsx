@@ -42,7 +42,10 @@ export default function CartegoryInput({
       renderChildren={(closeDropDown) =>
         category?.map((item) => (
           <div
-            onClick={closeDropDown}
+            onClick={() => {
+              setinputValue(item.name);
+              closeDropDown();
+            }}
             key={item.id}
           >
             {item.name}

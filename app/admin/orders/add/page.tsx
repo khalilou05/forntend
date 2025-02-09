@@ -22,7 +22,7 @@ export default function AddOrderPage() {
     prop: keyof OrderOut,
     value: string | number | boolean
   ) => {
-    setOrder({ ...order, [prop]: value });
+    setOrder((prv) => ({ ...prv, [prop]: value }));
   };
 
   useEffect(() => {

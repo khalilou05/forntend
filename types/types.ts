@@ -90,6 +90,14 @@ export type Images = {
   image: File;
 };
 
+export type ImagesIn = {
+  id: string;
+  file_name: string;
+  file_extenstion: string;
+  url: string;
+  type: "image" | "video";
+};
+
 export type ImagesPosition = {
   imageID: string;
   x: number;

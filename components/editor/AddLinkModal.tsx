@@ -7,15 +7,25 @@ import SelectInput from "../SelectInput";
 import Button from "../Button";
 import React, { useState } from "react";
 import Input from "../Input";
-export default function AddLinkBtn({ hasSelected }: { hasSelected: boolean }) {
+
+export default function AddLinkModal({
+  hasSelected,
+}: {
+  hasSelected: boolean;
+}) {
   const [link, setLink] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
   };
+
   return (
     <Modal
-      modalTitle="إضافة رابط"
+      isOpen={isOpen}
+      openModal={() => setIsOpen(true)}
+      closeModal={() => setIsOpen(false)}
+      title="إضافة رابط"
       render={(handleOpen) => (
         <ToolTip value="إضافة رابط">
           <button

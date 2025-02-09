@@ -8,10 +8,10 @@ import EyeCrossedIcon from "@/assets/icons/eyecrossed";
 import EyeOpned from "@/assets/icons/eyeOpen";
 import Loding from "@/components/LoadingSpiner";
 
-import { fetchApi } from "@/api/fetchApi";
 import Card from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import fetchApi from "@/lib/fetch";
 
 function AdminLogin() {
   const loginData = useRef({
@@ -144,7 +144,7 @@ function AdminLogin() {
             {btnLoading ? (
               <Loding
                 borderTopColor="white"
-                size="25px"
+                size={25}
               />
             ) : (
               "دخول"

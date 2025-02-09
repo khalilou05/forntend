@@ -1,34 +1,34 @@
-import { useState } from "react";
+import TextColorIcon from "@/assets/icons/textcolor";
 import DownCaretIcon from "@/assets/icons/downcaret";
+
+import ColorPicker from "../ColorPicker";
 import DropDown from "../DropDown";
 import ToolTip from "../ToolTip";
 import style from "@/css/component/editor.module.css";
 
-export default function TextSizeBtn() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("عادي");
-
+export default function SelectColorDropDown() {
   return (
     <DropDown
       align="center"
-      customWidth={100}
+      customWidth={230}
+      customHeith={270}
       component={(isOpen, ref, _, togleDropDown) => (
         <ToolTip
           show={!isOpen}
-          value="حجم النص"
+          value="الألوان"
         >
           <button
-            className={style.btn}
             data-open={isOpen}
+            className={style.btn}
             ref={ref}
             onClick={togleDropDown}
           >
-            {selectedSize}
+            <TextColorIcon size={20} />
             <DownCaretIcon size={20} />
           </button>
         </ToolTip>
       )}
-      renderChildren={() => <p>khalil</p>}
+      renderChildren={() => <ColorPicker />}
     />
   );
 }
