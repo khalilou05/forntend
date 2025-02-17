@@ -1,6 +1,6 @@
 import "@/css/route/singArticle.css";
 import ArticleImageSlider from "@/components/ArticleImageSlider";
-import { fetchApi } from "@/api/fetchApi";
+import fetchApi from "@/lib/fetch";
 
 type id = {
   params: Promise<{

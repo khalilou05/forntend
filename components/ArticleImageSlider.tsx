@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { SERVER_IP } from "@/settings";
+
 type ImageSliderProp = {
   imageUrlList: string[];
 };
@@ -24,7 +24,7 @@ function ArticleImageSlider({ imageUrlList }: ImageSliderProp) {
         return (
           <Image
             key={index}
-            src={`${SERVER_IP}/static/${item}`}
+            src={`/static/${item}`}
             fill
             alt="img"
             style={{

@@ -5,8 +5,11 @@ import Modal from "../Modal";
 import { useState } from "react";
 
 export default function AddImageBtn() {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <Modal
+      closeModal={() => setIsOpen(false)}
+      isOpen={isOpen}
       width={1000}
       title="إضافة صور"
       render={(handleClick) => (

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import style from "@/css/route/shipping.module.css";
 import Toast from "@/components/toast";
 import fetchApi from "@/lib/fetch";
@@ -10,94 +10,64 @@ import Input from "@/components/Input";
 import Switch from "@/components/Switch";
 import LoadingSpiner from "@/components/LoadingSpiner";
 
-function ShippingPage() {
-  const [wilaya, setwilaya] = useState<Wilaya[]>([]);
+import useFetch from "@/hooks/useFetch";
 
+function ShippingPage() {
   const [toastData, setToastData] = useState<ToastMsg[]>([]);
-  const prevWilaya = useRef<Wilaya[] | null>(null);
-  const [btdDisabled, setBtdDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const cache = useRef<Wilaya[]>([]);
 
-  const getModified = () => {
-    const modified = [];
-    for (let i = 0; i < wilaya.length; i++) {
-      const secendList = cache.current[i];
-      for (const prop in wilaya[i]) {
-        if (secendList[prop] !== wilaya[i][prop]) {
-          modified.push(wilaya[i]);
-          continue;
-        }
-      }
+  const { data: wilaya, setData } = useFetch<Wilaya[]>(
+    "/wilaya",
+    {},
+    (data) => {
+      cache.current = data;
     }
-    return modified;
-  };
+  );
+
+  const getModified = useMemo(() => {
+    if (!wilaya) return;
+    return wilaya.filter((item, i) => {
+      const prevItem = cache.current[i] ?? {};
+      return Object.keys(item).some((prop) => prevItem[prop] !== item[prop]);
+    });
+  }, [wilaya, cache.current]);
 
   async function updateShippingCost() {
-    if (btdDisabled) return;
+    if (!getModified) return;
     setLoading(true);
-    try {
-      const { status } = await fetchApi("/wilaya", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(getModified()),
-      });
-      if (status == 200) {
-        prevWilaya.current = wilaya;
-        cache.current = wilaya;
-        setBtdDisabled(true);
-      } else throw new Error("failed to update");
-    } catch (err) {
-      setwilaya(cache.current);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    const { status, error } = await fetchApi("/wilaya", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(getModified),
+    });
+    if (status == 200) {
+      cache.current = wilaya || [];
+    }
+    if (error) {
+      console.log(error);
     }
   }
 
   const handleOnChange = (
     wilayaID: number,
     prop: keyof Wilaya,
-    value: string | number | boolean
+    value: number | boolean
   ) => {
-    setwilaya((prv) =>
-      prv.map((item) =>
+    if (!wilaya) return;
+    if (typeof value === "number" && Number.isNaN(value)) return;
+    setData(
+      wilaya.map((item) =>
         item.id === wilayaID ? { ...item, [prop]: value } : item
       )
     );
   };
-  useEffect(() => {
-    document.title = "إدارة التوصيل";
-    const abortcntl = new AbortController();
-    (async () => {
-      try {
-        const { data, status } = await fetchApi<Wilaya[]>("/wilaya", {
-          signal: abortcntl.signal,
-        });
-        if (status == 200 && data) {
-          setwilaya(data);
-          cache.current = data;
-        } else throw new Error("error from the server");
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-
-    return () => abortcntl.abort();
-  }, []);
-
-  useEffect(() => {
-    const modified = getModified();
-    if (modified.length) {
-      setBtdDisabled(false);
-    } else {
-      setBtdDisabled(true);
-    }
-  }, [JSON.stringify(wilaya)]);
 
   return (
     <>
@@ -128,7 +98,11 @@ function ShippingPage() {
                 <Input
                   disabled={!item.active}
                   onChange={(e) => {
-                    handleOnChange(item.id, "desk_price", e.target.value);
+                    handleOnChange(
+                      item.id,
+                      "desk_price",
+                      Number(e.target.value)
+                    );
                   }}
                   value={item.desk_price}
                 />
@@ -137,7 +111,11 @@ function ShippingPage() {
                 <Input
                   disabled={!item.active}
                   onChange={(e) => {
-                    handleOnChange(item.id, "home_price", e.target.value);
+                    handleOnChange(
+                      item.id,
+                      "home_price",
+                      Number(e.target.value)
+                    );
                   }}
                   value={item.home_price}
                 />
@@ -155,11 +133,18 @@ function ShippingPage() {
         </div>
       </Card>
       <Button
-        disabled={btdDisabled}
+        disabled={getModified?.length ? false : true}
         onClick={updateShippingCost}
-        buttonType={btdDisabled ? "disabled" : "primary"}
+        buttonType={getModified?.length ? "primary" : "disabled"}
       >
-        {loading ? <LoadingSpiner size={20} /> : "حفض"}
+        {loading ? (
+          <LoadingSpiner
+            borderTopColor="white"
+            size={20}
+          />
+        ) : (
+          "حفض"
+        )}
       </Button>
     </>
   );

@@ -3,14 +3,15 @@ import { DOMAIN_NAME } from "@/settings";
 const fetchApi = async <T>(
   url: string,
   init: RequestInit = {}
-): Promise<{ data?: T; status?: number; error?: boolean }> => {
+): Promise<{ data?: T; status?: number; error?: string }> => {
   try {
     const resp = await fetch(`${DOMAIN_NAME}${url}`, { ...init });
-    const jsonData = await resp.json().catch(() => null);
-    if (resp.ok) return { data: jsonData, status: resp.status };
-    else throw new Error("failed to fetch");
+    if (!resp.ok) return { error: "failed to fetch" };
+    const jsonData = await resp.json();
+    return { data: jsonData, status: resp.status };
   } catch (error) {
-    return { error: true };
+    if (error instanceof SyntaxError) return { error: "Failed to parse json" };
+    return { error: "Failed to fetch" };
   }
 };
 

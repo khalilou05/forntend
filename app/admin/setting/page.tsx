@@ -5,9 +5,10 @@ import ReseTIcon from "@/assets/icons/resetPass";
 
 import EyeOpen from "@/assets/icons/eyeOpen";
 import EyeClose from "@/assets/icons/eyecrossed";
-import { fetchApi } from "@/api/fetchApi";
+
 import Card from "@/components/Card";
 import Button from "@/components/Button";
+import fetchApi from "@/lib/fetch";
 
 type Setting = {
   [key: string]: string;
@@ -72,11 +73,11 @@ function SettingPage() {
         <div className={style.EyeIcon}>
           {show ? (
             <span onClick={() => setshow((prv) => !prv)}>
-              <EyeClose size={"15px"} />
+              <EyeClose size={15} />
             </span>
           ) : (
             <span onClick={() => setshow((prv) => !prv)}>
-              <EyeOpen size={"15px"} />
+              <EyeOpen size={15} />
             </span>
           )}
         </div>

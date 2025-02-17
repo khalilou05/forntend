@@ -1,6 +1,6 @@
-import { fetchApi } from "@/api/fetchApi";
 import React from "react";
 import ArticleCard from "@/components/Article";
+import fetchApi from "@/lib/fetch";
 type Article = {
   id: number;
   title: string;

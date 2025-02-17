@@ -3,12 +3,12 @@ import style from "@/css/component/button.module.css";
 type Prop = {
   children: React.ReactNode;
   buttonType: "primary" | "secandary" | "disabled" | "danger" | "link";
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & React.ComponentProps<"button">;
 export default function Button({ children, buttonType, ...rest }: Prop) {
   return (
     <button
-      className={style[buttonType]}
       {...rest}
+      className={style[buttonType] + " " + rest.className}
     >
       <span>{children}</span>
     </button>

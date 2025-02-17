@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import style from "@/css/component/order_filter_btn.module.css";
 import BadgeStyle from "@/css/component/orderTable.module.css";
 
-import FilterIcon from "@/assets/icons/filter";
 type DropDownProp = {
   handleOrderStatusChange: (status: OrderStatus) => void;
 };
@@ -50,7 +49,7 @@ function DropDown({ handleOrderStatusChange }: DropDownProp) {
         }}
         className={style.btn}
       >
-        <FilterIcon size={"15px"} />
+        {/* <FilterIcon size={"15px"} /> */}
         <span>فلترة الطلبيات</span>
       </button>
       {isOpen &&

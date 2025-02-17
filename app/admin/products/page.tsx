@@ -3,7 +3,7 @@
 import style from "@/css/route/manage_article.module.css";
 
 import { useEffect, useState } from "react";
-import { fetchApi } from "@/api/fetchApi";
+
 import Link from "next/link";
 import Card from "@/components/Card";
 

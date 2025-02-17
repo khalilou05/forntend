@@ -1,13 +1,14 @@
 import DownCaret from "@/assets/icons/caretDown";
 import UpCaret from "@/assets/icons/caretUp";
-import { useState, type ChangeEvent } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import style from "@/css/component/inputNumberArrow.module.css";
 import Input from "./Input";
 
 type Prop = {
-  onChange: (key: string, value: number) => void;
-};
-export default function InputNumberArrow({ onChange }: Prop) {
+  handleInputChange: (value: number) => void;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+export default function InputNumberArrow({ handleInputChange, ...rest }: Prop) {
   const [value, setValue] = useState(0);
   const [isArrowVisible, setIsArrowVisible] = useState(false);
 
@@ -15,7 +16,7 @@ export default function InputNumberArrow({ onChange }: Prop) {
     const value = Number(e.target.value);
     if (!Number.isInteger(value)) return;
     setValue(value);
-    onChange("global_stock", value);
+    handleInputChange(value);
   };
 
   const handleIncrement = () => {
@@ -37,6 +38,7 @@ export default function InputNumberArrow({ onChange }: Prop) {
       className={style.warper}
     >
       <Input
+        {...rest}
         onChange={handleChange}
         value={value}
       />

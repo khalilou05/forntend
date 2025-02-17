@@ -1,17 +1,12 @@
 import type React from "react";
 import style from "@/css/component/input.module.css";
+import type { ComponentProps } from "react";
 
-type Prop = {
-  placeholder?: string;
-  ref?: React.Ref<HTMLInputElement>;
-} & React.InputHTMLAttributes<HTMLInputElement>;
-export default function Input({ placeholder, ref, ...rest }: Prop) {
+export default function Input({ ...rest }: ComponentProps<"input">) {
   return (
     <input
-      className={style.input}
-      ref={ref}
-      placeholder={placeholder}
       {...rest}
+      className={style.input}
     />
   );
 }

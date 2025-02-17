@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 
 export default function useFetch<T>(
   url: string,
-  option: RequestInit = {}
+  option: RequestInit = {},
+  callBack?: (data: T) => void,
+  deps: any[] = []
 ): {
   data: T | null;
+  setData: React.Dispatch<React.SetStateAction<T | null>>;
   loading: boolean;
   error: string;
   statusCode: number;
@@ -17,6 +20,7 @@ export default function useFetch<T>(
 
   useEffect(() => {
     const abortctrl = new AbortController();
+    setData(null);
     setLoading(true);
     setError("");
     (async () => {
@@ -28,6 +32,7 @@ export default function useFetch<T>(
         const jsonData = await resp.json().catch(() => null);
         if (resp.ok) {
           setData(jsonData);
+          callBack && callBack(jsonData);
           setStatusCode(resp.status);
         } else {
           throw Error(jsonData["msg"]);
@@ -39,8 +44,16 @@ export default function useFetch<T>(
       }
     })();
 
-    return () => abortctrl.abort();
-  }, [url]);
+    return () => {
+      abortctrl.abort();
+    };
+  }, [url, ...deps]);
 
-  return { data: data, statusCode: statusCode, loading: loading, error: error };
+  return {
+    data: data,
+    setData,
+    statusCode: statusCode,
+    loading: loading,
+    error: error,
+  };
 }

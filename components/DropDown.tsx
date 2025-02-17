@@ -40,10 +40,24 @@ export default function DropDown({
   const componentRef = useRef<HTMLElement | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
 
+  const adjustPosition = () => {
+    if (!componentRef.current) return;
+    const { top, left, right, height, width } =
+      componentRef.current?.getBoundingClientRect();
+
+    setPosition({
+      top: top + height + window.scrollY,
+      left: align === "center" ? left + width / 2 : left,
+      width: sameWidth ? width : customWidth,
+      right: align === "right" ? window.innerWidth - right : "",
+    });
+  };
   const togleDropDown = () => {
+    adjustPosition();
     setIsOpen(!isOpen);
   };
   const openDropDown = () => {
+    adjustPosition();
     setIsOpen(true);
   };
   const closeDropDown = () => {
@@ -60,18 +74,7 @@ export default function DropDown({
       togleDropDown();
     }
   };
-  const adjustPosition = () => {
-    if (!componentRef.current) return;
-    const { top, left, right, height, width } =
-      componentRef.current?.getBoundingClientRect();
 
-    setPosition({
-      top: top + height + window.scrollY,
-      left: align === "center" ? left + width / 2 : left,
-      width: sameWidth ? width : customWidth,
-      right: align === "right" ? window.innerWidth - right : "",
-    });
-  };
   const handleScroll = () => {
     if (dropRef.current && componentRef.current) {
       const { top } = dropRef.current?.getBoundingClientRect();
@@ -80,21 +83,19 @@ export default function DropDown({
   };
 
   useEffect(() => {
-    adjustPosition();
-    window.addEventListener("resize", adjustPosition);
-    return () => window.removeEventListener("resize", adjustPosition);
-  }, []);
-  useEffect(() => {
+    const abortctrl = new AbortController();
     if (isOpen) {
-      window.addEventListener("mousedown", handleMouseDown);
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("mousedown", handleMouseDown, {
+        signal: abortctrl.signal,
+      });
+      window.addEventListener("scroll", handleScroll, {
+        signal: abortctrl.signal,
+      });
     } else {
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("scroll", handleScroll);
+      abortctrl.abort();
     }
     return () => {
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("scroll", handleScroll);
+      abortctrl.abort();
     };
   }, [isOpen]);
   return (
@@ -115,6 +116,7 @@ export default function DropDown({
               top: position.top,
               left: position.left,
               right: position.right,
+              zIndex: 100,
             }}
           >
             {renderChildren(closeDropDown)}

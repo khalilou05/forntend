@@ -2,68 +2,74 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "@/css/component/orderTable.module.css";
 import { OrderStatus, type OrderIn, type OrderTableProps } from "@/types/types";
-import { inSelectedOrder, orderStatusFormat } from "@/lib/ordertableFunc";
+import { orderStatusFormat } from "@/lib/ordertableFunc";
 import { phoneFormat } from "@/lib/phoneNformat";
 import { useRouter } from "next/navigation";
 import DropDown from "./DropDown";
 
-import fetchApi from "@/lib/fetch";
 import Card from "./Card";
 import Button from "./Button";
 import Badge from "./Badge";
 import OrderSerchInput from "@/components/orderSearchInput";
+import useFetch from "@/hooks/useFetch";
+import CheckBox from "./CheckBox";
 
 function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
   const [selectedOrders, setselectedOrders] = useState<OrderIn[]>([]);
-  const [orders, setOrders] = useState<OrderIn[]>(ordersList);
   const [orderCount, setOrderCount] = useState(ordersCount);
   const [orderToViewId, setorderToViewId] = useState(0);
   const [orderStatus, setOrderStatus] = useState<OrderStatus>("all");
 
   const selectAllInput = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
+  const { data: orders, setData } = useFetch<OrderIn[]>(
+    `/order?status=${orderStatus}`,
+    {},
+    undefined,
+    [orderStatus]
+  );
   const handleSelectOrder = (order: OrderIn) => {
-    const selectedOrdersId = selectedOrders.map((order) => order.id);
-    if (selectedOrdersId.includes(order.id)) {
-      const removedOrderList = selectedOrders.filter(
-        (sorder) => sorder.id != order.id
-      );
-      setselectedOrders(removedOrderList);
-    } else {
-      setselectedOrders([...selectedOrders, order]);
-    }
+    const inSelectedOrder = selectedOrders.find((item) => item.id === order.id);
+    if (inSelectedOrder)
+      setselectedOrders((prv) => prv.filter((item) => item.id !== order.id));
+    else setselectedOrders((prv) => [...prv, order]);
   };
   const handleOrderStatusChange = (status: OrderStatus) => {
     setOrderStatus(status);
     setselectedOrders([]);
   };
-  const getOrders = async () => {
-    const { data } = await fetchApi<OrderIn[]>(`/order?status=${orderStatus}`);
-    const { data: ordNumber } = await fetchApi<number>(
-      `/order/count?status=${orderStatus}`
-    );
-    setOrderCount(ordNumber || 0);
-    if (data) setOrders(data);
-    else setOrders([]);
+
+  const handleSelectAllOrder = () => {
+    if (!orders?.length) return;
+    if (orders.length === selectedOrders?.length) {
+      setselectedOrders([]);
+    } else {
+      setselectedOrders(orders);
+    }
   };
-  useEffect(() => {
-    if (selectedOrders.length) {
-      selectAllInput.current!.indeterminate = true;
-      selectAllInput.current!.checked = false;
-    }
-    if (selectedOrders.length === orders.length) {
-      selectAllInput.current!.checked = true;
-      selectAllInput.current!.indeterminate = false;
-    }
-    if (selectedOrders.length === 0) {
-      selectAllInput.current!.indeterminate = false;
-      selectAllInput.current!.checked = false;
-    }
-  }, [selectedOrders.length]);
+
+  const inSelectedOrder = (orderId: number) => {
+    const inSelected = selectedOrders.find((item) => item.id === orderId);
+    if (inSelected) return true;
+    else return false;
+  };
 
   useEffect(() => {
-    getOrders();
-  }, [orderStatus]);
+    if (!selectAllInput.current) return;
+    switch (selectedOrders.length) {
+      case 0:
+        selectAllInput.current.checked = false;
+        selectAllInput.current.indeterminate = false;
+        break;
+      case orders?.length:
+        selectAllInput.current.checked = true;
+        selectAllInput.current.indeterminate = false;
+        break;
+      default:
+        selectAllInput.current.checked = false;
+        selectAllInput.current.indeterminate = true;
+    }
+  }, [selectedOrders]);
 
   const btnStatusBadge: Array<{ name: string; status: OrderStatus }> = [
     { name: "الكل", status: "all" },
@@ -80,7 +86,7 @@ function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
         <div className={style.search_inpt}>
           <OrderSerchInput
             orderStatus={orderStatus}
-            setOrders={setOrders}
+            setOrders={setData}
           />
         </div>
         <Button
@@ -108,17 +114,9 @@ function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
         </div>
         <div className={style.fixed_row}>
           <div className={style.fixed_row_item}>
-            <input
+            <CheckBox
               ref={selectAllInput}
-              onChange={() => {
-                if (orders.length && selectedOrders.length == orders.length) {
-                  setselectedOrders([]);
-                } else {
-                  setselectedOrders(orders);
-                }
-              }}
-              type="checkbox"
-              id="checkbox"
+              onChange={handleSelectAllOrder}
             />
           </div>
           <div className={style.fixed_row_item}>الهاتف</div>
@@ -131,7 +129,7 @@ function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
           <div className={style.fixed_row_item}></div>
         </div>
         <div className={style.order_container}>
-          {!orders.length ? (
+          {orders?.length ? (
             <div className={style.no_orders}>لا توجد طلبيات</div>
           ) : (
             orders?.map((order) => (
@@ -140,12 +138,11 @@ function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
                 className={style.order_row}
               >
                 <div>
-                  <input
-                    checked={inSelectedOrder(order.id, selectedOrders)}
+                  <CheckBox
+                    checked={inSelectedOrder(order.id)}
                     onChange={() => {
                       handleSelectOrder(order);
                     }}
-                    type="checkbox"
                   />
                 </div>
                 <div>{phoneFormat(order.phone_number)}</div>

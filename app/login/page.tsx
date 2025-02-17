@@ -43,35 +43,28 @@ function AdminLogin() {
 
       return;
     }
-    try {
-      setBtnLoading(true);
-      const response = await fetchApi("/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData.current),
-      });
 
-      if (response?.status === 200) {
-        route.push("/admin/orders");
-      } else {
-        throw new Error("failed");
-      }
-    } catch (error) {
+    setBtnLoading(true);
+    const { status, error } = await fetchApi("/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginData.current),
+    });
+
+    if (error) {
       setLoginError(true);
-    } finally {
       setTimeout(() => {
         setBtnLoading(false);
-        setLoginError(false);
-      }, 2000);
+      }, 1000);
+      return;
+    }
+    if (status === 200) {
+      route.push("/admin/orders");
     }
   }
-
-  useEffect(() => {
-    firstInpt.current?.focus();
-  }, []);
 
   return (
     <Card
@@ -94,6 +87,7 @@ function AdminLogin() {
           <div className={style.section}>
             <label>إسم المستخدم</label>
             <Input
+              autoFocus
               style={{ height: "40px" }}
               ref={firstInpt}
               onChange={(e) => {

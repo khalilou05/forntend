@@ -3,7 +3,7 @@
 import style from "@/css/route/addArticle.module.css";
 import { useEffect, useRef, useState } from "react";
 import SelectInput from "@/components/SelectInput";
-import type { Product, ProductOption, ImagesIn } from "@/types/types";
+import type { Product, ProductOption, Media } from "@/types/types";
 import ProductImage from "@/components/add_article/ProductImage";
 import { useRouter } from "next/navigation";
 import Editor from "@/components/editor/Editor";
@@ -18,21 +18,16 @@ import Card from "@/components/Card";
 import Input from "@/components/Input";
 import useFetch from "@/hooks/useFetch";
 import ImageModal from "@/components/ImageModal";
-
-type ImageModalProp = {
-  isOpen: boolean;
-  openFor: ImagesIn[] | null;
-  singleSelectionMode: boolean;
-};
+import CheckBox from "@/components/CheckBox";
+import fetchApi from "@/lib/fetch";
 
 export default function AddArticle() {
-  const [mediaList, setMediaList] = useState<ImagesIn[]>([]);
-  const formData = new FormData();
+  const [mediaList, setMediaList] = useState<Media[]>([]);
   const router = useRouter();
   const editorRef = useRef<HTMLDivElement | null>(null);
   const [canSubmit, setCanSubmit] = useState(false);
   const [productOption, setProductOption] = useState<ProductOption[]>([]);
-  const imageModalAction = useRef<((images: ImagesIn[]) => void) | null>(null);
+  const imageModalAction = useRef<((images: Media[]) => void) | null>(null);
   const [product, setProduct] = useState<Product>({
     title: "",
     price: 0,
@@ -46,7 +41,7 @@ export default function AddArticle() {
     active: true,
     has_option: false,
   });
-  const prevProduct = useRef<Product>({
+  const cache = useRef<Product>({
     title: "",
     price: 0,
     prev_price: 0,
@@ -59,10 +54,15 @@ export default function AddArticle() {
     active: true,
     has_option: false,
   });
-  const [imgModalState, setImgModalState] = useState<ImageModalProp>({
+
+  const [imgModalState, setImgModalState] = useState<{
+    isOpen: boolean;
+    mediaList: Media[];
+    selectionMode: "single" | "multiple";
+  }>({
     isOpen: false,
-    openFor: [],
-    singleSelectionMode: false,
+    mediaList: [],
+    selectionMode: "single",
   });
 
   const handleProductUpdate = (
@@ -73,67 +73,58 @@ export default function AddArticle() {
   };
 
   const uploadProduct = async () => {
-    if (Object.values(formData).length > 0) return;
+    const formData = new FormData();
     const data = {
       product: product,
       product_option: productOption,
     };
     formData.append("data", JSON.stringify(data));
-    // todo check here
-    // for (const image of imageFileList) {
-    //   formData.append("images", image.image);
-    // }
-    const { data: resp } = useFetch("/product", {
+
+    const { status } = await fetchApi("/product", {
       method: "POST",
       body: JSON.stringify(data),
     });
-    if (resp) router.back();
+    if (status === 201) router.back();
   };
 
   const closeImgModal = () => {
     setImgModalState((prv) => ({ ...prv, isOpen: false }));
-    imageModalAction.current = null;
   };
 
-  const openForProductImg = () => {
-    setImgModalState((prv) => ({
-      ...prv,
-      openFor: mediaList,
-      isOpen: true,
-    }));
-    imageModalAction.current = (images) => {
-      setMediaList(images);
-    };
-  };
-  const appendImgToEditor = (images: ImagesIn[]) => {
-    for (const img of images) {
-      const node = document.createElement("img");
-      node.src = img.url;
-
-      editorRef.current?.appendChild(node);
+  const appendImgToEditor = (medias: Media[]) => {
+    for (const media of medias) {
+      if (media.type === "video") {
+        editorRef.current?.insertAdjacentHTML(
+          "beforeend",
+          `<video width="95%" controls src=${media.url}></video>`
+        );
+      } else {
+        editorRef.current?.insertAdjacentHTML(
+          "beforeend",
+          `<p>
+            <img width="95%"  src=${media.url} />
+          </p>`
+        );
+      }
     }
   };
-  const openForDescImg = () => {
-    setImgModalState((prv) => ({
-      ...prv,
-      openFor: null,
+  const openImgModal = (
+    selectionMode: "single" | "multiple",
+    openFor: Media[],
+    callBack: (images: Media[]) => void
+  ) => {
+    setImgModalState({
       isOpen: true,
-    }));
-    imageModalAction.current = (images) => appendImgToEditor(images);
-  };
-  const openVariantImg = () => {
-    setImgModalState((prv) => ({
-      ...prv,
-      isOpen: true,
-      openFor: mediaList,
-      singleSelectionMode: true,
-    }));
+      mediaList: openFor,
+      selectionMode: selectionMode,
+    });
+    imageModalAction.current = callBack;
   };
 
   // const checkProduct = () => {
   //   const dirtyArray = [];
   //   for (const key in product) {
-  //     if (product[key] !== prevProduct.current[key]) dirtyArray.push(true);
+  //     if (product[key] !== cache.current[key]) dirtyArray.push(true);
   //     else dirtyArray.push(false);
   //   }
   //   if (dirtyArray.includes(true))
@@ -208,11 +199,12 @@ export default function AddArticle() {
 
   return (
     <main className={style.body}>
+      {/* <button onClick={() => console.log(selectedDescImg.current)}>qsd</button> */}
       <HeaderNav title="إضافة منتج" />
       <ImageModal
         {...imgModalState}
         closeModal={closeImgModal}
-        action={imageModalAction.current}
+        callBack={imageModalAction.current}
       />
       <div className={style.column_container}>
         <div className={style.right_column}>
@@ -237,12 +229,16 @@ export default function AddArticle() {
             <div className={style.section}>
               <Editor
                 ref={editorRef}
-                openImgModal={openForDescImg}
+                openImgModal={() =>
+                  openImgModal("multiple", [], appendImgToEditor)
+                }
               />
             </div>
             <div className={style.section}>
               <ProductImage
-                openForProductImg={openForProductImg}
+                openForProductImg={() =>
+                  openImgModal("multiple", mediaList, setMediaList)
+                }
                 setMediaList={setMediaList}
                 mediaList={mediaList}
               />
@@ -298,13 +294,16 @@ export default function AddArticle() {
           <Card style={{ gap: 10 }}>
             <div className={style.title}>المخزون</div>
 
-            <InputNumberArrow onChange={() => handleProductUpdate} />
+            <InputNumberArrow
+              handleInputChange={(value) =>
+                handleProductUpdate("global_stock", value)
+              }
+            />
             <div>
-              <input
+              <CheckBox
                 onChange={(e) =>
                   handleProductUpdate("out_stock_sell", e.target.checked)
                 }
-                type="checkbox"
               />
               <span>إستقبال الطلبيات بعد نفاذ المخزون</span>
             </div>

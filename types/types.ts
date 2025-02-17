@@ -90,7 +90,15 @@ export type Images = {
   image: File;
 };
 
-export type ImagesIn = {
+export type ImageModalProp = {
+  callBack: ((images: Media[]) => void) | null;
+  closeModal: () => void;
+  isOpen: boolean;
+  mediaList: Media[];
+  selectionMode: "single" | "multiple";
+};
+
+export type Media = {
   id: string;
   file_name: string;
   file_extenstion: string;

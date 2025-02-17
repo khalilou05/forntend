@@ -66,7 +66,7 @@ export default function OptionCard({ options, setProductOption }: Prop) {
               إضافة خيارات مثل الحجم أو الألوان
             </button>
           )}
-          renderChildren={() => <p onClick={addCustomProductOption}>khalil</p>}
+          renderChildren={() => <p onClick={addCustomProductOption}>custom</p>}
         />
       )}
     </Card>
@@ -315,7 +315,7 @@ function CustomOption({
                 tabIndex={0}
               />
 
-              {option.items.length > 2 && item.value.trim() !== "" && (
+              {option.items.length > 2 && item.value.trim() && (
                 <TrashIcon
                   tabIndex={-1}
                   onClick={() => {

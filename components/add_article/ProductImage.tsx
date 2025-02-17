@@ -2,15 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import style from "@/css/component/imageManager.module.css";
 
 import PlusIcon from "@/assets/icons/plus";
-import DragableImage from "./Dragableimage";
-import { Images, type ImagesIn } from "@/types/types";
-import Image from "next/image";
+import DragableMedia from "./DragableMedia";
+import { type Media } from "@/types/types";
 
 import fetchApi from "@/lib/fetch";
 import Button from "../Button";
+import CheckBox from "../CheckBox";
 type Prop = {
-  mediaList: ImagesIn[];
-  setMediaList: React.Dispatch<React.SetStateAction<ImagesIn[]>>;
+  mediaList: Media[];
+  setMediaList: React.Dispatch<React.SetStateAction<Media[]>>;
   openForProductImg: () => void;
 };
 
@@ -61,7 +61,7 @@ export default function ProductImage({
     for (const file of files) {
       formData.append("medias", file);
     }
-    const { data, status } = await fetchApi<ImagesIn[]>("/media", {
+    const { data, status } = await fetchApi<Media[]>("/media", {
       method: "POST",
       body: formData,
     });
@@ -71,7 +71,7 @@ export default function ProductImage({
 
   for (let i = 0; i < mediaList.length; i++) {
     mediaToRender.push(
-      <DragableImage
+      <DragableMedia
         selectedImageLength={selectedImage.length}
         dragMode={dragMode}
         setdragMode={setdragMode}
@@ -80,7 +80,7 @@ export default function ProductImage({
         fileListLength={mediaList.length}
         imageID={mediaList[i].id}
         key={mediaList[i].id}
-        imgUrl={mediaList[i].url}
+        media={mediaList[i]}
       />
     );
 
@@ -105,19 +105,14 @@ export default function ProductImage({
 
   useEffect(() => {
     if (!slectAllRef.current) return;
-    if (selectedImage.length) {
-      slectAllRef.current.indeterminate = true;
-      slectAllRef.current.checked = false;
-    }
     if (selectedImage.length === mediaList.length) {
       slectAllRef.current.checked = true;
       slectAllRef.current.indeterminate = false;
-    }
-    if (selectedImage.length === 0) {
-      slectAllRef.current.indeterminate = false;
+    } else {
+      slectAllRef.current.indeterminate = true;
       slectAllRef.current.checked = false;
     }
-  }, [selectedImage.length]);
+  }, [selectedImage]);
 
   return (
     <>
@@ -126,15 +121,21 @@ export default function ProductImage({
       ) : (
         <div className={style.select_bar}>
           <div>
-            <input
-              ref={slectAllRef}
-              type="checkbox"
+            <CheckBox
+              style={{ cursor: "pointer" }}
               onChange={handleSelectAllImage}
+              ref={slectAllRef}
             />
+
             <span>{selectedImage.length} صور محددة</span>
           </div>
-
-          <button onClick={deleteSelectedImage}>حذف</button>
+          <Button
+            onClick={deleteSelectedImage}
+            buttonType="link"
+            className={style.delete_btn}
+          >
+            حذف
+          </Button>
         </div>
       )}
       <section
@@ -157,7 +158,7 @@ export default function ProductImage({
             </button>
             <input
               onChange={handleUploadImage}
-              accept=".jpeg,.webp,.png,.jpg,.avif"
+              accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
               hidden
               multiple
@@ -182,11 +183,11 @@ export default function ProductImage({
               }}
               buttonType="secandary"
             >
-              رفع صور
+              رفع صور جديدة
             </Button>
             <input
               onChange={handleUploadImage}
-              accept=".jpeg,.webp,.png,.jpg,.avif"
+              accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
               hidden
               type="file"

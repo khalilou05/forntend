@@ -3,9 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "@/css/component/imageManager.module.css";
 
 import Portal from "../Portal";
+import CheckBox from "../CheckBox";
+import type { Media } from "@/types/types";
 
 export default function Dragableimage({
-  imgUrl,
+  media,
   dragMode,
   fileListLength,
   imageID,
@@ -15,7 +17,7 @@ export default function Dragableimage({
   setSelectedImage,
   setdragMode,
 }: {
-  imgUrl: string;
+  media: Media;
   fileListLength: number;
   inSelectedImage: boolean;
   selectedImageLength: number;
@@ -118,19 +120,24 @@ export default function Dragableimage({
         }
         onMouseDown={handleMouseDown}
       >
-        <input
+        <CheckBox
           checked={inSelectedImage}
           onChange={setSelectedImage}
           className={style.img_checkbox}
           onMouseDown={(e) => e.stopPropagation()}
-          type="checkbox"
         />
-
-        <img
-          src={imgUrl}
-          alt="img"
-          style={{ objectFit: "cover", height: "100%", width: "100%" }}
-        />
+        {media.type === "image" ? (
+          <img
+            src={media.url}
+            alt="img"
+            style={{ objectFit: "cover", height: "100%", width: "100%" }}
+          />
+        ) : (
+          <video
+            controls
+            src={media.url}
+          ></video>
+        )}
       </div>
 
       {isDraging && (
@@ -154,16 +161,26 @@ export default function Dragableimage({
               zIndex: 100,
             }}
           >
-            <img
-              style={{
-                pointerEvents: "none",
-                objectFit: "cover",
-                height: "100%",
-                width: "100%",
-              }}
-              src={imgUrl}
-              alt="img"
-            />
+            {media.type === "image" ? (
+              <img
+                style={{
+                  pointerEvents: "none",
+                  objectFit: "cover",
+                  height: "100%",
+                  width: "100%",
+                }}
+                src={media.url}
+                alt="img"
+              />
+            ) : (
+              <video
+                style={{
+                  objectFit: "fill",
+                }}
+                playsInline
+                src={media.url}
+              ></video>
+            )}
           </div>
         </Portal>
       )}
