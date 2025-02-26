@@ -1,7 +1,12 @@
 import { jwtVerify } from "jose";
 
-export function isAuth(token: string) {
+export async function isAuth(token: string) {
   const secretkey = new TextEncoder().encode(process.env.SECRET_KEY);
-
-  return jwtVerify(token, secretkey);
+  if (token === "") return Promise.resolve(false);
+  try {
+    await jwtVerify(token, secretkey);
+    return true;
+  } catch {
+    return false;
+  }
 }

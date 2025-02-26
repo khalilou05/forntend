@@ -27,10 +27,12 @@ export default function AddVideoModal({ addVideo }: Prop) {
   return (
     <Modal
       isOpen={isOpen}
-      heigth={300}
+      style={{
+        height: "300px",
+        width: "500px",
+      }}
       backdrop
-      delayedClose={false}
-      width={500}
+      animatedColse={false}
       closeModal={closeModal}
       openModal={openModal}
       title="إضافة فيديو"

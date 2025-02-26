@@ -120,6 +120,23 @@ export default function AddArticle() {
     });
     imageModalAction.current = callBack;
   };
+  const handleImgUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callBack: (data: Media[]) => void
+  ) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("medias", file);
+    }
+    const { data, status } = await fetchApi<Media[]>("/media", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (data) callBack(data);
+  };
 
   // const checkProduct = () => {
   //   const dirtyArray = [];
@@ -203,6 +220,7 @@ export default function AddArticle() {
       <HeaderNav title="إضافة منتج" />
       <ImageModal
         {...imgModalState}
+        handleImgUpload={handleImgUpload}
         closeModal={closeImgModal}
         callBack={imageModalAction.current}
       />
@@ -239,6 +257,7 @@ export default function AddArticle() {
                 openForProductImg={() =>
                   openImgModal("multiple", mediaList, setMediaList)
                 }
+                handleImgUpload={handleImgUpload}
                 setMediaList={setMediaList}
                 mediaList={mediaList}
               />

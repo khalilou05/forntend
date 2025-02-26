@@ -45,9 +45,8 @@ function AdminLogin() {
     }
 
     setBtnLoading(true);
-    const { status, error } = await fetchApi("/login", {
+    const { status, error, data } = await fetchApi<string>("/login", {
       method: "POST",
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -61,7 +60,8 @@ function AdminLogin() {
       }, 1000);
       return;
     }
-    if (status === 200) {
+    if (status === 200 && data) {
+      sessionStorage.setItem("token", data);
       route.push("/admin/orders");
     }
   }

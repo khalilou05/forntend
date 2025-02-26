@@ -12,12 +12,17 @@ type Prop = {
   mediaList: Media[];
   setMediaList: React.Dispatch<React.SetStateAction<Media[]>>;
   openForProductImg: () => void;
+  handleImgUpload: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    callBack: (data: Media[]) => void
+  ) => void;
 };
 
 export default function ProductImage({
   mediaList,
   setMediaList,
   openForProductImg,
+  handleImgUpload,
 }: Prop) {
   const [selectedImage, setselectedImage] = useState<string[]>([]);
   const [dragMode, setdragMode] = useState(false);
@@ -52,21 +57,6 @@ export default function ProductImage({
     );
     setMediaList(newImages);
     setselectedImage([]);
-  };
-
-  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const files = Array.from(e.target.files);
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append("medias", file);
-    }
-    const { data, status } = await fetchApi<Media[]>("/media", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (data) setMediaList((prv) => [...prv, ...data]);
   };
 
   for (let i = 0; i < mediaList.length; i++) {
@@ -157,7 +147,11 @@ export default function ProductImage({
               <PlusIcon size={"20px"} />
             </button>
             <input
-              onChange={handleUploadImage}
+              onChange={(event) =>
+                handleImgUpload(event, (data) =>
+                  setMediaList([...mediaList, ...data])
+                )
+              }
               accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
               hidden
@@ -186,7 +180,11 @@ export default function ProductImage({
               رفع صور جديدة
             </Button>
             <input
-              onChange={handleUploadImage}
+              onChange={(event) =>
+                handleImgUpload(event, (data) =>
+                  setMediaList([...mediaList, ...data])
+                )
+              }
               accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
               hidden

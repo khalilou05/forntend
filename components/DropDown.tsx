@@ -101,28 +101,29 @@ export default function DropDown({
   return (
     <>
       {component(isOpen, componentRef, openDropDown, togleDropDown)}
-      {isOpen && (
-        <Portal>
-          <Card
-            ref={dropRef}
-            type="floating"
-            style={{
-              padding: padding,
-              width: position.width,
-              height: customHeith,
-              flexDirection: flexDirection,
-              transform: align === "center" ? "translateX(-50%)" : "",
-              marginTop: marginTop,
-              top: position.top,
-              left: position.left,
-              right: position.right,
-              zIndex: 100,
-            }}
-          >
-            {renderChildren(closeDropDown)}
-          </Card>
-        </Portal>
-      )}
+      {/* {isOpen && ( */}
+      <Portal>
+        <Card
+          ref={dropRef}
+          type="floating"
+          style={{
+            display: isOpen ? "block" : "none",
+            padding: padding,
+            width: position.width,
+            height: customHeith,
+            flexDirection: flexDirection,
+            transform: align === "center" ? "translateX(-50%)" : "",
+            marginTop: marginTop,
+            top: position.top,
+            left: position.left,
+            right: position.right,
+            zIndex: 120,
+          }}
+        >
+          {renderChildren(closeDropDown)}
+        </Card>
+      </Portal>
+      {/* )} */}
     </>
   );
 }

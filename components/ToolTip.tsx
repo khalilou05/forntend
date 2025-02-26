@@ -61,7 +61,7 @@ export default function ToolTip({
         <div
           className={tooltipState.showDown ? style.tooltipDown : style.tooltip}
           style={{
-            visibility: tooltipState.visible && show ? "visible" : "hidden",
+            display: tooltipState.visible && show ? "block" : "none",
             position: "absolute",
             top: tooltipState.top,
             left: tooltipState.left,

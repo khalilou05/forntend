@@ -3,16 +3,30 @@ import SearchInput from "./SearchInput";
 import Button from "./Button";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useFetch from "@/hooks/useFetch";
-import type { ImageModalProp, Media } from "@/types/types";
+import type { Media } from "@/types/types";
 import style from "@/css/component/imageModal.module.css";
 import CheckBox from "./CheckBox";
 import LoadingSpiner from "./LoadingSpiner";
 import fetchApi from "@/lib/fetch";
 import DropDown from "./DropDown";
 import Input from "./Input";
+
+export type ImageModalProp = {
+  callBack: ((images: Media[]) => void) | null;
+  closeModal: () => void;
+  handleImgUpload: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    callBack: (data: Media[]) => void
+  ) => void;
+  isOpen: boolean;
+  mediaList: Media[];
+  selectionMode: "single" | "multiple";
+};
+
 export default function ImageModal({
   callBack,
   closeModal,
+  handleImgUpload,
   mediaList,
   selectionMode,
   isOpen,
@@ -76,12 +90,14 @@ export default function ImageModal({
 
   return (
     <Modal
-      backdrop={true}
-      delayedClose={false}
+      backdrop
+      animatedColse={false}
       isOpen={isOpen}
       closeModal={closeModal}
-      width={980}
-      heigth={600}
+      style={{
+        height: "600px",
+        width: "800px",
+      }}
       title="إختيار صور"
       footerRender={(handleClose) => (
         <>
@@ -112,10 +128,6 @@ export default function ImageModal({
         </>
       )}
     >
-      <div className={style.search_bar}>
-        <SearchInput placeholder="إبحث عن إسم الملف" />
-      </div>
-
       <div className={style.add_sec_warp}>
         <div className={style.add_sec}>
           <DropDown
@@ -142,8 +154,17 @@ export default function ImageModal({
             رفع صور جديدة
           </Button>
           <input
+            onChange={(event) =>
+              handleImgUpload(event, (data) =>
+                setData((prv) => {
+                  if (Array.isArray(prv)) return [...data, ...prv];
+                  else return [...data];
+                })
+              )
+            }
             ref={inputFileRef}
             type="file"
+            multiple
             hidden
           />
         </div>
@@ -196,6 +217,7 @@ function Media({ media, handleSelectImage, inSelection }: MediaProp) {
       {media.type === "image" ? (
         <img
           loading="lazy"
+          onLoad={() => console.log("img loaded")}
           style={{ pointerEvents: "none" }}
           width={150}
           height={150}

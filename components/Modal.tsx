@@ -1,4 +1,9 @@
-import React, { useEffect, useRef, type ReactNode } from "react";
+import React, {
+  useEffect,
+  useRef,
+  type ReactNode,
+  type ComponentProps,
+} from "react";
 import style from "@/css/component/modal.module.css";
 import Xicon from "@/assets/icons/Xicon";
 import Portal from "./Portal";
@@ -6,28 +11,26 @@ import Portal from "./Portal";
 type Prop = {
   isOpen: boolean;
   backdrop?: boolean;
-  delayedClose?: boolean;
+  animatedColse?: boolean;
   children: ReactNode;
   title: string;
-  width?: number;
-  heigth?: number;
+
   openModal?: () => void;
   closeModal: () => void;
   footerRender?: (handleClose: () => void) => ReactNode;
   render?: (handleOpen?: () => void) => ReactNode;
-};
+} & ComponentProps<"div">;
 export default function Modal({
   isOpen,
-  delayedClose = true,
+  animatedColse = true,
   backdrop = false,
   children,
   title,
-  width,
-  heigth,
   footerRender,
   openModal,
   closeModal,
   render,
+  ...rest
 }: Prop) {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,8 +42,9 @@ export default function Modal({
 
   const close = () => {
     modalRef.current?.removeAttribute("open");
-    if (delayedClose) setTimeout(closeModal, 100);
-    else closeModal();
+    if (animatedColse) {
+      setTimeout(closeModal, 100);
+    } else closeModal();
   };
 
   useEffect(() => {
@@ -56,29 +60,34 @@ export default function Modal({
   return (
     <>
       <Portal>
-        {backdrop && isOpen && <div className={style.backDrop}></div>}
-        {isOpen && (
-          <div
-            className={style.dialog}
-            style={{
-              width: `${width}px`,
-              height: `${heigth}px`,
-            }}
-            ref={modalRef}
-          >
-            <div className={style.header}>
-              {title}
-              <button
-                className={style.close_btn}
-                onClick={close}
-              >
-                <Xicon size={20} />
-              </button>
-            </div>
-            <main>{children}</main>
-            {footerRender && <footer> {footerRender(close)}</footer>}
+        <div
+          style={{ display: isOpen && backdrop ? "block" : "none" }}
+          className={style.backDrop}
+        ></div>
+
+        <div
+          {...rest}
+          className={style.dialog}
+          style={{
+            ...rest.style,
+            display: isOpen ? "flex" : "none",
+          }}
+          ref={modalRef}
+        >
+          <div className={style.header}>
+            {title}
+            <button
+              className={style.close_btn}
+              onClick={close}
+            >
+              <Xicon size={20} />
+            </button>
           </div>
-        )}
+          {children}
+          {footerRender && (
+            <div className={style.footer}> {footerRender(close)}</div>
+          )}
+        </div>
       </Portal>
       {render && render(openModal)}
     </>

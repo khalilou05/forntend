@@ -50,10 +50,10 @@ export default function useFetch<T>(
   }, [url, ...deps]);
 
   return {
-    data: data,
+    data,
     setData,
-    statusCode: statusCode,
-    loading: loading,
-    error: error,
+    statusCode,
+    loading,
+    error,
   };
 }
