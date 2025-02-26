@@ -10,7 +10,6 @@ export default function AddImageBtn() {
     <Modal
       closeModal={() => setIsOpen(false)}
       isOpen={isOpen}
-      width={1000}
       title="إضافة صور"
       render={(handleClick) => (
         <ToolTip value="إضافة صور">
