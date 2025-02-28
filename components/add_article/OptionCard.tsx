@@ -1,14 +1,14 @@
-import style from "@/css/component/articleOptionCard.module.css";
+import style from "@/css/component/optionCard.module.css";
 import type { OptionItem, ProductOption } from "@/types/types";
 import PlusIcon from "@/assets/icons/plusCircle";
 import TrashIcon from "@/assets/icons/trash";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 
 import Button from "../Button";
 import Card from "../Card";
 import Input from "../Input";
 
-import OptionListDropDown from "./OptionListDropDown";
+import OptionListDropDown, { OptionListItemDrp } from "./OptionListDropDown";
 import DropDown from "../DropDown";
 
 type Prop = {
@@ -17,18 +17,6 @@ type Prop = {
 };
 
 export default function OptionCard({ options, setProductOption }: Prop) {
-  const addCustomProductOption = () => {
-    setProductOption((prv) => [
-      ...prv,
-      {
-        id: crypto.randomUUID(),
-        is_custom: true,
-        name: "",
-        items: [{ id: crypto.randomUUID(), key: "", value: "" }],
-      },
-    ]);
-  };
-
   return (
     <Card
       style={{ gap: 10 }}
@@ -37,7 +25,7 @@ export default function OptionCard({ options, setProductOption }: Prop) {
       {!!options?.length && (
         <div className={style.option_warper}>
           {options.map((option) => (
-            <CustomOption
+            <Option
               key={option.id}
               option={option}
               setProductOption={setProductOption}
@@ -53,8 +41,7 @@ export default function OptionCard({ options, setProductOption }: Prop) {
 
       {!options.length && (
         <DropDown
-          customWidth={200}
-          customHeith={100}
+          sameWidth
           align="right"
           component={(__, ref, _, togleDropDown) => (
             <button
@@ -66,14 +53,16 @@ export default function OptionCard({ options, setProductOption }: Prop) {
               إضافة خيارات مثل الحجم أو الألوان
             </button>
           )}
-          renderChildren={() => <p onClick={addCustomProductOption}>custom</p>}
+          renderChildren={(closeDropDown) => (
+            <OptionListDropDown setProductOption={setProductOption} />
+          )}
         />
       )}
     </Card>
   );
 }
 
-function CustomOption({
+function Option({
   option,
   setProductOption,
 }: {
@@ -225,7 +214,7 @@ function CustomOption({
         const updatedOptionItem = option.items.map((item) =>
           item.id === itemID ? { ...item, [prop]: value } : item
         );
-        const lastItem = updatedOptionItem[updatedOptionItem.length - 1];
+        const lastItem = updatedOptionItem.at(-1);
         const shouldAddNewItem = lastItem && lastItem.key.trim() !== "";
         if (shouldAddNewItem) {
           updatedOptionItem.push({
@@ -254,7 +243,7 @@ function CustomOption({
     setProductOption((prv) => prv.filter((opt) => opt.id !== optionID));
   };
 
-  const updateOptionName = (optionID: number | string, optionName: string) => {
+  const updateOptionName = (optionID: string, optionName: string) => {
     setProductOption((prv) =>
       prv.map((opt) =>
         opt.id === optionID ? { ...opt, name: optionName } : opt
@@ -295,38 +284,55 @@ function CustomOption({
       <Input
         ref={optionNameInput}
         value={option.name}
+        readOnly={!option.is_custom}
         onChange={(e) => updateOptionName(option.id, e.target.value)}
         onKeyDown={handleKeyDonwFirstInp}
       />
       <label>الخيارات</label>
       <div className={style.input_warper}>
-        {option.items.map((item, i) => {
-          return (
-            <div
-              className={style.item_input}
-              key={item.id}
-            >
+        {option.is_custom === false ? (
+          <DropDown
+            sameWidth
+            align="right"
+            component={(_, ref, openDropDown) => (
               <Input
-                onKeyDown={(e) => handleKeyDonw(e, i, option.id, item.id)}
-                onChange={(e) =>
-                  updateOptionItem(option.id, item.id, "key", e.target.value)
-                }
-                ref={(node) => handleRefInit(node, i)}
-                tabIndex={0}
+                ref={ref}
+                onClick={openDropDown}
               />
-
-              {option.items.length > 2 && item.value.trim() && (
-                <TrashIcon
-                  tabIndex={-1}
-                  onClick={() => {
-                    deleteOptionItem(option.id, item.id);
-                  }}
-                  size={15}
+            )}
+            renderChildren={(closeDropDown) => (
+              <OptionListItemDrp option_id={option.id} />
+            )}
+          />
+        ) : (
+          option.items.map((item, i) => {
+            return (
+              <div
+                className={style.item_input}
+                key={item.id}
+              >
+                <Input
+                  onKeyDown={(e) => handleKeyDonw(e, i, option.id, item.id)}
+                  onChange={(e) =>
+                    updateOptionItem(option.id, item.id, "key", e.target.value)
+                  }
+                  ref={(node) => handleRefInit(node, i)}
+                  tabIndex={0}
                 />
-              )}
-            </div>
-          );
-        })}
+
+                {option.items.length > 2 && item.key.trim() && (
+                  <TrashIcon
+                    tabIndex={-1}
+                    onClick={() => {
+                      deleteOptionItem(option.id, item.id);
+                    }}
+                    size={15}
+                  />
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
       <div className={style.btn_bar}>
         <Button
@@ -350,41 +356,41 @@ function CustomOption({
   );
 }
 
-function Option({ option }: { option: ProductOption }) {
-  const [dropDownVisible, setDropDownVisible] = useState(false);
+// function Option({ option }: { option: ProductOption }) {
+//   const [dropDownVisible, setDropDownVisible] = useState(false);
 
-  const showDropdown = () => {
-    setDropDownVisible(true);
-  };
-  const hideDropDown = () => {
-    setDropDownVisible(false);
-  };
-  return (
-    <form className={style.option}>
-      <label>إسم الخيار</label>
-      <Input
-        value={option.name}
-        readOnly
-      />
-      <label>الخيارات</label>
-      <div className={style.input_warper}>
-        <div className="{style.label}"></div>
-        <Input
-          onFocus={showDropdown}
-          onBlur={hideDropDown}
-        />
-      </div>
-      {dropDownVisible && <OptionListDropDown optionID={option.id} />}
-      <div className={style.btn_bar}>
-        <Button buttonType="primary">حفض</Button>
-        <Button
-          style={{ color: "#8e0b21" }}
-          onClick={(e) => {}}
-          buttonType="secandary"
-        >
-          حذف
-        </Button>
-      </div>
-    </form>
-  );
-}
+//   const showDropdown = () => {
+//     setDropDownVisible(true);
+//   };
+//   const hideDropDown = () => {
+//     setDropDownVisible(false);
+//   };
+//   return (
+//     <form className={style.option}>
+//       <label>إسم الخيار</label>
+//       <Input
+//         value={option.name}
+//         readOnly
+//       />
+//       <label>الخيارات</label>
+//       <div className={style.input_warper}>
+//         <div className="{style.label}"></div>
+//         <Input
+//           onFocus={showDropdown}
+//           onBlur={hideDropDown}
+//         />
+//       </div>
+
+//       <div className={style.btn_bar}>
+//         <Button buttonType="primary">حفض</Button>
+//         <Button
+//           style={{ color: "#8e0b21" }}
+//           onClick={(e) => {}}
+//           buttonType="secandary"
+//         >
+//           حذف
+//         </Button>
+//       </div>
+//     </form>
+//   );
+// }

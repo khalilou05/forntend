@@ -1,0 +1,1 @@
+.line{background-color:#ccc;border-radius:5px;opacity:.5;width:60%;height:10px;animation:pulse 1s linear infinite alternate}@keyframes pulse{100%{opacity:1}}

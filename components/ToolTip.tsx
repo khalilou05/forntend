@@ -7,7 +7,6 @@ import Protal from "./Portal";
 type Prop = {
   children: React.ReactNode;
   value: string;
-
   show?: boolean;
   tooltipPosition?: "center" | "left";
 };

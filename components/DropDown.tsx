@@ -11,24 +11,15 @@ type Prop = {
   ) => ReactNode;
   renderChildren: (closeDropDown: () => void) => ReactNode;
   align?: "right" | "center";
-  padding?: string;
   sameWidth?: boolean;
-  customWidth?: number | string;
-  customHeith?: number | string;
-  marginTop?: number;
-  flexDirection?: "row" | "column";
-};
+} & React.ComponentProps<"div">;
 
 export default function DropDown({
   component,
   renderChildren,
-  padding,
-  customWidth = "fit-content",
-  customHeith = "fit-content",
-  marginTop = 0,
-  sameWidth = false,
-  flexDirection = "column",
   align,
+  sameWidth = false,
+  ...rest
 }: Prop) {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<Record<string, string | number>>({
@@ -39,6 +30,7 @@ export default function DropDown({
   });
   const componentRef = useRef<HTMLElement | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
+  const firstOpen = useRef(false);
 
   const adjustPosition = () => {
     if (!componentRef.current) return;
@@ -48,7 +40,7 @@ export default function DropDown({
     setPosition({
       top: top + height + window.scrollY,
       left: align === "center" ? left + width / 2 : left,
-      width: sameWidth ? width : customWidth,
+      width: sameWidth ? width : rest.style?.width || "fit-content",
       right: align === "right" ? window.innerWidth - right : "",
     });
   };
@@ -76,13 +68,18 @@ export default function DropDown({
   };
 
   const handleScroll = () => {
-    if (dropRef.current && componentRef.current) {
-      const { top } = dropRef.current?.getBoundingClientRect();
+    if (dropRef.current) {
+      const { top, height } = dropRef.current?.getBoundingClientRect();
       if (window.scrollY > top + window.scrollY) setIsOpen(false);
+
+      // todo fix
+      // console.log("top heigh", top + height);
+      // console.log(window.innerHeight);
     }
   };
 
   useEffect(() => {
+    if (!firstOpen.current) firstOpen.current = true;
     const abortctrl = new AbortController();
     if (isOpen) {
       window.addEventListener("mousedown", handleMouseDown, {
@@ -101,29 +98,28 @@ export default function DropDown({
   return (
     <>
       {component(isOpen, componentRef, openDropDown, togleDropDown)}
-      {/* {isOpen && ( */}
+
       <Portal>
         <Card
           ref={dropRef}
           type="floating"
           style={{
+            ...rest.style,
             display: isOpen ? "block" : "none",
-            padding: padding,
             width: position.width,
-            height: customHeith,
-            flexDirection: flexDirection,
             transform: align === "center" ? "translateX(-50%)" : "",
-            marginTop: marginTop,
             top: position.top,
             left: position.left,
             right: position.right,
+            scrollbarWidth: "thin",
+            overflow: "auto",
+            maxHeight: "200px",
             zIndex: 120,
           }}
         >
-          {renderChildren(closeDropDown)}
+          {firstOpen.current && renderChildren(closeDropDown)}
         </Card>
       </Portal>
-      {/* )} */}
     </>
   );
 }

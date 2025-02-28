@@ -1,17 +1,21 @@
-import { DOMAIN_NAME } from "@/settings";
+import { API_URL } from "@/settings";
 
 const fetchApi = async <T>(
-  url: string,
+  endpoint: string,
   init: RequestInit = {}
 ): Promise<{ data?: T; status?: number; error?: string }> => {
   try {
-    const resp = await fetch(`${DOMAIN_NAME}${url}`, { ...init });
-    if (!resp.ok) return { error: "failed to fetch" };
-    const jsonData = await resp.json();
+    const resp = await fetch(`${API_URL}${endpoint}`, init);
+    if (!resp.ok) {
+      throw new Error(resp.statusText);
+    }
+    const jsonData = await resp.json().catch(() => {
+      throw new Error("failed to parse json");
+    });
     return { data: jsonData, status: resp.status };
   } catch (error) {
-    if (error instanceof SyntaxError) return { error: "Failed to parse json" };
-    return { error: "Failed to fetch" };
+    if (error instanceof Error) return { error: error.message };
+    return { error: "undefiend error" };
   }
 };
 

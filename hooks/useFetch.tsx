@@ -1,9 +1,10 @@
-import { DOMAIN_NAME } from "@/settings";
+import fetchApi from "@/lib/fetch";
+
 import { useEffect, useState } from "react";
 
 export default function useFetch<T>(
-  url: string,
-  option: RequestInit = {},
+  endpoint: string,
+  startFetching: boolean = true,
   callBack?: (data: T) => void,
   deps: any[] = []
 ): {
@@ -19,35 +20,31 @@ export default function useFetch<T>(
   const [statusCode, setStatusCode] = useState(0);
 
   useEffect(() => {
+    if (!startFetching) return;
     const abortctrl = new AbortController();
     setData(null);
     setLoading(true);
     setError("");
     (async () => {
-      try {
-        const resp = await fetch(`${DOMAIN_NAME}${url}`, {
-          signal: abortctrl.signal,
-          ...option,
-        });
-        const jsonData = await resp.json().catch(() => null);
-        if (resp.ok) {
-          setData(jsonData);
-          callBack && callBack(jsonData);
-          setStatusCode(resp.status);
-        } else {
-          throw Error(jsonData["msg"]);
-        }
-      } catch (err) {
-        setError(err as string);
-      } finally {
-        setLoading(false);
+      const { data, error, status } = await fetchApi<T>(endpoint, {
+        method: "GET",
+        signal: abortctrl.signal,
+      });
+      setStatusCode(status || 0);
+      if (error) {
+        setError(error);
       }
+      if (data) {
+        setData(data);
+        callBack && callBack(data);
+      }
+      setLoading(false);
     })();
 
     return () => {
       abortctrl.abort();
     };
-  }, [url, ...deps]);
+  }, [endpoint, startFetching, ...deps]);
 
   return {
     data,

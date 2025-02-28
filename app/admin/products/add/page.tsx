@@ -206,13 +206,13 @@ export default function AddArticle() {
   useEffect(() => {
     document.title = "إضافة منتج";
   }, []);
-  useEffect(() => {
-    if (productOption.length) {
-      setProduct((prv) => ({ ...prv, has_option: true }));
-    } else {
-      setProduct((prv) => ({ ...prv, has_option: false }));
-    }
-  }, [productOption.length]);
+  // useEffect(() => {
+  //   if (productOption.length) {
+  //     setProduct((prv) => ({ ...prv, has_option: true }));
+  //   } else {
+  //     setProduct((prv) => ({ ...prv, has_option: false }));
+  //   }
+  // }, [productOption.length]);
 
   return (
     <main className={style.body}>

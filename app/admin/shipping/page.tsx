@@ -20,7 +20,7 @@ function ShippingPage() {
 
   const { data: wilaya, setData } = useFetch<Wilaya[]>(
     "/wilaya",
-    {},
+    false,
     (data) => {
       cache.current = data;
     }

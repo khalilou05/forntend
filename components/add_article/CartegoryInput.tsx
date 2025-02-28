@@ -7,17 +7,13 @@ import Input from "../Input";
 import useFetch from "@/hooks/useFetch";
 import LoadingSpiner from "../LoadingSpiner";
 import DropDown from "../DropDown";
+import { LineSkeleteon } from "../Skeleteon";
 export default function CartegoryInput({
   setProdct,
 }: {
   setProdct: React.Dispatch<React.SetStateAction<Product>>;
 }) {
   const [inputValue, setinputValue] = useState("");
-  const { data, loading } = useFetch<Category[]>("/category");
-  const filtredCategory = data?.filter((item) =>
-    item.name.startsWith(inputValue)
-  );
-  const category = filtredCategory || data;
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setinputValue(e.target.value);
@@ -25,8 +21,10 @@ export default function CartegoryInput({
 
   return (
     <DropDown
-      customHeith={100}
-      padding="10px"
+      style={{
+        padding: "10px",
+        height: "50px",
+      }}
       sameWidth={true}
       component={(_, componentRef, openDropDown) => (
         <div className={style.select_warper}>
@@ -39,19 +37,38 @@ export default function CartegoryInput({
           <ArrowIcon size={20} />
         </div>
       )}
-      renderChildren={(closeDropDown) =>
-        category?.map((item) => (
-          <div
-            onClick={() => {
-              setinputValue(item.name);
-              closeDropDown();
-            }}
-            key={item.id}
-          >
-            {item.name}
-          </div>
-        ))
-      }
+      renderChildren={(closeDropDown) => (
+        <CartegoryList setinputValue={setinputValue} />
+      )}
     />
+  );
+}
+
+export function CartegoryList({
+  setinputValue,
+}: {
+  setinputValue: (value: string) => void;
+}) {
+  const { data: category, loading } = useFetch<Category[]>("/category");
+
+  return (
+    <>
+      {loading && (
+        <LineSkeleteon
+          style={{ width: "100%" }}
+          lineNum={3}
+        />
+      )}
+      {category?.map((item) => (
+        <div
+          onClick={() => {
+            setinputValue(item.name);
+          }}
+          key={item.id}
+        >
+          {item.name}
+        </div>
+      ))}
+    </>
   );
 }

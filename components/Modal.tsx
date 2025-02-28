@@ -48,11 +48,14 @@ export default function Modal({
   };
 
   useEffect(() => {
+    const abortcontroller = new AbortController();
     if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown, {
+        signal: abortcontroller.signal,
+      });
       document.body.setAttribute("style", "height:100vh;overflow-y:hidden;");
     } else {
-      document.removeEventListener("keydown", handleKeyDown);
+      abortcontroller.abort();
       document.body.removeAttribute("style");
     }
   }, [isOpen]);

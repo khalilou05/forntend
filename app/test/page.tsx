@@ -11,12 +11,13 @@ import LoadingSpiner from "@/components/LoadingSpiner";
 import ColorPicker from "@/components/ColorPicker";
 import SearchInput from "@/components/SearchInput";
 import Button from "@/components/Button";
+import { LineSkeleteon } from "@/components/Skeleteon";
 
 export default function Page() {
   return (
     <>
       <br />
-      <Button buttonType="link">khalil</Button>
+      <LineSkeleteon lineNum={2} />
     </>
   );
 }

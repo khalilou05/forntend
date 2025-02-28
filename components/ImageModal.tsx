@@ -39,14 +39,7 @@ export default function ImageModal({
     data: medias,
     setData,
     loading,
-  } = useFetch<Media[]>(
-    "/media",
-    {
-      cache: "no-store",
-    },
-    undefined,
-    [mediaList]
-  );
+  } = useFetch<Media[]>("/media", isOpen, undefined, [mediaList]);
 
   const cache = useRef<Media[]>([]);
 

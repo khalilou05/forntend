@@ -110,8 +110,8 @@ export default function Editor({ openImgModal, ref }: Prop) {
   // }, [isBold]);
 
   const Customformat = (command: string) => {
-    document.execCommand(command);
     ref.current?.focus();
+    document.execCommand(command);
   };
 
   return (
@@ -158,7 +158,7 @@ export default function Editor({ openImgModal, ref }: Prop) {
           <ColorBtn />
           <div className={style.dividor}></div>
           <DropDown
-            padding="3px"
+            style={{ padding: "3px" }}
             component={(isOpen, ref, _, togleDropDown) => (
               <ToolTip
                 show={!isOpen}

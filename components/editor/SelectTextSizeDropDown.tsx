@@ -11,7 +11,6 @@ export default function SelectTextSizeDropDown() {
   return (
     <DropDown
       align="right"
-      customWidth={100}
       component={(isOpen, ref, _, togleDropDown) => (
         <ToolTip
           show={!isOpen}

@@ -1,6 +1,6 @@
 type Prop = {
   size: number;
-} & React.SVGProps<SVGSVGElement>;
+} & React.ComponentProps<"svg">;
 export default function CircleX({ size, ...rest }: Prop) {
   return (
     <svg

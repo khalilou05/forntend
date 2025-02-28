@@ -24,7 +24,7 @@ function OrderTable({ ordersList, ordersCount }: OrderTableProps) {
   const router = useRouter();
   const { data: orders, setData } = useFetch<OrderIn[]>(
     `/order?status=${orderStatus}`,
-    {},
+    true,
     undefined,
     [orderStatus]
   );

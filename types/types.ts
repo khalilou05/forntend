@@ -55,7 +55,7 @@ export type OptionItem = {
 
 export type ProductOption = {
   id: string;
-  name?: string;
+  name: string;
   is_custom: boolean;
   items: OptionItem[];
 };
