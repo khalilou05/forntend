@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 
 import HeaderNav from "@/components/HeaderNav";
 import ProductDetails from "@/components/ProductDetails";
+import ProductOption from "@/components/ProductOption";
 import ProductShipping from "@/components/ProductShipping";
 import ProductStatus from "@/components/ProductStatus";
 import ProductStock from "@/components/ProductStock";
@@ -114,7 +115,7 @@ export default function AddArticle() {
             <div className={style.right_column}>
               <ProductDetails />
               <PricingCard />
-              {/* <ProductOption /> */}
+              <ProductOption />
             </div>
 
             <div className={style.left_column}>

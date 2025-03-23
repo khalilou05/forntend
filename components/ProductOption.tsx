@@ -16,7 +16,7 @@ import OptionListDropDown, {
 } from "./add_article/OptionListDropDown";
 
 export default function ProductOption() {
-  const { productOption: options } = useContext(Context);
+  const { productOption: options, setProductOption } = useContext(Context);
   const inOption = (optionId: string, newItem: OptionItem) => {
     const isIn = options.find((opt) => {
       if (opt.id === optionId) {
@@ -374,7 +374,6 @@ function Option({
                     onClick={() => {
                       deleteOptionItem(option.id, item.id);
                     }}
-                    size={15}
                   />
                 )}
               </div>

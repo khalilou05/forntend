@@ -9,10 +9,7 @@ function AdminLayout({
   return (
     <>
       {/* <OnlineBar /> */}
-      <script
-        crossOrigin="anonymous"
-        src="//unpkg.com/react-scan/dist/auto.global.js"
-      />
+
       <Sidebar />
 
       {children}

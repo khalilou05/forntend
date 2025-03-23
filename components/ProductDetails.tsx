@@ -20,32 +20,30 @@ export default function ProductDetails() {
   const { handleProductUpdate } = useContext(Context);
 
   return (
-    <>
-      <Card
-        className={style.product_info}
-        style={{ gap: 10 }}
-      >
-        <div className={style.section}>
-          <label
-            className={style.inpt_label}
-            htmlFor="title"
-          >
-            العنوان
-          </label>
-          <Input
-            placeholder="أكتب عنوان مناسب للمنتج"
-            onChange={(e) => {
-              handleProductUpdate("title", e.target.value);
-            }}
-          />
-        </div>
-        <div className={style.section}>
-          <Editor />
-        </div>
-        <div className={style.section}>
-          <ProductImage />
-        </div>
-      </Card>
-    </>
+    <Card
+      className={style.product_info}
+      style={{ gap: 10 }}
+    >
+      <div className={style.section}>
+        <label
+          className={style.inpt_label}
+          htmlFor="title"
+        >
+          العنوان
+        </label>
+        <Input
+          placeholder="أكتب عنوان مناسب للمنتج"
+          onChange={(e) => {
+            handleProductUpdate("title", e.target.value);
+          }}
+        />
+      </div>
+      <div className={style.section}>
+        <Editor />
+      </div>
+      <div className={style.section}>
+        <ProductImage />
+      </div>
+    </Card>
   );
 }

@@ -1,14 +1,10 @@
 import type { Media, Product, ProductOption } from "@/types/types";
-import React, {
-  createContext,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from "react";
+import React, { createContext, useRef, useState } from "react";
 
 export type AddPrdCtx = {
   mediaList: Media[];
   productOption: ProductOption[];
+  setProductOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
 
   setMediaList: React.Dispatch<React.SetStateAction<Media[]>>;
   handleProductUpdate: <T extends keyof Product>(
@@ -47,6 +43,7 @@ export default function PageCtx({ children }: { children: React.ReactNode }) {
       value={{
         mediaList,
         productOption,
+        setProductOption,
         setMediaList,
         handleProductUpdate,
       }}
@@ -55,14 +52,3 @@ export default function PageCtx({ children }: { children: React.ReactNode }) {
     </Context>
   );
 }
-
-export type ImgModlaType = {
-  openImgModal: (
-    openfor: "product" | "editor" | "variant",
-    callback: (media: Media[]) => void
-  ) => void;
-  handleImgUpload: (
-    e: ChangeEvent<HTMLInputElement>,
-    callBack: (media: Media[]) => void
-  ) => Promise<void>;
-};
