@@ -26,12 +26,8 @@ import type { Media } from "@/types/types";
 import DropDown from "../DropDown";
 import ToolTip from "../ToolTip";
 
-import {
-  Context,
-  type AddPrdCtx,
-  type ImgModlaType,
-} from "@/context/AddProductContext";
-import { ImgModlaCtx } from "@/context/ImgModalContext";
+import { Context, type AddPrdCtx } from "@/context/AddProductContext";
+import { ImgModlaCtx, type ImgModlaType } from "@/context/ImgModalContext";
 
 export default function Editor() {
   const editorRef = useRef<HTMLIFrameElement | null>(null);
