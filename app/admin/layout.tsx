@@ -1,6 +1,5 @@
-import React from "react";
 import Sidebar from "@/components/sidebar";
-import OnlineBar from "@/components/OfflineBar";
+import React from "react";
 
 function AdminLayout({
   children, // will be a page or nested layout
@@ -10,7 +9,12 @@ function AdminLayout({
   return (
     <>
       {/* <OnlineBar /> */}
+      <script
+        crossOrigin="anonymous"
+        src="//unpkg.com/react-scan/dist/auto.global.js"
+      />
       <Sidebar />
+
       {children}
     </>
   );

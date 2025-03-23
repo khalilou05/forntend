@@ -1,34 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
 import style from "@/css/component/imageManager.module.css";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import PlusIcon from "@/assets/icons/plus";
 import DragableMedia from "./DragableMedia";
-import { type Media } from "@/types/types";
 
-import fetchApi from "@/lib/fetch";
+import { Context } from "@/context/AddProductContext";
+import { ImgModlaCtx } from "@/context/ImgModalContext";
 import Button from "../Button";
 import CheckBox from "../CheckBox";
-type Prop = {
-  mediaList: Media[];
-  setMediaList: React.Dispatch<React.SetStateAction<Media[]>>;
-  openForProductImg: () => void;
-  handleImgUpload: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    callBack: (data: Media[]) => void
-  ) => void;
-};
 
-export default function ProductImage({
-  mediaList,
-  setMediaList,
-  openForProductImg,
-  handleImgUpload,
-}: Prop) {
+export default function ProductImage() {
   const [selectedImage, setselectedImage] = useState<string[]>([]);
   const [dragMode, setdragMode] = useState(false);
   const [expand, setexpand] = useState(false);
   const InputRef = useRef<HTMLInputElement | null>(null);
   const slectAllRef = useRef<HTMLInputElement | null>(null);
+  const { mediaList, setMediaList } = useContext(Context);
+  const { openImgModal, handleImgUpload } = useContext(ImgModlaCtx);
   const mediaToRender = [];
   const handleSelectAllImage = () => {
     if (selectedImage.length === mediaList.length) {
@@ -139,18 +127,15 @@ export default function ProductImage({
           <>
             {mediaToRender}
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                openForProductImg();
+              onClick={() => {
+                openImgModal("product", (media) => setMediaList(media));
               }}
             >
-              <PlusIcon size={"20px"} />
+              <PlusIcon size={20} />
             </button>
             <input
               onChange={(event) =>
-                handleImgUpload(event, (data) =>
-                  setMediaList([...mediaList, ...data])
-                )
+                handleImgUpload(event, (media) => setMediaList(media))
               }
               accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
@@ -164,12 +149,13 @@ export default function ProductImage({
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                openForProductImg();
+                openImgModal("product", (media) => setMediaList(media));
               }}
               buttonType="link"
             >
               إختيار صور
             </Button>
+
             <Button
               onClick={(e) => {
                 e.stopPropagation();

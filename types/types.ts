@@ -103,3 +103,11 @@ export type ImagesPosition = {
   x: number;
   y: number;
 };
+
+export type Variant = {
+  name: string;
+  media_id: string;
+  stock: number;
+  price: number;
+  items: string[];
+};

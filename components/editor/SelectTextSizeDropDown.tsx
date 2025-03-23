@@ -1,33 +1,83 @@
-import { useState } from "react";
 import DownCaretIcon from "@/assets/icons/downcaret";
-import DropDown from "../DropDown";
-import ToolTip from "../ToolTip";
 import style from "@/css/component/editor.module.css";
+import { useState } from "react";
+import DropDown from "../DropDown";
 
-export default function SelectTextSizeDropDown() {
+export default function SelectTextSizeDropDown({
+  applyFormat,
+}: {
+  applyFormat: (command: string, attr?: string) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("عادي");
 
   return (
     <DropDown
       align="right"
+      sameWidth
       component={(isOpen, ref, _, togleDropDown) => (
-        <ToolTip
-          show={!isOpen}
-          value="حجم النص"
+        <button
+          className={style.btn}
+          data-active={isOpen}
+          ref={ref}
+          onClick={togleDropDown}
         >
-          <button
-            className={style.btn}
-            data-active={isOpen}
-            ref={ref}
-            onClick={togleDropDown}
-          >
-            {selectedSize}
-            <DownCaretIcon size={20} />
-          </button>
-        </ToolTip>
+          حجم النص
+          <DownCaretIcon size={20} />
+        </button>
       )}
-      renderChildren={() => <p>khalil</p>}
+      renderChildren={(closeDropDown) => (
+        <div onClick={() => closeDropDown()}>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "1");
+            }}
+          >
+            1
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "2");
+            }}
+          >
+            2
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "3");
+            }}
+          >
+            3
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "4");
+            }}
+          >
+            4
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "5");
+            }}
+          >
+            5
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "6");
+            }}
+          >
+            6
+          </p>
+          <p
+            onClick={() => {
+              applyFormat("fontSize", "7");
+            }}
+          >
+            7
+          </p>
+        </div>
+      )}
     />
   );
 }

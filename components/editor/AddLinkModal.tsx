@@ -1,18 +1,14 @@
-import Modal from "../Modal";
 import style from "@/css/component/editor.module.css";
+import Modal from "../Modal";
 
-import ToolTip from "../ToolTip";
 import LinkIcon from "@/assets/icons/link";
-import SelectInput from "../SelectInput";
-import Button from "../Button";
 import React, { useState } from "react";
+import Button from "../Button";
 import Input from "../Input";
+import SelectInput from "../SelectInput";
+import ToolTip from "../ToolTip";
 
-export default function AddLinkModal({
-  hasSelected,
-}: {
-  hasSelected: boolean;
-}) {
+export default function AddLinkModal() {
   const [link, setLink] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,8 +25,7 @@ export default function AddLinkModal({
       render={(handleOpen) => (
         <ToolTip value="إضافة رابط">
           <button
-            disabled={!hasSelected}
-            className={hasSelected ? style.btn : style.btn_disabled}
+            className={style.btn}
             onClick={handleOpen}
           >
             <LinkIcon size={20} />

@@ -14,7 +14,7 @@ export default function useFetch<T>(
   error: string;
   statusCode: number;
 } {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [data, setData] = useState<T | null>(null);
   const [statusCode, setStatusCode] = useState(0);
@@ -23,7 +23,6 @@ export default function useFetch<T>(
     if (!startFetching) return;
     const abortctrl = new AbortController();
     setData(null);
-    setLoading(true);
     setError("");
     (async () => {
       const { data, error, status } = await fetchApi<T>(endpoint, {
@@ -33,12 +32,14 @@ export default function useFetch<T>(
       setStatusCode(status || 0);
       if (error) {
         setError(error);
+        setLoading(false);
+        return;
       }
       if (data) {
         setData(data);
-        callBack && callBack(data);
+        callBack?.(data);
+        setLoading(false);
       }
-      setLoading(false);
     })();
 
     return () => {

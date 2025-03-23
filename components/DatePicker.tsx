@@ -1,80 +1,104 @@
-import { useEffect, useRef, useState } from "react";
-import Portal from "./Portal";
+import CalendarIco from "@/assets/icons/calendar";
+import ArrowIco from "@/assets/icons/rightArrow";
 import style from "@/css/component/datePicker.module.css";
-import CalendarIcon from "@/assets/icons/calendar";
+import { useMemo, useState } from "react";
+import DropDown from "./DropDown";
+import Input from "./Input";
+
 export default function DatePicker() {
-  const [dropDown, setDropDown] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    visible: false,
-  });
-  const dropDownRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date(Date.now()));
+  const [currentDate, setCurrentDate] = useState(new Date(Date.now()));
 
-  const handleFocus = () => {
-    if (inputRef.current) {
-      const { top, left, height, width } =
-        inputRef.current?.getBoundingClientRect();
-      setDropDown({
-        top: top + height,
-        left: left,
-        width: width,
-        visible: true,
-      });
-    }
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  const formatedMonth = new Intl.DateTimeFormat("ar-DZ", {
+    month: "long",
+    year: "numeric",
+  }).format(currentDate);
+
+  const setMonthUp = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentMonth + 1);
+    setCurrentDate(newDate);
+  };
+  const setMonthDown = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentMonth - 1);
+    setCurrentDate(newDate);
   };
 
-  const handleClose = (e: MouseEvent) => {
-    if (
-      !dropDownRef.current?.contains(e.target as Node) &&
-      !inputRef.current?.contains(e.target as Node)
-    ) {
-      setDropDown((prv) => ({ ...prv, visible: false }));
+  const getMonthDates = useMemo(() => {
+    const dates = [];
+    const date = new Date(currentYear, currentMonth, 1);
+    while (date.getMonth() === currentMonth) {
+      dates.push(date.getDate());
+      date.setDate(date.getDate() + 1);
     }
-  };
-
-  useEffect(() => {
-    if (dropDown.visible) {
-      window.addEventListener("mousedown", handleClose);
-    } else {
-      window.removeEventListener("mousedown", handleClose);
-    }
-    return () => window.removeEventListener("mousedown", handleClose);
-  }, [dropDown.visible]);
+    return dates;
+  }, [currentMonth]);
   return (
-    <>
-      <div className={style.warper}>
-        <input
-          readOnly
-          ref={inputRef}
-          onFocus={handleFocus}
-          type="text"
-        />
-        <CalendarIcon
-          height={20}
-          width={20}
-          color={"hsl(0,0%,50%)"}
-        />
-      </div>
-
-      <Portal>
+    <DropDown
+      sameWidth
+      gap={5}
+      component={(_, ref, __, togleDropDown) => (
         <div
-          className={style.dropDown}
-          ref={dropDownRef}
-          data-open={dropDown.visible}
           style={{
-            visibility: dropDown.visible ? "visible" : "hidden",
-            top: dropDown.top,
-            left: dropDown.left,
-            backgroundColor: "gray",
-            width: dropDown.width,
-            height: "100px",
+            display: "flex",
+            width: "fit-content",
+            position: "relative",
           }}
         >
-          sdfsdfsdf
+          <Input
+            ref={ref}
+            value={Intl.DateTimeFormat("ar-DZ").format(selectedDate)}
+            readOnly
+            onClick={togleDropDown}
+            style={{ cursor: "auto" }}
+          />
+          <CalendarIco
+            fill="rgba(138, 138, 138, 1)"
+            style={{
+              position: "absolute",
+              left: "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              userSelect: "none",
+              pointerEvents: "none",
+            }}
+            size={20}
+          />
         </div>
-      </Portal>
-    </>
+      )}
+      renderChildren={(closeDropDown) => (
+        <div className={style.calendar}>
+          <div className={style.header}>
+            <button onClick={setMonthDown}>
+              <ArrowIco size={20} />
+            </button>
+            {formatedMonth}
+            <button onClick={setMonthUp}>
+              <ArrowIco
+                style={{ rotate: "180deg" }}
+                size={20}
+              />
+            </button>
+          </div>
+          <div className={style.dateGrid}>
+            {getMonthDates.map((day, i) => (
+              <span
+                className={style.date}
+                key={i}
+                onClick={() => {
+                  setSelectedDate(new Date(currentYear, currentMonth, day));
+                  closeDropDown();
+                }}
+              >
+                {day}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    />
   );
 }

@@ -1,1 +1,1 @@
-.line{background-color:#ccc;border-radius:5px;opacity:.5;width:60%;height:10px;animation:pulse 1s linear infinite alternate}@keyframes pulse{100%{opacity:1}}
+.line{background-color:hsl(0,0%,85%);border-radius:5px;opacity:.6;width:60%;height:10px;animation:pulse 800ms linear infinite alternate}.square{background-color:hsl(0,0%,85%);aspect-ratio:1;opacity:.6;animation:pulse 800ms linear infinite alternate}@keyframes pulse{100%{opacity:1}}

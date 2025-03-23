@@ -1,9 +1,9 @@
-import ToolTip from "../ToolTip";
 import VideoIcon from "@/assets/icons/video";
 import style from "@/css/component/editor.module.css";
-import Modal from "../Modal";
 import React, { useState } from "react";
 import Button from "../Button";
+import Modal from "../Modal";
+import ToolTip from "../ToolTip";
 
 type Prop = {
   addVideo: (value: string) => void;
@@ -60,8 +60,8 @@ export default function AddVideoModal({ addVideo }: Prop) {
           <Button
             onClick={() => {
               addVideo(value);
-              handleClose();
               setValue("");
+              handleClose();
             }}
             disabled={value.length ? false : true}
             buttonType={value.length ? "primary" : "disabled"}
@@ -73,7 +73,10 @@ export default function AddVideoModal({ addVideo }: Prop) {
     >
       <div className={style.addVideoModal}>
         <label>قم بلصق كود الفيديو في الأسفل</label>
-        <textarea onChange={handleChange}></textarea>
+        <textarea
+          value={value}
+          onChange={handleChange}
+        ></textarea>
         <label>الكود يبدأ عموما بـ : &lt;iframe&gt;</label>
       </div>
     </Modal>

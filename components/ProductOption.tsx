@@ -1,22 +1,60 @@
-import style from "@/css/component/optionCard.module.css";
-import type { OptionItem, ProductOption } from "@/types/types";
 import PlusIcon from "@/assets/icons/plusCircle";
 import TrashIcon from "@/assets/icons/trash";
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import style from "@/css/component/optionCard.module.css";
+import type { OptionItem, ProductOption } from "@/types/types";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
-import Button from "../Button";
-import Card from "../Card";
-import Input from "../Input";
+import Button from "./Button";
+import Card from "./Card";
+import Input from "./Input";
 
-import OptionListDropDown, { OptionListItemDrp } from "./OptionListDropDown";
-import DropDown from "../DropDown";
+import { Context } from "@/context/AddProductContext";
+import CheckBox from "./CheckBox";
+import DropDown from "./DropDown";
+import OptionListDropDown, {
+  OptionListItemDrp,
+} from "./add_article/OptionListDropDown";
 
-type Prop = {
-  options: ProductOption[];
-  setProductOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
-};
+export default function ProductOption() {
+  const { productOption: options } = useContext(Context);
+  const inOption = (optionId: string, newItem: OptionItem) => {
+    const isIn = options.find((opt) => {
+      if (opt.id === optionId) {
+        const isInItem = opt.items.find((itm) => itm.id === newItem.id);
+        return isInItem ? true : false;
+      }
+      return false;
+    });
+    return isIn ? true : false;
+  };
 
-export default function OptionCard({ options, setProductOption }: Prop) {
+  const togleAddOptionItem = (optionId: string, newItem: OptionItem) => {
+    const isInOption = inOption(optionId, newItem);
+    if (isInOption) {
+      setProductOption((prv) =>
+        prv.map((opt) =>
+          opt.id === optionId
+            ? {
+                ...opt,
+                items: opt.items.filter((itm) => itm.id !== newItem.id),
+              }
+            : opt
+        )
+      );
+    } else {
+      setProductOption((prv) =>
+        prv.map((opt) =>
+          opt.id === optionId
+            ? {
+                ...opt,
+                items: [...opt.items, newItem],
+              }
+            : opt
+        )
+      );
+    }
+  };
+
   return (
     <Card
       style={{ gap: 10 }}
@@ -26,6 +64,7 @@ export default function OptionCard({ options, setProductOption }: Prop) {
         <div className={style.option_warper}>
           {options.map((option) => (
             <Option
+              togleAddOptionItem={togleAddOptionItem}
               key={option.id}
               option={option}
               setProductOption={setProductOption}
@@ -65,9 +104,11 @@ export default function OptionCard({ options, setProductOption }: Prop) {
 function Option({
   option,
   setProductOption,
+  togleAddOptionItem,
 }: {
   option: ProductOption;
   setProductOption: React.Dispatch<React.SetStateAction<ProductOption[]>>;
+  togleAddOptionItem: (optionId: string, newItem: OptionItem) => void;
 }) {
   const [expand, setExpand] = useState(false);
   const optionNameInput = useRef<HTMLInputElement | null>(null);
@@ -291,19 +332,27 @@ function Option({
       <label>الخيارات</label>
       <div className={style.input_warper}>
         {option.is_custom === false ? (
-          <DropDown
-            sameWidth
-            align="right"
-            component={(_, ref, openDropDown) => (
-              <Input
-                ref={ref}
-                onClick={openDropDown}
-              />
-            )}
-            renderChildren={(closeDropDown) => (
-              <OptionListItemDrp option_id={option.id} />
-            )}
-          />
+          <>
+            {option.items.map((itm) => (
+              <div key={itm.id}>{itm.key}</div>
+            ))}
+            <DropDown
+              sameWidth
+              align="right"
+              component={(_, ref, openDropDown) => (
+                <Input
+                  ref={ref}
+                  onClick={openDropDown}
+                />
+              )}
+              renderChildren={(closeDropDown) => (
+                <OptionListItemDrp
+                  togleAddOptionItem={togleAddOptionItem}
+                  option_id={option.id}
+                />
+              )}
+            />
+          </>
         ) : (
           option.items.map((item, i) => {
             return (
@@ -322,7 +371,6 @@ function Option({
 
                 {option.items.length > 2 && item.key.trim() && (
                   <TrashIcon
-                    tabIndex={-1}
                     onClick={() => {
                       deleteOptionItem(option.id, item.id);
                     }}
@@ -356,41 +404,26 @@ function Option({
   );
 }
 
-// function Option({ option }: { option: ProductOption }) {
-//   const [dropDownVisible, setDropDownVisible] = useState(false);
-
-//   const showDropdown = () => {
-//     setDropDownVisible(true);
-//   };
-//   const hideDropDown = () => {
-//     setDropDownVisible(false);
-//   };
-//   return (
-//     <form className={style.option}>
-//       <label>إسم الخيار</label>
-//       <Input
-//         value={option.name}
-//         readOnly
-//       />
-//       <label>الخيارات</label>
-//       <div className={style.input_warper}>
-//         <div className="{style.label}"></div>
-//         <Input
-//           onFocus={showDropdown}
-//           onBlur={hideDropDown}
-//         />
-//       </div>
-
-//       <div className={style.btn_bar}>
-//         <Button buttonType="primary">حفض</Button>
-//         <Button
-//           style={{ color: "#8e0b21" }}
-//           onClick={(e) => {}}
-//           buttonType="secandary"
-//         >
-//           حذف
-//         </Button>
-//       </div>
-//     </form>
-//   );
-// }
+export function VariantCard(options: ProductOption[]) {
+  const [selectedVariant, setSelectedVariant] = useState();
+  const generateVariant = () => {
+    const [firstOpt, rest] = options;
+    const firstVariant = firstOpt.items.map((item) => ({
+      name: item.key,
+      media_id: "",
+      stock: 0,
+      price: 0,
+      items: [],
+    }));
+  };
+  return (
+    <>
+      <div className="header">
+        <CheckBox />
+        <li>Variant</li>
+        <li>Price</li>
+        <li>aviailibe</li>
+      </div>
+    </>
+  );
+}

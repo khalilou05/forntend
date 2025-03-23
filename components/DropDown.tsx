@@ -1,6 +1,6 @@
-import React, { useState, type ReactNode, useRef, useEffect } from "react";
-import Portal from "./Portal";
+import React, { useEffect, useRef, useState, type ReactNode } from "react";
 import Card from "./Card";
+import Portal from "./Portal";
 
 type Prop = {
   component: (
@@ -12,6 +12,7 @@ type Prop = {
   renderChildren: (closeDropDown: () => void) => ReactNode;
   align?: "right" | "center";
   sameWidth?: boolean;
+  gap?: number;
 } & React.ComponentProps<"div">;
 
 export default function DropDown({
@@ -19,6 +20,7 @@ export default function DropDown({
   renderChildren,
   align,
   sameWidth = false,
+  gap = 0,
   ...rest
 }: Prop) {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +40,7 @@ export default function DropDown({
       componentRef.current?.getBoundingClientRect();
 
     setPosition({
-      top: top + height + window.scrollY,
+      top: top + height + window.scrollY + gap,
       left: align === "center" ? left + width / 2 : left,
       width: sameWidth ? width : rest.style?.width || "fit-content",
       right: align === "right" ? window.innerWidth - right : "",
@@ -85,6 +87,13 @@ export default function DropDown({
       window.addEventListener("mousedown", handleMouseDown, {
         signal: abortctrl.signal,
       });
+      window.addEventListener(
+        "blur",
+        () => {
+          togleDropDown();
+        },
+        { signal: abortctrl.signal }
+      );
       window.addEventListener("scroll", handleScroll, {
         signal: abortctrl.signal,
       });

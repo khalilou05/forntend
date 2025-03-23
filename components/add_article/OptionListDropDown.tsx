@@ -1,10 +1,8 @@
-import type { OptionItem, ProductOption } from "@/types/types";
 import PlusIcon from "@/assets/icons/plusCircle";
-import { use } from "react";
+import type { OptionItem, ProductOption } from "@/types/types";
 
-import fetchApi from "@/lib/fetch";
 import useFetch from "@/hooks/useFetch";
-import LoadingSpiner from "../LoadingSpiner";
+import CheckBox from "../CheckBox";
 import { LineSkeleteon } from "../Skeleteon";
 
 type Prop = {
@@ -51,20 +49,29 @@ export default function OptionListDropDown({ setProductOption }: Prop) {
 
 type OptionListProp = {
   option_id: string;
+  togleAddOptionItem: (optionId: string, itm: OptionItem) => void;
 };
 
-export function OptionListItemDrp({ option_id }: OptionListProp) {
-  const { data, loading } = useFetch<OptionItem[]>(
-    `/option_item?option_id=${option_id}`,
-    true
+export function OptionListItemDrp({
+  option_id,
+  togleAddOptionItem,
+}: OptionListProp) {
+  const { data: optionItems, loading } = useFetch<OptionItem[]>(
+    `/option_item?option_id=${option_id}`
   );
 
   return (
     <>
       {loading && <LineSkeleteon lineNum={3} />}
 
-      {data?.map((option) => (
-        <div key={option.id}>{option.key}</div>
+      {optionItems?.map((item) => (
+        <div
+          onClick={() => togleAddOptionItem(option_id, item)}
+          key={item.id}
+        >
+          <CheckBox />
+          {item.key}
+        </div>
       ))}
     </>
   );

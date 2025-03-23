@@ -1,18 +1,13 @@
 import ArrowIcon from "@/assets/icons/selectArrow";
 import style from "@/css/component/categoryInput.module.css";
-import type { Product, Category } from "@/types/types";
-import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
-
-import Input from "../Input";
 import useFetch from "@/hooks/useFetch";
-import LoadingSpiner from "../LoadingSpiner";
+import type { Category } from "@/types/types";
+import { useState, type ChangeEvent } from "react";
 import DropDown from "../DropDown";
+import Input from "../Input";
 import { LineSkeleteon } from "../Skeleteon";
-export default function CartegoryInput({
-  setProdct,
-}: {
-  setProdct: React.Dispatch<React.SetStateAction<Product>>;
-}) {
+
+export default function CartegoryInput() {
   const [inputValue, setinputValue] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +33,10 @@ export default function CartegoryInput({
         </div>
       )}
       renderChildren={(closeDropDown) => (
-        <CartegoryList setinputValue={setinputValue} />
+        <CartegoryList
+          closeDropDown={closeDropDown}
+          setinputValue={setinputValue}
+        />
       )}
     />
   );
@@ -46,8 +44,10 @@ export default function CartegoryInput({
 
 export function CartegoryList({
   setinputValue,
+  closeDropDown,
 }: {
   setinputValue: (value: string) => void;
+  closeDropDown: () => void;
 }) {
   const { data: category, loading } = useFetch<Category[]>("/category");
 
@@ -63,6 +63,7 @@ export function CartegoryList({
         <div
           onClick={() => {
             setinputValue(item.name);
+            closeDropDown();
           }}
           key={item.id}
         >

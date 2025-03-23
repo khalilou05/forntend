@@ -1,5 +1,10 @@
-const SvgComponent = ({ size }) => (
+type Prop = {
+  size: number;
+} & React.ComponentProps<"svg">;
+
+const SvgComponent = ({ size, ...rest }: Prop) => (
   <svg
+    {...rest}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     height={size}
