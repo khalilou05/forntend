@@ -1,3 +1,4 @@
+"use client";
 import BanIcon from "@/assets/icons/ban";
 import BoldTextIcon from "@/assets/icons/boldtext";
 import ItalicTextIcon from "@/assets/icons/italictext";

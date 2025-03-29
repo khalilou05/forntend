@@ -1,10 +1,11 @@
-import { Context } from "@/context/AddProductContext";
-import { useContext } from "react";
+"use client";
+
+import { useAddPrdCtx } from "@/context/AddProductContext";
 import Card from "./Card";
 import SelectInput from "./SelectInput";
 
 export default function ProductStatus() {
-  const { handleProductUpdate } = useContext(Context);
+  const { handleProductUpdate } = useAddPrdCtx();
   return (
     <Card
       title="حالة المنتج"

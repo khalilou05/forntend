@@ -1,12 +1,13 @@
-import { Context } from "@/context/AddProductContext";
+"use client";
+
+import { useAddPrdCtx } from "@/context/AddProductContext";
 import style from "@/css/route/addArticle.module.css";
-import { useContext } from "react";
 import Card from "../Card";
 import InputNumber from "../InputNumber";
 import ToolTip from "../ToolTip";
 
 export default function PricingCard() {
-  const { handleProductUpdate } = useContext(Context);
+  const { handleProductUpdate } = useAddPrdCtx();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,

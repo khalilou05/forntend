@@ -1,5 +1,6 @@
+"use client";
 import type { Media, Product, ProductOption } from "@/types/types";
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 export type AddPrdCtx = {
   mediaList: Media[];
@@ -13,7 +14,7 @@ export type AddPrdCtx = {
   ) => void;
 };
 
-export const Context = createContext<AddPrdCtx>({} as AddPrdCtx);
+export const Context = createContext<AddPrdCtx | null>(null);
 
 export default function PageCtx({ children }: { children: React.ReactNode }) {
   const [mediaList, setMediaList] = useState<Media[]>([]);
@@ -51,4 +52,12 @@ export default function PageCtx({ children }: { children: React.ReactNode }) {
       {children}
     </Context>
   );
+}
+
+export function useAddPrdCtx() {
+  const AddprdCtx = useContext(Context);
+  if (!AddprdCtx) {
+    throw new Error("ctx is null");
+  }
+  return AddprdCtx;
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import CategoryInput from "@/components/add_article/CartegoryInput";
 import Card from "./Card";
 

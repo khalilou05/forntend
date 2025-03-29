@@ -1,11 +1,12 @@
-import { Context } from "@/context/AddProductContext";
-import { useContext } from "react";
+"use client";
+
+import { useAddPrdCtx } from "@/context/AddProductContext";
 import Card from "./Card";
 import CheckBox from "./CheckBox";
 import InputNumberArrow from "./InputNumberArrow";
 
 export default function ProductStock() {
-  const { handleProductUpdate } = useContext(Context);
+  const { handleProductUpdate } = useAddPrdCtx();
 
   return (
     <Card style={{ gap: 10 }}>

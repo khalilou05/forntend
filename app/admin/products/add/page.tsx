@@ -1,11 +1,6 @@
-"use client";
-
 import PricingCard from "@/components/add_article/PricingCard";
 
 import style from "@/css/route/addArticle.module.css";
-import type { Product } from "@/types/types";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 
 import HeaderNav from "@/components/HeaderNav";
 import ProductDetails from "@/components/ProductDetails";
@@ -19,23 +14,6 @@ import PageProvider from "@/context/AddProductContext";
 import { ImgModlProvider } from "@/context/ImgModalContext";
 
 export default function AddArticle() {
-  const [canSubmit, setCanSubmit] = useState(false);
-  const router = useRouter();
-
-  const cache = useRef<Product>({
-    title: "",
-    price: 0,
-    prev_price: 0,
-    buying_price: 0,
-    global_stock: 0,
-    category_id: 0,
-    description: "",
-    out_stock_sell: false,
-    free_shipping: false,
-    active: true,
-    has_option: false,
-  });
-
   // const checkProduct = () => {
   //   const dirtyArray = [];
   //   for (const key in product) {
@@ -100,10 +78,6 @@ export default function AddArticle() {
   //       .forEach((el) => el.removeEventListener("click", handleClick));
   //   };
   // }, [isDirty]);
-
-  useEffect(() => {
-    document.title = "إضافة منتج";
-  }, []);
 
   return (
     <PageProvider>

@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 
 import style from "@/css/component/imageManager.module.css";
 
-import Portal from "../Portal";
-import CheckBox from "../CheckBox";
 import type { Media } from "@/types/types";
+import CheckBox from "../CheckBox";
+import Portal from "../Portal";
 
 export default function Dragableimage({
   media,

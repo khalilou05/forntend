@@ -1,3 +1,5 @@
+"use client";
+
 import ImageModal from "@/components/ImageModal";
 import fetchApi from "@/lib/fetch";
 import type { Media } from "@/types/types";
@@ -9,9 +11,9 @@ import {
   useState,
 } from "react";
 
-import { Context } from "./AddProductContext";
+import { useAddPrdCtx } from "./AddProductContext";
 
-export type ImgModlaType = {
+export type ImgModlaCtxType = {
   openImgModal: (
     openfor: "product" | "editor" | "variant",
     callback: (media: Media[]) => void
@@ -22,7 +24,7 @@ export type ImgModlaType = {
   ) => Promise<void>;
 };
 
-export const ImgModlaCtx = createContext<ImgModlaType>({} as ImgModlaType);
+export const ImgModlaCtx = createContext<ImgModlaCtxType | null>(null);
 
 export function ImgModlProvider({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +34,7 @@ export function ImgModlProvider({ children }: { children: React.ReactNode }) {
 
   const imgModalcallBack = useRef<((media: Media[]) => void) | null>(null);
 
-  const { mediaList } = useContext(Context);
+  const { mediaList } = useAddPrdCtx();
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -76,4 +78,10 @@ export function ImgModlProvider({ children }: { children: React.ReactNode }) {
       />
     </ImgModlaCtx>
   );
+}
+
+export function useImgModalCtx() {
+  const ImgModalCtx = useContext(ImgModlaCtx);
+  if (!ImgModalCtx) throw new Error("image modal ctx is null");
+  return ImgModalCtx;
 }

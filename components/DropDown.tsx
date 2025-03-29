@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
 import Card from "./Card";
 import Portal from "./Portal";

@@ -1,7 +1,9 @@
+"use client";
+
 import DownCaret from "@/assets/icons/caretDown";
 import UpCaret from "@/assets/icons/caretUp";
-import React, { useState, type ChangeEvent } from "react";
 import style from "@/css/component/inputNumberArrow.module.css";
+import React, { useState, type ChangeEvent } from "react";
 import Input from "./Input";
 
 type Prop = {

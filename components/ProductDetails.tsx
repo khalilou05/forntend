@@ -1,7 +1,8 @@
-import { Context } from "@/context/AddProductContext";
+"use client";
+
+import { useAddPrdCtx } from "@/context/AddProductContext";
 import style from "@/css/route/addArticle.module.css";
 import type { Media, Product } from "@/types/types";
-import { useContext } from "react";
 import ProductImage from "./add_article/ProductImage";
 import Card from "./Card";
 import Editor from "./editor/Editor";
@@ -17,7 +18,7 @@ type Prop = {
 };
 
 export default function ProductDetails() {
-  const { handleProductUpdate } = useContext(Context);
+  const { handleProductUpdate } = useAddPrdCtx();
 
   return (
     <Card

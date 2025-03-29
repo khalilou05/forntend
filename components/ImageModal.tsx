@@ -1,3 +1,4 @@
+"use client";
 import style from "@/css/component/imageModal.module.css";
 import useFetch from "@/hooks/useFetch";
 import fetchApi from "@/lib/fetch";

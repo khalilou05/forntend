@@ -1,3 +1,5 @@
+"use client";
+
 import style from "@/css/component/imageManager.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
 

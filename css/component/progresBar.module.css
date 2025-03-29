@@ -1,0 +1,1 @@
+.bar{position:"fixed";width:0%;top:0;left:0;animation:progress 1000 forwards}@keyframes progress{100%{width:100%}}

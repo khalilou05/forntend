@@ -1,14 +1,16 @@
+"use client";
+
 import PlusIcon from "@/assets/icons/plusCircle";
 import TrashIcon from "@/assets/icons/trash";
 import style from "@/css/component/optionCard.module.css";
 import type { OptionItem, ProductOption } from "@/types/types";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Button from "./Button";
 import Card from "./Card";
 import Input from "./Input";
 
-import { Context } from "@/context/AddProductContext";
+import { useAddPrdCtx } from "@/context/AddProductContext";
 import CheckBox from "./CheckBox";
 import DropDown from "./DropDown";
 import OptionListDropDown, {
@@ -16,7 +18,7 @@ import OptionListDropDown, {
 } from "./add_article/OptionListDropDown";
 
 export default function ProductOption() {
-  const { productOption: options, setProductOption } = useContext(Context);
+  const { productOption: options, setProductOption } = useAddPrdCtx();
   const inOption = (optionId: string, newItem: OptionItem) => {
     const isIn = options.find((opt) => {
       if (opt.id === optionId) {
