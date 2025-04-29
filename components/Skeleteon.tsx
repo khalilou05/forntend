@@ -1,4 +1,4 @@
-import style from "@/css/component/skeleton.module.css";
+import style from "@/css/skeleton.module.css";
 
 type LineProp = {
   lineNum: number;

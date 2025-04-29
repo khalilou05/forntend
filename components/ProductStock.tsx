@@ -1,22 +1,18 @@
 "use client";
 
-import { useAddPrdCtx } from "@/context/AddProductContext";
+import { InputNumArrow } from "@/components/inputGroup";
+import { useAddPrdCtx } from "@/context/AddProductCtx";
 import Card from "./Card";
 import CheckBox from "./CheckBox";
-import InputNumberArrow from "./InputNumberArrow";
 
 export default function ProductStock() {
   const { handleProductUpdate } = useAddPrdCtx();
 
   return (
     <Card style={{ gap: 10 }}>
-      <div>المخزون</div>
+      <label htmlFor="stock">المخزون</label>
 
-      <InputNumberArrow
-        handleInputChange={(value) =>
-          handleProductUpdate("global_stock", value)
-        }
-      />
+      <InputNumArrow id="stock" />
       <div>
         <CheckBox
           onChange={(e) =>

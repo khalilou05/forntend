@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { OrderIn } from "@/types/types";
 
-import SearchInput from "./SearchInput";
+import { Input } from "@/components/inputGroup";
 import fetchApi from "@/lib/fetch";
 
 type OrderFilterInput = {
@@ -46,8 +46,7 @@ function OrderSerchInput({ setOrders, orderStatus }: OrderFilterInput) {
   }, [query]);
 
   return (
-    <SearchInput
-      showXicon
+    <Input
       placeholder="إبحث برقم الهاتف أو الإسم"
       onChange={handleSearch}
     />

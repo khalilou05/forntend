@@ -2,20 +2,18 @@
 
 import PlusIcon from "@/assets/icons/plusCircle";
 import TrashIcon from "@/assets/icons/trash";
-import style from "@/css/component/optionCard.module.css";
+import style from "@/css/optionCard.module.css";
 import type { OptionItem, ProductOption } from "@/types/types";
 import React, { useEffect, useRef, useState } from "react";
 
 import Button from "./Button";
 import Card from "./Card";
-import Input from "./Input";
+import { Input } from "./inputGroup";
 
-import { useAddPrdCtx } from "@/context/AddProductContext";
+import { useAddPrdCtx } from "@/context/AddProductCtx";
 import CheckBox from "./CheckBox";
 import DropDown from "./DropDown";
-import OptionListDropDown, {
-  OptionListItemDrp,
-} from "./add_article/OptionListDropDown";
+import OptionListDropDown from "./add_article/OptionListDropDown";
 
 export default function ProductOption() {
   const { productOption: options, setProductOption } = useAddPrdCtx();
@@ -81,9 +79,7 @@ export default function ProductOption() {
       )}
 
       {!options.length && (
-        <DropDown
-          sameWidth
-          align="right"
+        <DropDown<HTMLButtonElement>
           component={(__, ref, _, togleDropDown) => (
             <button
               ref={ref}
@@ -94,8 +90,11 @@ export default function ProductOption() {
               إضافة خيارات مثل الحجم أو الألوان
             </button>
           )}
-          renderChildren={(closeDropDown) => (
-            <OptionListDropDown setProductOption={setProductOption} />
+          dropDown={(ref, styles) => (
+            <OptionListDropDown
+              ref={ref}
+              style={styles}
+            />
           )}
         />
       )}
@@ -325,10 +324,10 @@ function Option({
     <form className={style.option}>
       <label>إسم الخيار</label>
       <Input
+        type="text"
         ref={optionNameInput}
         value={option.name}
         readOnly={!option.is_custom}
-        onChange={(e) => updateOptionName(option.id, e.target.value)}
         onKeyDown={handleKeyDonwFirstInp}
       />
       <label>الخيارات</label>
@@ -338,19 +337,20 @@ function Option({
             {option.items.map((itm) => (
               <div key={itm.id}>{itm.key}</div>
             ))}
-            <DropDown
+            <DropDown<HTMLInputElement>
               sameWidth
               align="right"
               component={(_, ref, openDropDown) => (
                 <Input
+                  type="text"
                   ref={ref}
                   onClick={openDropDown}
                 />
               )}
-              renderChildren={(closeDropDown) => (
-                <OptionListItemDrp
-                  togleAddOptionItem={togleAddOptionItem}
-                  option_id={option.id}
+              dropDown={(ref, styles) => (
+                <OptionListDropDown
+                  ref={ref}
+                  style={styles}
                 />
               )}
             />
@@ -363,6 +363,7 @@ function Option({
                 key={item.id}
               >
                 <Input
+                  type="text"
                   onKeyDown={(e) => handleKeyDonw(e, i, option.id, item.id)}
                   onChange={(e) =>
                     updateOptionItem(option.id, item.id, "key", e.target.value)

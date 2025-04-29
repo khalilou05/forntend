@@ -1,0 +1,1 @@
+body{overflow:hidden}.admin-frame{display:flex;flex-direction:column;height:100vh;background-color:#000}.admin-frame .main{display:flex;background-color:var(--bg-color);border-top-left-radius:10px;border-top-right-radius:10px;flex:1;overflow:hidden}.admin-frame .main .page{flex:1;overflow-y:auto}

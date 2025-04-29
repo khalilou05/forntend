@@ -1,7 +1,7 @@
 export default function Redo({ ...rest }: React.ComponentProps<"svg">) {
   return (
     <svg
-      {...rest}
+      className="icon__svg"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
     >

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import style from "@/css/route/add_order.module.css";
+import React, { useState } from "react";
 
-import SearchInput from "../SearchInput";
+import { SearchInput } from "@/components/inputGroup";
+import Button from "../Button";
 import Card from "../Card";
 import Modal from "../Modal";
-import Button from "../Button";
 function ArticleSearchInput() {
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +36,7 @@ function ArticleSearchInput() {
           closeModal={handleClose}
           openModal={() => setIsOpen(true)}
           title="بحث عن منتج"
-          render={(handleOpen) => (
+          component={(handleOpen) => (
             <Button
               onClick={handleOpen}
               buttonType="secandary"

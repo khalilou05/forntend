@@ -1,11 +1,11 @@
+import { SearchInput } from "@/components/inputGroup";
 import Card from "./Card";
-import SearchInput from "./SearchInput";
 
 export default function ProductOptionSearch() {
   return (
     <>
       <br />
-      <Card type="floating">
+      <Card type="dropDown">
         <div className="style.search_bar">
           <SearchInput
             autoFocus={true}

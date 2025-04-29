@@ -1,0 +1,8 @@
+.spinner {
+  animation: spin 500ms linear infinite;
+}
+@keyframes spin {
+  100% {
+    rotate: 360deg;
+  }
+}

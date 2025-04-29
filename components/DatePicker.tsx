@@ -1,11 +1,15 @@
+"use client";
 import CalendarIco from "@/assets/icons/calendar";
 import ArrowIco from "@/assets/icons/rightArrow";
 import style from "@/css/component/datePicker.module.css";
 import { useMemo, useState } from "react";
+import Card from "./Card";
 import DropDown from "./DropDown";
-import Input from "./Input";
-
-export default function DatePicker() {
+import { Input } from "./inputGroup";
+interface Prop {
+  handleDateChange: (date: Date) => void;
+}
+export default function DatePicker({ handleDateChange }: Prop) {
   const [selectedDate, setSelectedDate] = useState(new Date(Date.now()));
   const [currentDate, setCurrentDate] = useState(new Date(Date.now()));
 
@@ -27,6 +31,11 @@ export default function DatePicker() {
     setCurrentDate(newDate);
   };
 
+  const handleSelectDate = (date: Date) => {
+    setSelectedDate(date);
+    handleDateChange(date);
+  };
+
   const getMonthDates = useMemo(() => {
     const dates = [];
     const date = new Date(currentYear, currentMonth, 1);
@@ -37,7 +46,7 @@ export default function DatePicker() {
     return dates;
   }, [currentMonth]);
   return (
-    <DropDown
+    <DropDown<HTMLInputElement>
       sameWidth
       gap={5}
       component={(_, ref, __, togleDropDown) => (
@@ -69,8 +78,13 @@ export default function DatePicker() {
           />
         </div>
       )}
-      renderChildren={(closeDropDown) => (
-        <div className={style.calendar}>
+      dropDown={(ref, styles, closeDropDown) => (
+        <Card
+          ref={ref}
+          type="dropDown"
+          style={{ ...styles }}
+          className={style.calendar}
+        >
           <div className={style.header}>
             <button onClick={setMonthDown}>
               <ArrowIco size={20} />
@@ -89,7 +103,7 @@ export default function DatePicker() {
                 className={style.date}
                 key={i}
                 onClick={() => {
-                  setSelectedDate(new Date(currentYear, currentMonth, day));
+                  handleSelectDate(new Date(currentYear, currentMonth, day));
                   closeDropDown();
                 }}
               >
@@ -97,7 +111,7 @@ export default function DatePicker() {
               </span>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     />
   );

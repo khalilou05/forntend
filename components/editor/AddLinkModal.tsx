@@ -1,10 +1,10 @@
-import style from "@/css/component/editor.module.css";
+import style from "@/css/editor.module.css";
 import Modal from "../Modal";
 
 import LinkIcon from "@/assets/icons/link";
 import React, { useState } from "react";
 import Button from "../Button";
-import Input from "../Input";
+import { Input } from "../inputGroup";
 import SelectInput from "../SelectInput";
 import ToolTip from "../ToolTip";
 
@@ -22,15 +22,21 @@ export default function AddLinkModal() {
       openModal={() => setIsOpen(true)}
       closeModal={() => setIsOpen(false)}
       title="إضافة رابط"
-      render={(handleOpen) => (
-        <ToolTip value="إضافة رابط">
-          <button
-            className={style.btn}
-            onClick={handleOpen}
-          >
-            <LinkIcon size={20} />
-          </button>
-        </ToolTip>
+      component={(handleOpen) => (
+        <ToolTip
+          value="إضافة رابط"
+          component={(ref, handleMouseEnter, handleMouseLeave) => (
+            <button
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              ref={ref}
+              className={style.btn}
+              onClick={handleOpen}
+            >
+              <LinkIcon size={20} />
+            </button>
+          )}
+        />
       )}
       footerRender={(handleClose) => (
         <>
@@ -53,6 +59,7 @@ export default function AddLinkModal() {
         <div className={style.column}>
           <label>رابط الي</label>
           <Input
+            type="text"
             dir="ltr"
             placeholder="https://"
             onChange={handleChange}

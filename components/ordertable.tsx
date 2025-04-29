@@ -1,17 +1,15 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import style from "@/css/component/orderTable.module.css";
-import { OrderStatus, type OrderIn, type OrderTableProps } from "@/types/types";
-import { orderStatusFormat } from "@/lib/ordertableFunc";
+import style from "@/css/orderTable.module.css";
 import { phoneFormat } from "@/lib/phoneNformat";
+import { OrderStatus, type OrderIn, type OrderTableProps } from "@/types/types";
 import { useRouter } from "next/navigation";
-import DropDown from "./DropDown";
+import { useEffect, useRef, useState } from "react";
 
-import Card from "./Card";
-import Button from "./Button";
-import Badge from "./Badge";
 import OrderSerchInput from "@/components/orderSearchInput";
 import useFetch from "@/hooks/useFetch";
+import Badge from "./Badge";
+import Button from "./Button";
+import Card from "./Card";
 import CheckBox from "./CheckBox";
 
 function OrderTable({ ordersList, ordersCount }: OrderTableProps) {

@@ -1,5 +1,6 @@
+"use client";
 import Notification from "@/components/Notification";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, use, useCallback, useState } from "react";
 
 type NotifCtx = {
   notify: (type: MsgType, message: string) => void;
@@ -48,7 +49,7 @@ export default function NotificationProvider({
 }
 
 export function useNotfication() {
-  const NotfCtx = useContext(NotificationCtx);
+  const NotfCtx = use(NotificationCtx);
   if (!NotfCtx) throw new Error("notification ctx is null");
   return NotfCtx;
 }

@@ -1,1 +1,63 @@
-.body{display:flex;flex-direction:column;justify-content:center;width:100%;padding:100px 8%;gap:20px}.body .column_container{display:flex;gap:20px}.body .column_container .right_column{display:flex;flex-direction:column;flex-shrink:0;gap:20px;width:65%}.body .column_container .right_column .product_info .section{display:flex;flex-direction:column;gap:10px}.body .column_container .right_column .pricing_card{display:flex}.body .column_container .right_column .pricing_card .wraper{display:flex;gap:20px}.body .column_container .right_column .pricing_card .wraper .row_item{width:30%;display:flex;flex-direction:column;gap:10px}.body .column_container .right_column .submit_btn{align-self:flex-end;width:60px}.body .column_container .left_column{display:flex;flex-direction:column;width:35%;gap:20px}.body .column_container .left_column .shipping_card{grid-row:2/3;grid-column:2/3}.body .column_container .left_column .stock_card{display:flex;flex-direction:column}.body .column_container .left_column .stock_card div{display:flex;align-items:center}.body .column_container .left_column .stock_card div span{font-size:14px}.inpt_label{font-size:14px}
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 100px;
+}
+.page .column_container {
+  display: flex;
+  gap: 20px;
+}
+.page .column_container .right_column {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 20px;
+  width: 65%;
+}
+.page .column_container .right_column .product_info .section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.page .column_container .right_column .pricing_card {
+  display: flex;
+}
+.page .column_container .right_column .pricing_card .wraper {
+  display: flex;
+  gap: 20px;
+}
+.page .column_container .right_column .pricing_card .wraper .row_item {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.page .column_container .right_column .submit_btn {
+  align-self: flex-end;
+  width: 60px;
+}
+.page .column_container .left_column {
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  gap: 20px;
+}
+.page .column_container .left_column .shipping_card {
+  grid-row: 2/3;
+  grid-column: 2/3;
+}
+.page .column_container .left_column .stock_card {
+  display: flex;
+  flex-direction: column;
+}
+.page .column_container .left_column .stock_card div {
+  display: flex;
+  align-items: center;
+}
+.page .column_container .left_column .stock_card div span {
+  font-size: 14px;
+}
+.inpt_label {
+  font-size: 14px;
+}

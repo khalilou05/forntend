@@ -1,13 +1,8 @@
-type Prop = {
-  size: number;
-} & React.SVGProps<SVGSVGElement>;
-const SvgComponent = ({ size, ...rest }: Prop) => (
+const SvgComponent = ({ ...rest }: React.ComponentProps<"svg">) => (
   <svg
+    {...rest}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
-    height={size}
-    width={size}
-    {...rest}
   >
     <path
       fillRule="evenodd"

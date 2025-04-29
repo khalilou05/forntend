@@ -1,17 +1,17 @@
-import PricingCard from "@/components/add_article/PricingCard";
-
-import style from "@/css/route/addArticle.module.css";
-
 import HeaderNav from "@/components/HeaderNav";
 import ProductDetails from "@/components/ProductDetails";
-import ProductOption from "@/components/ProductOption";
+import PricingCard from "@/components/ProductPrice";
 import ProductShipping from "@/components/ProductShipping";
 import ProductStatus from "@/components/ProductStatus";
 import ProductStock from "@/components/ProductStock";
+import style from "@/css/route/addArticle.module.css";
 
 import ProductCategory from "@/components/ProductCategory";
-import PageProvider from "@/context/AddProductContext";
-import { ImgModlProvider } from "@/context/ImgModalContext";
+import ProductOption from "@/components/ProductOption";
+import ProductSEO from "@/components/ProductSEO";
+import PageProvider from "@/context/AddProductCtx";
+import { ImgModlProvider } from "@/context/ImgModalCtx";
+import NotificationProvider from "@/context/NotificationCtx";
 
 export default function AddArticle() {
   // const checkProduct = () => {
@@ -82,24 +82,27 @@ export default function AddArticle() {
   return (
     <PageProvider>
       <ImgModlProvider>
-        <div className={style.body}>
-          <HeaderNav title="إضافة منتج" />
+        <NotificationProvider>
+          <div className={style.page}>
+            <HeaderNav title="إضافة منتج" />
 
-          <div className={style.column_container}>
-            <div className={style.right_column}>
-              <ProductDetails />
-              <PricingCard />
-              <ProductOption />
-            </div>
+            <div className={style.column_container}>
+              <div className={style.right_column}>
+                <ProductDetails />
+                <PricingCard />
+                <ProductOption />
+                <ProductSEO />
+              </div>
 
-            <div className={style.left_column}>
-              <ProductStatus />
-              <ProductShipping />
-              <ProductStock />
-              <ProductCategory />
+              <div className={style.left_column}>
+                <ProductStatus />
+                <ProductShipping />
+                <ProductStock />
+                <ProductCategory />
+              </div>
             </div>
           </div>
-        </div>
+        </NotificationProvider>
       </ImgModlProvider>
     </PageProvider>
   );

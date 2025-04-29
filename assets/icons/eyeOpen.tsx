@@ -2,14 +2,12 @@ import type React from "react";
 type Prop = {
   size: number;
 } & React.SVGProps<SVGSVGElement>;
-const SvgComponent = ({ size, ...rest }: Prop) => (
+const SvgComponent = ({ ...rest }: Prop) => (
   <svg
+    {...rest}
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
-    viewBox="0 0 512.19 512.19"
-    height={size}
-    width={size}
-    {...rest}
+    viewBox="0 0 20 20"
   >
     <circle
       cx={256.095}

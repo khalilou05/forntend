@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 
-import style from "@/css/component/toast.module.css";
+import style from "@/css/toast.module.css";
 import { ToastMsg } from "@/types/types";
 type Props = {
   data: { msg: string; type: string }[];

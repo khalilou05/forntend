@@ -1,12 +1,12 @@
 "use client";
 
-import { useAddPrdCtx } from "@/context/AddProductContext";
+import { useAddPrdCtx } from "@/context/AddProductCtx";
 import style from "@/css/route/addArticle.module.css";
 import type { Media, Product } from "@/types/types";
 import ProductImage from "./add_article/ProductImage";
 import Card from "./Card";
 import Editor from "./editor/Editor";
-import Input from "./Input";
+import { Input } from "./inputGroup";
 
 type Prop = {
   mediaList: Media[];
@@ -25,6 +25,7 @@ export default function ProductDetails() {
       className={style.product_info}
       style={{ gap: 10 }}
     >
+      <div className=""></div>
       <div className={style.section}>
         <label
           className={style.inpt_label}
@@ -33,10 +34,9 @@ export default function ProductDetails() {
           العنوان
         </label>
         <Input
+          id="title"
           placeholder="أكتب عنوان مناسب للمنتج"
-          onChange={(e) => {
-            handleProductUpdate("title", e.target.value);
-          }}
+          onChange={(e) => handleProductUpdate("title", e.target.value)}
         />
       </div>
       <div className={style.section}>

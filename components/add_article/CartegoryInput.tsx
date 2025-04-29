@@ -1,29 +1,28 @@
 import ArrowIcon from "@/assets/icons/selectArrow";
-import style from "@/css/component/categoryInput.module.css";
+import { useWarperRef } from "@/context/WarperRefCtx";
+import style from "@/css/categoryInput.module.css";
 import useFetch from "@/hooks/useFetch";
 import type { Category } from "@/types/types";
 import { useState, type ChangeEvent } from "react";
+import Card from "../Card";
 import DropDown from "../DropDown";
-import Input from "../Input";
+import { Input } from "../inputGroup";
 import { LineSkeleteon } from "../Skeleteon";
 
 export default function CartegoryInput() {
   const [inputValue, setinputValue] = useState("");
-
+  const { warper } = useWarperRef();
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setinputValue(e.target.value);
   };
 
   return (
-    <DropDown
-      style={{
-        padding: "10px",
-        height: "50px",
-      }}
+    <DropDown<HTMLInputElement>
       sameWidth={true}
       component={(_, componentRef, openDropDown) => (
         <div className={style.select_warper}>
           <Input
+            type="text"
             value={inputValue}
             ref={componentRef}
             onClick={openDropDown}
@@ -32,11 +31,14 @@ export default function CartegoryInput() {
           <ArrowIcon size={20} />
         </div>
       )}
-      renderChildren={(closeDropDown) => (
-        <CartegoryList
-          closeDropDown={closeDropDown}
-          setinputValue={setinputValue}
-        />
+      dropDown={(ref, styles, closeDropDown) => (
+        <Card
+          ref={ref}
+          style={styles}
+          type="dropDown"
+        >
+          <p>khalil</p>
+        </Card>
       )}
     />
   );

@@ -1,13 +1,11 @@
 "use client";
-import style from "@/css/route/add_order.module.css";
-import RightArrowIcon from "@/assets/icons/rightArrow";
 import ArticleSearchBar from "@/components/add_order/ArticleSearchBar";
 import CustomerInfo from "@/components/add_order/CustomerInfo";
 import OrderSummary from "@/components/add_order/OrderSummary";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { type OrderOut } from "@/types/types";
 import HeaderNav from "@/components/HeaderNav";
+import style from "@/css/route/add_order.module.css";
+import { type OrderOut } from "@/types/types";
+import { useEffect, useState } from "react";
 
 export default function AddOrderPage() {
   const [order, setOrder] = useState<OrderOut>({

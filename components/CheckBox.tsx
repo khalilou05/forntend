@@ -1,11 +1,5 @@
-import type React from "react";
-import style from "@/css/component/checkbox.module.css";
-import type {
-  ComponentProps,
-  ComponentPropsWithRef,
-  HTMLProps,
-  InputHTMLAttributes,
-} from "react";
+import style from "@/css/checkbox.module.css";
+import type { ComponentProps } from "react";
 export default function CheckBox({ ...rest }: ComponentProps<"input">) {
   return (
     <input

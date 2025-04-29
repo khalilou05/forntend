@@ -1,12 +1,16 @@
 "use client";
 
-import DatePicker from "@/components/DatePicker";
+import { SearchInput } from "@/components/inputGroup";
+
+import withToolTip from "@/components/WithToolTip";
+
+const InputTooltip = withToolTip(SearchInput);
 
 export default function Page() {
   return (
     <>
       <br />
-      <DatePicker />
+      <InputTooltip tooltipText="khalil" />
     </>
   );
 }

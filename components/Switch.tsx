@@ -1,4 +1,4 @@
-import style from "@/css/component/switch.module.css";
+import style from "@/css/switch.module.css";
 
 export default function Switch({
   ...rest

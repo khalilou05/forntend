@@ -1,76 +1,108 @@
-"use client";
-import React, { useCallback, useRef, useState } from "react";
-import style from "@/css/component/tooltip.module.css";
+import { useWarperRef } from "@/context/WarperRefCtx";
+import style from "@/css/tooltip.module.css";
+import dynamic from "next/dynamic";
+import React, { useEffect, useRef, useState } from "react";
 
-import Protal from "./Portal";
+const Portal = dynamic(() => import("./Portal"), { ssr: false });
 
 type Prop = {
-  children: React.ReactNode;
+  parentRef?: React.RefObject<HTMLElement | null>;
+  component: (
+    ref: React.RefObject<any | null>,
+    showToolTip: () => void,
+    hideToolTip: () => void
+  ) => React.ReactNode;
   value: string;
   show?: boolean;
   tooltipPosition?: "center" | "left";
 };
 export default function ToolTip({
-  children,
+  component,
+  parentRef,
   value,
   show = true,
   tooltipPosition = "center",
 }: Prop) {
-  const [tooltipState, setTooltipState] = useState({
+  const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({
     top: 0,
     left: 0,
     showDown: false,
-    visible: false,
   });
 
-  const warperRef = useRef<HTMLDivElement | null>(null);
+  const { warper } = useWarperRef();
 
-  const handleMouseEnter = () => {
-    if (warperRef.current) {
-      const { top, left, width, height } =
-        warperRef.current.children[0].getBoundingClientRect();
+  const componentRef = useRef<HTMLElement | null>(null);
+  const dropDownRef = useRef<HTMLDivElement | null>(null);
+  const refToUse = parentRef ?? componentRef;
 
-      setTooltipState({
-        top:
-          top <= 41
-            ? top + height + 9 + window.scrollY
-            : top - height - 11 + window.scrollY,
-        left: tooltipPosition === "center" ? left + width / 2 : left,
-        showDown: top <= 41 ? true : false,
-        visible: true,
-      });
-    }
+  const updatePosition = () => {
+    if (!refToUse.current || !dropDownRef.current || !warper.current) return;
+    console.log(refToUse.current, dropDownRef.current, componentRef.current);
+
+    const componentRect = refToUse.current.getBoundingClientRect();
+    const dropDownRect = dropDownRef.current.getBoundingClientRect();
+    const warperRect = warper.current.getBoundingClientRect();
+
+    const hasTouchedNav =
+      componentRect.top + dropDownRect.height >=
+      warperRect.height - warperRect.top;
+
+    setPosition({
+      top: hasTouchedNav
+        ? componentRect.bottom + 2
+        : componentRect.top + dropDownRect.height,
+      left:
+        tooltipPosition === "center"
+          ? componentRect.left -
+            dropDownRect.width / 2 +
+            componentRect.width / 2
+          : componentRect.left,
+      showDown: hasTouchedNav ? true : false,
+    });
   };
-  const handleMouseLeave = useCallback(() => {
-    setTooltipState((prv) => ({ ...prv, visible: false }));
-  }, []);
+  const showToolTip = () => {
+    updatePosition();
+    setIsOpen(true);
+  };
+  const hideToolTip = () => setIsOpen(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const abrtctrl = new AbortController();
+    warper.current?.addEventListener(
+      "scroll",
+      () => {
+        hideToolTip();
+      },
+      { signal: abrtctrl.signal }
+    );
+
+    return () => {
+      abrtctrl.abort();
+    };
+  }, [isOpen]);
 
   return (
     <>
-      <div
-        ref={warperRef}
-        style={{ display: "contents" }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {children}
-      </div>
+      {component(refToUse, showToolTip, hideToolTip)}
 
-      <Protal>
+      <Portal>
         <div
-          className={tooltipState.showDown ? style.tooltipDown : style.tooltip}
+          ref={dropDownRef}
+          className={position.showDown ? style.tooltipDown : style.tooltip}
           style={{
-            display: tooltipState.visible && show ? "block" : "none",
+            visibility: isOpen && show ? "visible" : "hidden",
             position: "absolute",
-            top: tooltipState.top,
-            left: tooltipState.left,
-            transform: tooltipPosition === "center" ? "translateX(-50%)" : "",
+            top: position.top,
+            left: position.left,
+
             zIndex: 1000,
           }}
         >
           {value}
         </div>
-      </Protal>
+      </Portal>
     </>
   );
 }

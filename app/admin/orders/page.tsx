@@ -1,13 +1,6 @@
 import OrderTable from "@/components/ordertable";
 import fetchApi from "@/lib/fetch";
 import { OrderIn } from "@/types/types";
-import { Metadata } from "next";
-import { Suspense } from "react";
-
-export const metadata: Metadata = {
-  title: "الطلبيات",
-  description: "الطلبيات",
-};
 
 async function OrdersPage() {
   const { data: orderCount } = await fetchApi<number>(

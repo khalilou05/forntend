@@ -1,11 +1,9 @@
 "use client";
 
-import style from "@/css/route/manage_article.module.css";
-
 import { useEffect, useState } from "react";
 
-import Link from "next/link";
 import Card from "@/components/Card";
+import Link from "next/link";
 
 export default function ArticleManager() {
   useEffect(() => {

@@ -1,16 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { MouseEvent, useEffect, useRef, useState } from "react";
-import style from "@/css/route/login.module.css";
-import LockIcon from "@/assets/icons/lock";
 import EyeCrossedIcon from "@/assets/icons/eyecrossed";
 import EyeOpned from "@/assets/icons/eyeOpen";
+import LockIcon from "@/assets/icons/lock";
 import Loding from "@/components/LoadingSpiner";
+import style from "@/css/route/login.module.css";
+import { useRouter } from "next/navigation";
+import { MouseEvent, useRef, useState } from "react";
 
-import Card from "@/components/Card";
-import Input from "@/components/Input";
 import Button from "@/components/Button";
+import Card from "@/components/Card";
+import { Input } from "@/components/inputGroup";
 import fetchApi from "@/lib/fetch";
 
 function AdminLogin() {
@@ -102,14 +102,6 @@ function AdminLogin() {
               <Input
                 type={showPassword ? "text" : "password"}
                 style={{ height: "40px" }}
-                onChange={(e) => {
-                  loginData.current.password = e.target.value;
-                  if (loginData.current.password == "") {
-                    setPassEmpty(true);
-                    return;
-                  }
-                  setPassEmpty(false);
-                }}
               />
 
               {showPassword ? (

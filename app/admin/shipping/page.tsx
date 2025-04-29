@@ -1,14 +1,14 @@
 "use client";
-import React, { useMemo, useRef, useState } from "react";
-import style from "@/css/route/shipping.module.css";
-import Toast from "@/components/toast";
-import fetchApi from "@/lib/fetch";
-import type { ToastMsg, Wilaya } from "@/types/types";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
-import Input from "@/components/Input";
-import Switch from "@/components/Switch";
+import { Input } from "@/components/inputGroup";
 import LoadingSpiner from "@/components/LoadingSpiner";
+import Switch from "@/components/Switch";
+import Toast from "@/components/toast";
+import style from "@/css/route/shipping.module.css";
+import fetchApi from "@/lib/fetch";
+import type { ToastMsg, Wilaya } from "@/types/types";
+import { useMemo, useRef, useState } from "react";
 
 import useFetch from "@/hooks/useFetch";
 
@@ -96,6 +96,7 @@ function ShippingPage() {
               <div>{item.name}</div>
               <div>
                 <Input
+                  type="text"
                   disabled={!item.active}
                   onChange={(e) => {
                     handleOnChange(
@@ -109,6 +110,7 @@ function ShippingPage() {
               </div>
               <div>
                 <Input
+                  type="text"
                   disabled={!item.active}
                   onChange={(e) => {
                     handleOnChange(

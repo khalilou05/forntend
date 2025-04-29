@@ -1,12 +1,11 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 
-import style from "@/css/component/imageManager.module.css";
+import style from "@/css/imageManager.module.css";
 
 import type { Media } from "@/types/types";
+import dynamic from "next/dynamic";
 import CheckBox from "../CheckBox";
-import Portal from "../Portal";
+const Portal = dynamic(() => import("../Portal"), { ssr: false });
 
 export default function Dragableimage({
   media,

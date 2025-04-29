@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 
 function Page() {
   return <div>facebook Pixel</div>;

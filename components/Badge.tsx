@@ -1,4 +1,4 @@
-import style from "@/css/component/badge.module.css";
+import style from "@/css/badge.module.css";
 import { orderStatusFormat } from "@/lib/ordertableFunc";
 import type { OrderStatus } from "@/types/types";
 

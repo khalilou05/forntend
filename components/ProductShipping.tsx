@@ -1,6 +1,6 @@
 "use client";
 
-import { useAddPrdCtx } from "@/context/AddProductContext";
+import { useAddPrdCtx } from "@/context/AddProductCtx";
 import Card from "./Card";
 import SelectInput from "./SelectInput";
 

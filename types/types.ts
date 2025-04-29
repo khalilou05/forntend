@@ -109,5 +109,4 @@ export type Variant = {
   media_id: string;
   stock: number;
   price: number;
-  items: string[];
 };

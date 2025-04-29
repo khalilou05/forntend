@@ -1,8 +1,9 @@
 import VideoIcon from "@/assets/icons/video";
-import style from "@/css/component/editor.module.css";
+import style from "@/css/editor.module.css";
 import React, { useState } from "react";
 import Button from "../Button";
 import Modal from "../Modal";
+import TextArea from "../TextArea";
 import ToolTip from "../ToolTip";
 
 type Prop = {
@@ -36,15 +37,21 @@ export default function AddVideoModal({ addVideo }: Prop) {
       closeModal={closeModal}
       openModal={openModal}
       title="إضافة فيديو"
-      render={(handleOpen) => (
-        <ToolTip value="إضافة فيديو">
-          <button
-            onClick={handleOpen}
-            className={style.btn}
-          >
-            <VideoIcon size={20} />
-          </button>
-        </ToolTip>
+      component={(handleOpen) => (
+        <ToolTip
+          value="إضافة فيديو"
+          component={(ref, handleMouseEnter, handleMouseLeave) => (
+            <button
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              ref={ref}
+              onClick={handleOpen}
+              className={style.btn}
+            >
+              <VideoIcon />
+            </button>
+          )}
+        />
       )}
       footerRender={(handleClose) => (
         <>
@@ -73,10 +80,10 @@ export default function AddVideoModal({ addVideo }: Prop) {
     >
       <div className={style.addVideoModal}>
         <label>قم بلصق كود الفيديو في الأسفل</label>
-        <textarea
+        <TextArea
           value={value}
           onChange={handleChange}
-        ></textarea>
+        />
         <label>الكود يبدأ عموما بـ : &lt;iframe&gt;</label>
       </div>
     </Modal>

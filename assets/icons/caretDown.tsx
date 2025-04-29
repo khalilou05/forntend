@@ -1,9 +1,11 @@
-const SvgComponent = ({ height, width }) => (
+import type React from "react";
+
+interface Prop extends React.ComponentProps<"svg"> {}
+const SvgComponent = ({ ...rest }: Prop) => (
   <svg
+    {...rest}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
-    height={height}
-    width={width}
   >
     <path
       fillRule="evenodd"

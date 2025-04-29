@@ -1,6 +1,8 @@
 import DownCaretIcon from "@/assets/icons/downcaret";
-import style from "@/css/component/editor.module.css";
+import { useWarperRef } from "@/context/WarperRefCtx";
+import style from "@/css/editor.module.css";
 import { useState } from "react";
+import Card from "../Card";
 import DropDown from "../DropDown";
 
 export default function SelectTextSizeDropDown({
@@ -9,9 +11,10 @@ export default function SelectTextSizeDropDown({
   applyFormat: (command: string, attr?: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { warper } = useWarperRef();
 
   return (
-    <DropDown
+    <DropDown<HTMLButtonElement>
       align="right"
       sameWidth
       component={(isOpen, ref, _, togleDropDown) => (
@@ -25,8 +28,13 @@ export default function SelectTextSizeDropDown({
           <DownCaretIcon size={20} />
         </button>
       )}
-      renderChildren={(closeDropDown) => (
-        <div onClick={() => closeDropDown()}>
+      dropDown={(ref, styles, closeDropDown) => (
+        <Card
+          onClick={closeDropDown}
+          ref={ref}
+          style={styles}
+          type="dropDown"
+        >
           <p
             onClick={() => {
               applyFormat("fontSize", "1");
@@ -76,7 +84,7 @@ export default function SelectTextSizeDropDown({
           >
             7
           </p>
-        </div>
+        </Card>
       )}
     />
   );

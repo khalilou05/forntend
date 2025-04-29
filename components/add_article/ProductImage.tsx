@@ -1,13 +1,13 @@
 "use client";
 
-import style from "@/css/component/imageManager.module.css";
-import { useContext, useEffect, useRef, useState } from "react";
+import style from "@/css/imageManager.module.css";
+import { useEffect, useRef, useState } from "react";
 
 import PlusIcon from "@/assets/icons/plus";
 import DragableMedia from "./DragableMedia";
 
-import { Context } from "@/context/AddProductContext";
-import { ImgModlaCtx } from "@/context/ImgModalContext";
+import { useAddPrdCtx } from "@/context/AddProductCtx";
+import { useImgModalCtx } from "@/context/ImgModalCtx";
 import Button from "../Button";
 import CheckBox from "../CheckBox";
 
@@ -17,14 +17,14 @@ export default function ProductImage() {
   const [expand, setexpand] = useState(false);
   const InputRef = useRef<HTMLInputElement | null>(null);
   const slectAllRef = useRef<HTMLInputElement | null>(null);
-  const { mediaList, setMediaList } = useContext(Context);
-  const { openImgModal, handleImgUpload } = useContext(ImgModlaCtx);
+  const { productMedia, setproductMedia } = useAddPrdCtx();
+  const { openImgModal } = useImgModalCtx();
   const mediaToRender = [];
   const handleSelectAllImage = () => {
-    if (selectedImage.length === mediaList.length) {
+    if (selectedImage.length === productMedia.length) {
       setselectedImage([]);
     } else {
-      const imgId = mediaList.map((item) => item.id);
+      const imgId = productMedia.map((item) => item.id);
       setselectedImage(imgId);
     }
   };
@@ -42,29 +42,29 @@ export default function ProductImage() {
     return selectedImage.includes(id);
   };
   const deleteSelectedImage = () => {
-    const newImages = mediaList.filter(
-      (item) => !selectedImage.includes(item.id)
-    );
-    setMediaList(newImages);
+    // const newImages = productMedia.filter(
+    //   (item) => !selectedImage.includes(item.id)
+    // );
+    // setproductMedia(newImages);
     setselectedImage([]);
   };
 
-  for (let i = 0; i < mediaList.length; i++) {
+  for (let i = 0; i < productMedia.length; i++) {
     mediaToRender.push(
       <DragableMedia
         selectedImageLength={selectedImage.length}
         dragMode={dragMode}
         setdragMode={setdragMode}
-        setSelectedImage={() => handleSelectImage(mediaList[i].id)}
-        inSelectedImage={inSelectedImage(mediaList[i].id)}
-        fileListLength={mediaList.length}
-        imageID={mediaList[i].id}
-        key={mediaList[i].id}
-        media={mediaList[i]}
+        setSelectedImage={() => handleSelectImage(productMedia[i].id)}
+        inSelectedImage={inSelectedImage(productMedia[i].id)}
+        fileListLength={productMedia.length}
+        imageID={productMedia[i].id}
+        key={productMedia[i].id}
+        media={productMedia[i]}
       />
     );
 
-    if (i == 6 && !expand && mediaList.length > 8) {
+    if (i == 6 && !expand && productMedia.length > 8) {
       mediaToRender.push(
         <div
           key={i}
@@ -72,10 +72,10 @@ export default function ProductImage() {
           onClick={() => setexpand(true)}
         >
           <img
-            src={mediaList[7].url}
+            src={productMedia[7].url}
             alt=""
           />
-          <span>{mediaList.length - 7}+</span>
+          <span>{productMedia.length - 7}+</span>
         </div>
       );
 
@@ -85,7 +85,7 @@ export default function ProductImage() {
 
   useEffect(() => {
     if (!slectAllRef.current) return;
-    if (selectedImage.length === mediaList.length) {
+    if (selectedImage.length === productMedia.length) {
       slectAllRef.current.checked = true;
       slectAllRef.current.indeterminate = false;
     } else {
@@ -120,24 +120,25 @@ export default function ProductImage() {
       )}
       <section
         onClick={() => {
-          if (mediaList.length) return;
+          if (productMedia.length) return;
           InputRef.current?.click();
         }}
-        className={mediaList.length ? style.warper : style.warper_no_content}
+        className={productMedia.length ? style.warper : style.warper_no_content}
       >
-        {mediaList.length ? (
+        {productMedia.length ? (
           <>
             {mediaToRender}
             <button
               onClick={() => {
-                openImgModal("product", (media) => setMediaList(media));
+                openImgModal("product", (media) => setproductMedia(media));
               }}
             >
               <PlusIcon size={20} />
             </button>
             <input
-              onChange={(event) =>
-                handleImgUpload(event, (media) => setMediaList(media))
+              onChange={
+                (event) => null
+                // handleImgUpload(event, (media) => setproductMedia(media))
               }
               accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}
@@ -151,7 +152,7 @@ export default function ProductImage() {
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                openImgModal("product", (media) => setMediaList(media));
+                openImgModal("product", (media) => setproductMedia(media));
               }}
               buttonType="link"
             >
@@ -168,10 +169,11 @@ export default function ProductImage() {
               رفع صور جديدة
             </Button>
             <input
-              onChange={(event) =>
-                handleImgUpload(event, (data) =>
-                  setMediaList([...mediaList, ...data])
-                )
+              onChange={
+                (event) => null
+                // handleImgUpload(event, (data) =>
+                // setproductMedia([...productMedia, ...data])
+                // )
               }
               accept=".jpeg,.webp,.png,.jpg,.avif,.svg"
               ref={InputRef}

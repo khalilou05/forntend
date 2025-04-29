@@ -1,10 +1,10 @@
-import style from "@/css/component/customer_info.module.css";
-import SelectInput from "../SelectInput";
-import { useEffect, useState, type ChangeEvent } from "react";
-import fetchApi from "@/lib/fetch";
-import type { Wilaya, Baladiya, OrderOut } from "@/types/types";
 import Card from "@/components/Card";
-import Input from "../Input";
+import style from "@/css/component/customer_info.module.css";
+import fetchApi from "@/lib/fetch";
+import type { Baladiya, OrderOut, Wilaya } from "@/types/types";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { Input } from "../inputGroup";
+import SelectInput from "../SelectInput";
 
 type Prop = {
   handleOrderData: (
@@ -57,12 +57,14 @@ export default function CustomerInfo({ handleOrderData }: Prop) {
         <div className={style.input_sec}>
           <label>الإسم الكامل</label>
           <Input
+            type="text"
             onChange={(e) => handleOrderData("full_name", e.target.value)}
           />
         </div>
         <div className={style.input_sec}>
           <label>رقم الهاتف</label>
           <Input
+            type="text"
             onChange={(e) => handleOrderData("phone_number", e.target.value)}
           />
         </div>

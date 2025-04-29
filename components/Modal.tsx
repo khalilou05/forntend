@@ -1,25 +1,21 @@
-import React, {
-  useEffect,
-  useRef,
-  type ReactNode,
-  type ComponentProps,
-} from "react";
-import style from "@/css/component/modal.module.css";
-import Xicon from "@/assets/icons/Xicon";
-import Portal from "./Portal";
+import { Xicon } from "@/assets/icons";
+import style from "@/css/modal.module.css";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, type ComponentProps, type ReactNode } from "react";
+import Button from "./Button";
+const Portal = dynamic(() => import("./Portal"), { ssr: false });
 
-type Prop = {
+interface Prop extends ComponentProps<"div"> {
   isOpen: boolean;
   backdrop?: boolean;
   animatedColse?: boolean;
   children: ReactNode;
   title: string;
-
   openModal?: () => void;
   closeModal: () => void;
   footerRender?: (handleClose: () => void) => ReactNode;
-  render?: (handleOpen?: () => void) => ReactNode;
-} & ComponentProps<"div">;
+  component?: (handleOpen?: () => void) => ReactNode;
+}
 export default function Modal({
   isOpen,
   animatedColse = true,
@@ -29,7 +25,7 @@ export default function Modal({
   footerRender,
   openModal,
   closeModal,
-  render,
+  component,
   ...rest
 }: Prop) {
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +36,7 @@ export default function Modal({
     }
   };
 
-  const close = () => {
+  const closemodal = () => {
     modalRef.current?.removeAttribute("open");
     if (animatedColse) {
       setTimeout(closeModal, 100);
@@ -48,16 +44,12 @@ export default function Modal({
   };
 
   useEffect(() => {
-    const abortcontroller = new AbortController();
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown, {
-        signal: abortcontroller.signal,
-      });
-      document.body.setAttribute("style", "height:100vh;overflow-y:hidden;");
-    } else {
-      abortcontroller.abort();
-      document.body.removeAttribute("style");
-    }
+    if (!isOpen) return;
+    const abrtctrl = new AbortController();
+    document.addEventListener("keydown", handleKeyDown, {
+      signal: abrtctrl.signal,
+    });
+    return () => abrtctrl.abort();
   }, [isOpen]);
 
   return (
@@ -67,9 +59,7 @@ export default function Modal({
           style={{ display: isOpen && backdrop ? "block" : "none" }}
           className={style.backDrop}
         ></div>
-
         <div
-          {...rest}
           className={style.dialog}
           style={{
             ...rest.style,
@@ -79,20 +69,21 @@ export default function Modal({
         >
           <div className={style.header}>
             {title}
-            <button
+            <Button
+              buttonType="icon"
               className={style.close_btn}
-              onClick={close}
+              onClick={closemodal}
             >
-              <Xicon size={20} />
-            </button>
+              <Xicon />
+            </Button>
           </div>
           {children}
           {footerRender && (
-            <div className={style.footer}> {footerRender(close)}</div>
+            <div className={style.footer}>{footerRender(closemodal)}</div>
           )}
         </div>
       </Portal>
-      {render && render(openModal)}
+      {component?.(openModal)}
     </>
   );
 }

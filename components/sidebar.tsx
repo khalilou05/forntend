@@ -1,15 +1,15 @@
 "use client";
 
 import ManageIcon from "@/assets/aside_icons/articleManage.js";
-import TruckIcon from "@/assets/aside_icons/truck.js";
-import OrdersIcon from "@/assets/icons/orders.js";
-import SettingIcon from "@/assets/aside_icons/setting.js";
 import LogoutIcon from "@/assets/aside_icons/logout.js";
 import PuzzuleIcon from "@/assets/aside_icons/puzzule";
-import style from "@/css/component/sidebar.module.css";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
+import SettingIcon from "@/assets/aside_icons/setting.js";
+import TruckIcon from "@/assets/aside_icons/truck.js";
+import OrdersIcon from "@/assets/icons/orders.js";
+import style from "@/css/sidebar.module.css";
 import fetchApi from "@/lib/fetch";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 function Sidebar() {
   const router = useRouter();

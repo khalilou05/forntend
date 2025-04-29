@@ -1,6 +1,6 @@
 "use client";
 import RightArrowIcon from "@/assets/icons/rightArrow";
-import style from "@/css/component/headerNav.module.css";
+import style from "@/css/headerNav.module.css";
 import { useRouter } from "next/navigation";
 
 type Prop = {

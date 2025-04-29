@@ -1,5 +1,5 @@
-import style from "@/css/component/colorpicker.module.css";
-import { useRef, useState } from "react";
+import style from "@/css/colorpicker.module.css";
+import { useState } from "react";
 export default function ColorPicker() {
   const [hsl, setHsl] = useState({
     hue: 0,

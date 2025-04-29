@@ -1,13 +1,13 @@
-import style from "@/css/component/loiding.module.css";
+import style from "@/css/loiding.module.css";
+import type React from "react";
 type loadingProp = {
   size: number;
-  borderWidth?: string;
   borderTopColor?: string;
-  borderColor?: string;
-};
+} & React.ComponentProps<"div">;
 export default function LoadingSpiner({
   size,
   borderTopColor = "black",
+  ...rest
 }: loadingProp) {
   const border = (size * 10) / 100;
 
@@ -19,8 +19,9 @@ export default function LoadingSpiner({
         aspectRatio: 1 / 1,
         border: `${border}px solid gray`,
         borderTopColor: borderTopColor,
+        ...rest.style,
       }}
-      className={style.loading}
+      className={style.loading + " " + rest.className}
     ></div>
   );
 }

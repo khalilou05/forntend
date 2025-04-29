@@ -1,9 +1,8 @@
-import React, { ReactNode } from "react";
 import ArrowIcon from "@/assets/icons/selectArrow";
-import style from "@/css/component/selectInput.module.css";
-type Prop = {
-  children?: ReactNode;
-} & React.SelectHTMLAttributes<HTMLSelectElement>;
+import style from "@/css/selectInput.module.css";
+import React from "react";
+
+interface Prop extends React.ComponentProps<"select"> {}
 
 export default function SelectInput({ children, ...rest }: Prop) {
   return (

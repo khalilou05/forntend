@@ -1,134 +1,162 @@
 "use client";
-import React, { useEffect, useRef, useState, type ReactNode } from "react";
-import Card from "./Card";
-import Portal from "./Portal";
+import { useWarperRef } from "@/context/WarperRefCtx";
+import dynamic from "next/dynamic";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
-type Prop = {
+const Portal = dynamic(() => import("./Portal"), { ssr: false });
+
+type DropDownProps<T extends HTMLElement> = {
   component: (
     isOpen: boolean,
-    ref: React.Ref<any>,
+    ref: React.RefObject<T | null>,
     openDropDown: () => void,
-    togleDropDown: () => void
+    toggleDropDown: () => void
   ) => ReactNode;
-  renderChildren: (closeDropDown: () => void) => ReactNode;
-  align?: "right" | "center";
+  dropDown: (
+    ref: React.RefObject<HTMLDivElement | null>,
+    styles: CSSProperties,
+    closeDropDown: () => void
+  ) => ReactNode;
+
+  align?: "left" | "center" | "right";
   sameWidth?: boolean;
   gap?: number;
-} & React.ComponentProps<"div">;
+};
 
-export default function DropDown({
+export default function DropDown<T extends HTMLElement>({
   component,
-  renderChildren,
-  align,
+  dropDown,
+
+  align = "left",
   sameWidth = false,
-  gap = 0,
-  ...rest
-}: Prop) {
+  gap = 2,
+}: DropDownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
-  const [position, setPosition] = useState<Record<string, string | number>>({
+  const [position, setPosition] = useState<CSSProperties>({
     top: 0,
     left: 0,
-    right: 0,
-    width: 0,
+    width: "auto",
   });
-  const componentRef = useRef<HTMLElement | null>(null);
-  const dropRef = useRef<HTMLDivElement | null>(null);
-  const firstOpen = useRef(false);
 
-  const adjustPosition = () => {
-    if (!componentRef.current) return;
-    const { top, left, right, height, width } =
-      componentRef.current?.getBoundingClientRect();
+  const componentRef = useRef<T | null>(null);
+  const dropRef = useRef<HTMLDivElement | null>(null);
+  const frameId = useRef<number | null>(null);
+  const { warper } = useWarperRef();
+
+  const updatePosition = () => {
+    const trigger = componentRef.current;
+    const dropdown = dropRef.current;
+    if (!trigger || !dropdown) return;
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const dropdownHeight = dropdown.offsetHeight;
+    const triggerMid = triggerRect.left + triggerRect.width / 2;
+
+    if (triggerRect.top <= 50 || triggerRect.bottom >= window.innerHeight) {
+      closeDropDown();
+      return;
+    }
+
+    const spaceBelow = window.innerHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+    const placeAbove =
+      dropdownHeight > spaceBelow && spaceAbove > dropdownHeight;
+
+    const top = placeAbove
+      ? triggerRect.top - dropdownHeight - gap
+      : triggerRect.bottom + gap;
+
+    let left = triggerRect.left;
+    if (align === "center") left = triggerMid;
+    if (align === "right") left = triggerRect.right;
 
     setPosition({
-      top: top + height + window.scrollY + gap,
-      left: align === "center" ? left + width / 2 : left,
-      width: sameWidth ? width : rest.style?.width || "fit-content",
-      right: align === "right" ? window.innerWidth - right : "",
+      top,
+      left,
+      width: sameWidth ? triggerRect.width : "auto",
+      transform:
+        align === "center"
+          ? "translateX(-50%)"
+          : align === "right"
+          ? "translateX(-100%)"
+          : undefined,
     });
   };
-  const togleDropDown = () => {
-    adjustPosition();
-    setIsOpen(!isOpen);
+
+  const initPosition = () => {
+    if (!componentRef.current) return;
+    const { top, height, left, width } =
+      componentRef.current.getBoundingClientRect();
+    setPosition({
+      top: top + height + gap,
+      left: left,
+      width: sameWidth ? width : "auto",
+    });
   };
+
   const openDropDown = () => {
-    adjustPosition();
+    initPosition();
     setIsOpen(true);
   };
-  const closeDropDown = () => {
-    setIsOpen(false);
+  const closeDropDown = () => setIsOpen(false);
+
+  const toggleDropDown = () => {
+    initPosition();
+    setIsOpen(!isOpen);
   };
 
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleOutsideClick = (e: MouseEvent) => {
     if (
-      componentRef.current &&
-      e.target instanceof Node &&
-      !componentRef.current.contains(e.target) &&
-      !dropRef.current?.contains(e.target)
-    ) {
-      togleDropDown();
-    }
+      componentRef.current?.contains(e.target as Node) ||
+      dropRef.current?.contains(e.target as Node)
+    )
+      return;
+
+    closeDropDown();
   };
 
-  const handleScroll = () => {
-    if (dropRef.current) {
-      const { top, height } = dropRef.current?.getBoundingClientRect();
-      if (window.scrollY > top + window.scrollY) setIsOpen(false);
-
-      // todo fix
-      // console.log("top heigh", top + height);
-      // console.log(window.innerHeight);
-    }
+  const handleScrollResize = () => {
+    if (frameId.current) cancelAnimationFrame(frameId.current);
+    frameId.current = requestAnimationFrame(updatePosition);
   };
 
   useEffect(() => {
-    if (!firstOpen.current) firstOpen.current = true;
-    const abortctrl = new AbortController();
-    if (isOpen) {
-      window.addEventListener("mousedown", handleMouseDown, {
-        signal: abortctrl.signal,
-      });
-      window.addEventListener(
-        "blur",
-        () => {
-          togleDropDown();
-        },
-        { signal: abortctrl.signal }
-      );
-      window.addEventListener("scroll", handleScroll, {
-        signal: abortctrl.signal,
-      });
-    } else {
-      abortctrl.abort();
-    }
-    return () => {
-      abortctrl.abort();
-    };
+    if (!isOpen) return;
+    const ctrl = new AbortController();
+    window.addEventListener("mousedown", handleOutsideClick, {
+      signal: ctrl.signal,
+    });
+    window.addEventListener("resize", handleScrollResize, {
+      signal: ctrl.signal,
+    });
+    window.addEventListener("blur", closeDropDown, { signal: ctrl.signal });
+    warper.current?.addEventListener("scroll", handleScrollResize, {
+      signal: ctrl.signal,
+    });
+
+    return () => ctrl.abort();
   }, [isOpen]);
+
   return (
     <>
-      {component(isOpen, componentRef, openDropDown, togleDropDown)}
-
+      {component(isOpen, componentRef, openDropDown, toggleDropDown)}
       <Portal>
-        <Card
-          ref={dropRef}
-          type="floating"
-          style={{
-            ...rest.style,
-            display: isOpen ? "block" : "none",
-            width: position.width,
-            transform: align === "center" ? "translateX(-50%)" : "",
-            top: position.top,
-            left: position.left,
-            right: position.right,
-            scrollbarWidth: "thin",
-            overflow: "auto",
-            maxHeight: "200px",
+        {dropDown(
+          dropRef,
+          {
+            ...position,
+            position: "absolute",
+            visibility: isOpen ? "visible" : "hidden",
             zIndex: 120,
-          }}
-        >
-          {firstOpen.current && renderChildren(closeDropDown)}
-        </Card>
+          },
+          closeDropDown
+        )}
       </Portal>
     </>
   );

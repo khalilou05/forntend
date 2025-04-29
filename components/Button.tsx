@@ -1,14 +1,14 @@
+import style from "@/css/button.module.css";
 import type React from "react";
-import style from "@/css/component/button.module.css";
-type Prop = {
+interface Prop extends React.ComponentProps<"button"> {
   children: React.ReactNode;
-  buttonType: "primary" | "secandary" | "disabled" | "danger" | "link";
-} & React.ComponentProps<"button">;
+  buttonType: "primary" | "secandary" | "disabled" | "danger" | "link" | "icon";
+}
 export default function Button({ children, buttonType, ...rest }: Prop) {
   return (
     <button
       {...rest}
-      className={style[buttonType] + " " + rest.className}
+      className={`${style[buttonType]} ${rest.className ?? ""}`}
     >
       <span>{children}</span>
     </button>
